@@ -1,0 +1,32 @@
+# Configuration LLM : les noms de modèles vivent ici, jamais dans le code (C1, D-008).
+# Identifiants au format LiteLLM « fournisseur/modèle ». Budget 0 € : aucun fournisseur payant.
+# Les clés sont lues dans .env via les variables indiquées ; elles ne figurent jamais ici.
+
+providers:
+  gemini:
+    api_key_env: GEMINI_API_KEY
+  groq:
+    api_key_env: GROQ_API_KEY
+  ollama:
+    api_base_env: OLLAMA_API_BASE
+
+models:
+  # Moteur principal : tous les agents, y compris le coordinateur et l'agent Fundamental.
+  main: gemini/gemini-flash-latest
+  # Tâches simples : résumés de news, extraction.
+  light: gemini/gemini-flash-lite-latest
+  # Relais automatique sur erreur de quota (429) des modèles Gemini.
+  fallback: groq/openai/gpt-oss-120b
+  # Développement et tests : local, ne consomme aucun quota.
+  dev: ollama/llama3.1:8b
+
+# Ordre de relais pour chaque niveau en production.
+fallback_order:
+  main: [main, fallback]
+  light: [light, main, fallback]
+
+# Mode d'exécution par défaut : « dev » (Ollama) ou « prod » (Gemini + relais Groq).
+default_mode: dev
+
+defaults:
+  temperature: 0

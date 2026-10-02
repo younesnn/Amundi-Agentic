@@ -1,0 +1,17 @@
+# Secrets — ne jamais commiter
+.env
+.env.*
+!.env.example
+# macOS
+.DS_Store
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+# Caches et sorties lourdes
+.cache/
+runs/**/raw/
+.ruff_cache/
+.coverage
+htmlcov/
