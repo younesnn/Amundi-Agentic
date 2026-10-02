@@ -25,6 +25,16 @@ fallback_order:
   main: [main, fallback]
   light: [light, main, fallback]
 
+# Mode évaluation (D-024) : identifiants à version figée, un seul modèle par run, aucun relais.
+# Sur erreur 429 : pause puis reprise depuis le cache ; le run s'arrête si le modèle servi change.
+# Versions relevées le 2026-10-02 (champ `modelVersion` renvoyé par l'API). La date de fin
+# d'entraînement de chacune reste à relever avant le pré-enregistrement (D-025, D-027).
+evaluation:
+  fallback_enabled: false
+  models:
+    main: gemini/gemini-3.8-flash
+    light: gemini/gemini-3.5-flash-lite
+
 # Mode d'exécution par défaut : « dev » (Ollama) ou « prod » (Gemini + relais Groq).
 default_mode: dev
 

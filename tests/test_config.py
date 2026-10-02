@@ -38,3 +38,12 @@ def test_aucun_nom_de_modele_dans_le_code():
 
 def test_temperature_zero_par_defaut():
     assert CONFIG["defaults"]["temperature"] == 0
+
+
+def test_mode_evaluation_fige_les_versions_sans_relais():
+    evaluation = CONFIG["evaluation"]
+    assert evaluation["fallback_enabled"] is False
+    for nom in evaluation["models"].values():
+        assert nom.startswith("gemini/")
+        assert "latest" not in nom, "le mode évaluation exige une version figée (D-024)"
+        assert nom.split("/", 1)[1] not in {m.split("/", 1)[1] for m in CONFIG["models"].values()}
