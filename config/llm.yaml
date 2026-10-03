@@ -40,3 +40,66 @@ default_mode: dev
 
 defaults:
   temperature: 0
+  # Graine enregistrée dans chaque ExecutionRecord (EX-NF-10) ; transmise au fournisseur.
+  seed: 0
+  timeout_s: 120
+  max_output_tokens: null
+  # Sortie structurée invalide : nouvelles tentatives avec rappel des erreurs de validation.
+  structured_retries: 2
+
+# Cache disque (EX-NF-04) : clé = SHA-256(modèle demandé, messages, schéma, paramètres,
+# date_donnees). Chemin relatif à la racine du dépôt (.cache/ est ignoré par Git).
+cache:
+  enabled: true
+  dir: .cache/llm
+
+# Nouvelles tentatives sur erreur 503 et timeout (attente exponentielle) et pauses sur 429.
+retry:
+  max_attempts: 4            # tentatives totales par modèle sur 503 ou timeout
+  backoff_base_s: 2
+  backoff_factor: 2
+  backoff_max_s: 60
+  # Mode évaluation : sur 429, attente puis nouvelle tentative, puis arrêt propre de l'exécution
+  # (reprise depuis le cache). Valeurs d'hypothèse (H), à régler quand les quotas sont relevés.
+  pause_429_wait_s: 65
+  pause_429_max_waits: 2
+
+# Mode interactif : relais vers le modèle suivant de fallback_order.
+relay:
+  # Un modèle qui vient de répondre 429 est évité pendant cette durée (secondes).
+  cooldown_s: 60
+  # Relayer aussi quand les tentatives sur 503 ou timeout sont épuisées.
+  on_unavailable_exhausted: true
+
+# Journal des quotas (par fournisseur et par jour) et alerte avant la limite (EX-NF-03).
+# Les limites sont à relever sur les pages officielles des niveaux gratuits (D-004) : `null`
+# tant qu'elles ne sont pas relevées (aucune valeur inventée). Clé : un fournisseur (gemini,
+# groq, ollama) ou un identifiant complet de modèle, qui l'emporte sur le fournisseur.
+quotas:
+  alert_threshold: 0.8
+  # Fuseau de la remise à zéro quotidienne ; à relever (UTC en attendant).
+  day_timezone: UTC
+  journal: .cache/llm/quotas.json
+  limits:
+    gemini: {requests_per_day: null, requests_per_minute: null, tokens_per_minute: null}
+    groq: {requests_per_day: null, requests_per_minute: null, tokens_per_minute: null}
+    ollama: {requests_per_day: null, requests_per_minute: null, tokens_per_minute: null}
+
+# Coût en euros par million de jetons. Niveaux gratuits : 0. Le calcul existe pour que le coût
+# reste mesuré si un fournisseur devient payant (cout_eur de l'ExecutionRecord).
+pricing:
+  gemini: {input_eur_per_mtok: 0, output_eur_per_mtok: 0}
+  groq: {input_eur_per_mtok: 0, output_eur_per_mtok: 0}
+  ollama: {input_eur_per_mtok: 0, output_eur_per_mtok: 0}
+
+# Embeddings (EX-NF-14), par profil d'exécution. Groq n'en propose pas : pas de relais.
+# L'identifiant Gemini n'a pas été testé (aucun appel Gemini en phase 3, tâche 1).
+# Profil dev : llama3.1:8b ne sait pas produire d'embeddings (testé en local, 2026-10-03) ; il faut
+# un modèle d'embedding local, à installer une fois (`ollama pull nomic-embed-text`).
+embeddings:
+  prod: gemini/gemini-embedding-001
+  dev: ollama/nomic-embed-text
+
+# Date de fin d'entraînement par modèle servi (EX-O5-06), à relever avant le pré-enregistrement
+# (D-025). Clé : identifiant renvoyé par le fournisseur ; valeur : date AAAA-MM-JJ.
+training_cutoff: {}
