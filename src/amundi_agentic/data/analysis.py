@@ -50,19 +50,34 @@ def cross_check(
 
 
 def esg_matrix(
-    records: pd.DataFrame, rules: dict, basis_defs: dict, criteres: tuple[str, ...] = CRITERES
+    records: pd.DataFrame,
+    rules: dict,
+    basis_defs: dict,
+    criteres: tuple[str, ...] = CRITERES,
+    etf_view=None,
 ) -> tuple[list[dict], dict]:
     """Matrice actif x critère à trois états : déterminé par donnée, supposé par règle, inconnu.
 
     - titre : indicateur fournisseur disponible -> déterminé ; sinon règle SIC existante pour le
       critère -> supposé ; sinon inconnu (armes controversées : aucune règle SIC, donc inconnu).
     - ETF : critère listé par la base méthodologique déclarée (indice) -> supposé ; sinon inconnu.
+    - ETF avec `etf_view` (vue point-in-time de la source manuelle D-048, `EtfSources.as_of(t)`) : un
+      critère dont un document prouve l'exclusion de l'exposition (portée `indice` ou
+      `portefeuille_replication_directe`) -> déterminé par donnée, quelle que soit la base déclarée ;
+      sinon l'état ci-dessus est conservé (supposé ou inconnu). Une exclusion portée seulement par les
+      titres détenus d'un fonds à swap ne compte pas. Les colonnes `sfdr` et `caractere_indice` sont
+      ajoutées (valeurs documentées ou `inconnu`) ; SFDR n'est pas un score ESG.
     """
     dernier = records.sort_values("observed_at").groupby("asset_id", as_index=False).tail(1)
     lignes = []
     for r in dernier.itertuples():
         notes = str(getattr(r, "notes", "") or "").split("|")
         ligne = {"actif": r.asset_id, "type": r.kind}
+        preuves = (
+            etf_view.proven_exclusions(r.asset_id)
+            if etf_view is not None and r.kind != "stock"
+            else frozenset()
+        )
         for c in criteres:
             etat = INCONNU
             if r.kind == "stock":
@@ -78,7 +93,16 @@ def esg_matrix(
                 defn = basis_defs.get(base or "", {})
                 if defn.get("determined", True) and c in defn.get("exclusions", []) and base:
                     etat = SUPPOSE
+            if etf_view is not None and r.kind != "stock" and c in preuves:
+                etat = DETERMINE
             ligne[c] = etat
+        if etf_view is not None:
+            ligne["sfdr"] = etf_view.sfdr(r.asset_id) if r.kind != "stock" else "sans objet"
+            ligne["caractere_indice"] = (
+                etf_view.get(r.asset_id, "caractere_indice").valeur
+                if r.kind != "stock"
+                else "sans objet"
+            )
         lignes.append(ligne)
     n = len(lignes)
     totaux = {

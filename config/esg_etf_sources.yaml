@@ -1,0 +1,916 @@
+# Source ESG manuelle et historisée par ETF (phase 3, D-048, EX-O1-18, L1 §9.4). Voir le docstring de
+# src/amundi_agentic/data/connectors/esg_etf_sources.py pour le schéma, les règles de validation et la
+# règle point-in-time. APPEND-ONLY : ne jamais modifier ni supprimer une entrée existante ; pour corriger,
+# ajouter une entrée (nouvel id) avec `corrige: <id>` et une `date_saisie` postérieure.
+version: 1
+description: 'Source ESG manuelle et historisée par ETF (D-048, EX-O1-18). Saisie à la main depuis les documents de la gestionnaire du fonds ou de l''administrateur de l''indice. Append-only : une entrée
+  existante n''est jamais modifiée ; une correction ajoute une entrée avec `corrige`. Une valeur sans document reste `inconnu` (jamais déduite d''un nom). SFDR classe des produits : ce n''est pas un score
+  ESG ; un article 8 n''implique pas l''exclusion des armes controversées, du tabac ou du charbon thermique ; CT-06 reste suspendue (D-035).'
+consultation:
+  date: '2026-10-03'
+  site: 'https://www.amundietf.fr (gestionnaire : Amundi Asset Management / Amundi Luxembourg)'
+  acces: documents publics téléchargés avec TLS actif, pause de 3 s entre requêtes, une requête par document
+etfs:
+  500.PA:
+    isin: LU1681048804
+    nom_fiche_consultee: Amundi S&P 500 Swap UCITS ETF EUR Acc
+    entries:
+    - id: 500.PA:sfdr:001
+      champ: sfdr
+      valeur: article_6
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi S&P 500 Swap UCITS ETF EUR Acc » (LU1681048804), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-sp-500-swap-ucits-etf-eur-acc/lu1681048804
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681048804, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
+          datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'Classification lue sur la fiche produit à la date de consultation ; aucun document antérieur consulté : date d''effet = date de consultation (borne prudente, la classification a pu être la
+        même avant). SFDR classe un produit : ce n''est pas un score ESG.'
+    - id: 500.PA:indice:001
+      champ: indice
+      valeur: S&P 500 (indice de rendement total net)
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: dic_kid
+        titre: DIC/KID « Amundi S&P 500 Swap UCITS ETF EUR Acc » du 2026-06-05
+        url: https://www.amundietf.fr/pdfDocuments/download/083f6e1d-2b84-4f92-a79e-d97202c59db9/KIDPRIIPs_1048686_51570_FRA_FRA_20260605.pdf
+        sha256: 07b1636a34bfb5b296eee4d9131a3379c24295681a47fc09af84a9f04b71feba
+      date_document: '2026-06-05'
+      date_effet: '2026-06-05'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: 'Indice S&P 500 … Indice de rendement total net ; fiche produit : « S&P 500 Net Total Return Index »'
+      sources_complementaires:
+      - type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi S&P 500 Swap UCITS ETF EUR Acc » (LU1681048804), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-sp-500-swap-ucits-etf-eur-acc/lu1681048804
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681048804, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        date_document: '2026-10-03'
+    - id: 500.PA:exclusions:001
+      champ: exclusions
+      valeur:
+        controversial_weapons: titres_detenus_hors_swap
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: prospectus
+        titre: Prospectus Amundi Index Solutions, version française du 2026-09-01, fiche du compartiment « Amundi S&P 500 Swap »
+        url: https://www.amundietf.fr/pdfDocuments/download/8c0bba4f-aa84-4e30-8358-c680a9a72b42/PSC_1_UM49675_fra_FRA_20260901_20260804.pdf
+        sha256: 148c032726b3bca0312ebf227abcfa90a7956214a23cda6d527c3cb3b9c6cdba
+      date_document: '2026-09-01'
+      date_effet: '2026-09-01'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: ne détiendra aucun titre de sociétés impliquées dans la production ou la vente d'armes controversées, tel que défini à la section « Méthodes de réplication »
+      note: 'Ne concerne que les titres détenus par le fonds en contrepartie du swap : l''exposition économique est l''indice, via un contrat d''échange. Cette entrée ne prouve donc pas que l''exposition
+        à l''indice exclut ces activités ; la matrice ne la compte pas comme exclusion déterminée.'
+    - id: 500.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: Aucun document consulté (fiche produit, KID, prospectus) ne qualifie l'indice d'ESG, de Paris-Aligned, de Climate Transition ou de standard ; l'absence de mention n'est pas une preuve de caractère
+        « standard » et rien n'est déduit du nom de l'indice. La page de l'indice chez son administrateur n'a pas été consultée.
+      date_saisie: '2026-10-03'
+  MEU.PA:
+    isin: FR0010261198
+    nom_fiche_consultee: Amundi MSCI Europe UCITS ETF Acc
+    entries:
+    - id: MEU.PA:sfdr:001
+      champ: sfdr
+      valeur: article_6
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi MSCI Europe UCITS ETF Acc » (FR0010261198), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-europe-ucits-etf-acc/fr0010261198
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010261198, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
+          datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'Classification lue sur la fiche produit à la date de consultation ; aucun document antérieur consulté : date d''effet = date de consultation (borne prudente, la classification a pu être la
+        même avant). SFDR classe un produit : ce n''est pas un score ESG.'
+    - id: MEU.PA:indice:001
+      champ: indice
+      valeur: MSCI Europe Net Total Return Index
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: dic_kid
+        titre: DIC/KID « Amundi MSCI Europe UCITS ETF Acc » du 2026-04-28
+        url: https://www.amundietf.fr/pdfDocuments/download/7f739b9e-1b07-46e2-93e9-bae956fa9d5c/KIDPRIIPs_978904_79583_FRA_FRA_20260428.pdf
+        sha256: 85b5f8859c7365a202b8435d5e63e9fb6c6795ecaf6c9efc328216b396fca31c
+      date_document: '2026-04-28'
+      date_effet: '2026-04-28'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: indice MSCI Europe Net Total Return Index (dividendes nets réinvestis)
+      sources_complementaires:
+      - type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi MSCI Europe UCITS ETF Acc » (FR0010261198), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-europe-ucits-etf-acc/fr0010261198
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010261198, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        date_document: '2026-10-03'
+    - id: MEU.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: Aucun document consulté (fiche produit, KID, prospectus) ne qualifie l'indice d'ESG, de Paris-Aligned, de Climate Transition ou de standard ; l'absence de mention n'est pas une preuve de caractère
+        « standard » et rien n'est déduit du nom de l'indice. La page de l'indice chez son administrateur n'a pas été consultée.
+      date_saisie: '2026-10-03'
+    - id: MEU.PA:exclusions:001
+      champ: exclusions
+      valeur: inconnu
+      raison: Aucun document consulté n'énumère d'exclusion (armes controversées, tabac, charbon thermique) appliquée par l'indice ou le fonds. Un article 6 ou 8 n'implique pas ces exclusions ; rien n'est
+        déduit du nom.
+      date_saisie: '2026-10-03'
+  JPN.PA:
+    isin: FR0010245514
+    nom_fiche_consultee: Amundi Japan TOPIX II UCITS ETF EUR Dist
+    entries:
+    - id: JPN.PA:sfdr:001
+      champ: sfdr
+      valeur: article_6
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Japan TOPIX II UCITS ETF EUR Dist » (FR0010245514), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-japan-topix-ii-ucits-etf-eur-dist/fr0010245514
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010245514, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
+          datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'Classification lue sur la fiche produit à la date de consultation ; aucun document antérieur consulté : date d''effet = date de consultation (borne prudente, la classification a pu être la
+        même avant). SFDR classe un produit : ce n''est pas un score ESG.'
+    - id: JPN.PA:indice:001
+      champ: indice
+      valeur: TOPIX Gross Total Return Index (JPY)
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: dic_kid
+        titre: DIC/KID « Amundi Japan TOPIX II UCITS ETF EUR Dist » du 2026-04-28
+        url: https://www.amundietf.fr/pdfDocuments/download/8c13c612-2dbf-4796-8808-3843ce435560/KIDPRIIPs_976969_80075_FRA_FRA_20260428.pdf
+        sha256: 0c216676f544b17444770add7a60d803590667d62bc88a522e77a16cf3730ed2
+      date_document: '2026-04-28'
+      date_effet: '2026-04-28'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: l'Indice TOPIX® Gross Total Return (dividendes bruts réinvestis), libellé en Yen japonais (JPY)
+      sources_complementaires:
+      - type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Japan TOPIX II UCITS ETF EUR Dist » (FR0010245514), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-japan-topix-ii-ucits-etf-eur-dist/fr0010245514
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010245514, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        date_document: '2026-10-03'
+    - id: JPN.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: Aucun document consulté (fiche produit, KID, prospectus) ne qualifie l'indice d'ESG, de Paris-Aligned, de Climate Transition ou de standard ; l'absence de mention n'est pas une preuve de caractère
+        « standard » et rien n'est déduit du nom de l'indice. La page de l'indice chez son administrateur n'a pas été consultée.
+      date_saisie: '2026-10-03'
+    - id: JPN.PA:exclusions:001
+      champ: exclusions
+      valeur: inconnu
+      raison: Aucun document consulté n'énumère d'exclusion (armes controversées, tabac, charbon thermique) appliquée par l'indice ou le fonds. Un article 6 ou 8 n'implique pas ces exclusions ; rien n'est
+        déduit du nom.
+      date_saisie: '2026-10-03'
+  AEEM.PA:
+    isin: LU1681045370
+    nom_fiche_consultee: Amundi MSCI Emerging Markets Swap UCITS ETF EUR Acc
+    entries:
+    - id: AEEM.PA:sfdr:001
+      champ: sfdr
+      valeur: article_6
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi MSCI Emerging Markets Swap UCITS ETF EUR Acc » (LU1681045370), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-emerging-markets-swap-ucits-etf-eur-acc/lu1681045370
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681045370, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
+          datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'Classification lue sur la fiche produit à la date de consultation ; aucun document antérieur consulté : date d''effet = date de consultation (borne prudente, la classification a pu être la
+        même avant). SFDR classe un produit : ce n''est pas un score ESG.'
+    - id: AEEM.PA:indice:001
+      champ: indice
+      valeur: MSCI Emerging Markets (indice de rendement total net)
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: dic_kid
+        titre: DIC/KID « Amundi MSCI Emerging Markets Swap UCITS ETF EUR Acc » du 2026-04-28
+        url: https://www.amundietf.fr/pdfDocuments/download/a5363081-1418-4e5d-bbc2-e1a6d1ab869a/KIDPRIIPs_978187_51590_FRA_FRA_20260428.pdf
+        sha256: 26820d1648b1bcbbc0130338e2e1b0a992b3f552b3b9fc945efc60e6b2ffea6f
+      date_document: '2026-04-28'
+      date_effet: '2026-04-28'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: l'Indice MSCI Emerging Markets … Indice de rendement total net
+      sources_complementaires:
+      - type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi MSCI Emerging Markets Swap UCITS ETF EUR Acc » (LU1681045370), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-emerging-markets-swap-ucits-etf-eur-acc/lu1681045370
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681045370, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        date_document: '2026-10-03'
+    - id: AEEM.PA:exclusions:001
+      champ: exclusions
+      valeur:
+        controversial_weapons: titres_detenus_hors_swap
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: prospectus
+        titre: Prospectus Amundi Index Solutions, version française du 2026-09-01, fiche du compartiment « Amundi MSCI Emerging Markets Swap »
+        url: https://www.amundietf.fr/pdfDocuments/download/8c0bba4f-aa84-4e30-8358-c680a9a72b42/PSC_1_UM49675_fra_FRA_20260901_20260804.pdf
+        sha256: 148c032726b3bca0312ebf227abcfa90a7956214a23cda6d527c3cb3b9c6cdba
+      date_document: '2026-09-01'
+      date_effet: '2026-09-01'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: ne détiendra aucun titre de sociétés impliquées dans la production ou la vente d'armes controversées, tel que défini à la section « Méthodes de réplication »
+      note: 'Ne concerne que les titres détenus par le fonds en contrepartie du swap : l''exposition économique est l''indice, via un contrat d''échange. Cette entrée ne prouve donc pas que l''exposition
+        à l''indice exclut ces activités ; la matrice ne la compte pas comme exclusion déterminée.'
+    - id: AEEM.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: Aucun document consulté (fiche produit, KID, prospectus) ne qualifie l'indice d'ESG, de Paris-Aligned, de Climate Transition ou de standard ; l'absence de mention n'est pas une preuve de caractère
+        « standard » et rien n'est déduit du nom de l'indice. La page de l'indice chez son administrateur n'a pas été consultée.
+      date_saisie: '2026-10-03'
+  MTD.PA:
+    isin: LU1287023185
+    nom_fiche_consultee: Amundi Euro Government Bond 7-10Y UCITS ETF Acc
+    entries:
+    - id: MTD.PA:sfdr:001
+      champ: sfdr
+      valeur: article_6
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 7-10Y UCITS ETF Acc » (LU1287023185), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-euro-government-bond-710y-ucits-etf-acc/lu1287023185
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1287023185, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
+          datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'Classification lue sur la fiche produit à la date de consultation ; aucun document antérieur consulté : date d''effet = date de consultation (borne prudente, la classification a pu être la
+        même avant). SFDR classe un produit : ce n''est pas un score ESG.'
+    - id: MTD.PA:indice:001
+      champ: indice
+      valeur: Bloomberg Barclays Euro Treasury 50bn 7-10 Year Bond
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: dic_kid
+        titre: DIC/KID « Amundi Euro Government Bond 7-10Y UCITS ETF Acc » du 2026-04-28
+        url: https://www.amundietf.fr/pdfDocuments/download/d7d3e1dd-63f3-4e4a-9bbb-b82a242603b9/KIDPRIIPs_983582_79717_FRA_FRA_20260428.pdf
+        sha256: 6a3ad90c0728e6ed5ff944eda1cde0c87e63f15bb47534d61858bdf9f107b2d2
+      date_document: '2026-04-28'
+      date_effet: '2026-04-28'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: 'l''Indice Bloomberg Barclays Euro Treasury 50bn 7-10 Year Bond ; fiche produit : « Bloomberg Euro Treasury 50bn 7-10 Year Bond Index » (libellé de marque différent, même indice présumé :
+        non vérifié)'
+      sources_complementaires:
+      - type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 7-10Y UCITS ETF Acc » (LU1287023185), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-euro-government-bond-710y-ucits-etf-acc/lu1287023185
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1287023185, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        date_document: '2026-10-03'
+      note: 'Absorption du FCP « Amundi ETF Govt Bond Euro Broad Investment Grade 7-10 UCITS ETF DR » par ce compartiment (avis du 2024-04-29) : caractéristiques du fonds absorbant inchangées d''après l''avis.
+        Libellé du KID : « Bloomberg Barclays » ; fiche : « Bloomberg » : non vérifié si même indice.'
+    - id: MTD.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: Aucun document consulté (fiche produit, KID, prospectus) ne qualifie l'indice d'ESG, de Paris-Aligned, de Climate Transition ou de standard ; l'absence de mention n'est pas une preuve de caractère
+        « standard » et rien n'est déduit du nom de l'indice. La page de l'indice chez son administrateur n'a pas été consultée.
+      date_saisie: '2026-10-03'
+    - id: MTD.PA:exclusions:001
+      champ: exclusions
+      valeur: inconnu
+      raison: Aucun document consulté n'énumère d'exclusion (armes controversées, tabac, charbon thermique) appliquée par l'indice ou le fonds. Un article 6 ou 8 n'implique pas ces exclusions ; rien n'est
+        déduit du nom.
+      date_saisie: '2026-10-03'
+  CRP.PA:
+    isin: LU1829219127
+    nom_fiche_consultee: Amundi EUR Corporate Bond Climate Paris Aligned UCITS ETF Acc
+    entries:
+    - id: CRP.PA:sfdr:001
+      champ: sfdr
+      valeur: article_8
+      emetteur: gestionnaire_fonds
+      source: &id003
+        type_document: document_sfdr
+        titre: Document précontractuel SFDR (modèle article 8), « Amundi EUR Corporate Bond Climate Net Zero Ambition PAB », version anglaise, mis en ligne le 2023-01-16
+        url: https://www.amundietf.fr/pdfDocuments/download/fc45f551-2b04-47f3-82b9-a157d2518042/91af44c0c20cd1143e107909440027d6.pdf
+        sha256: 12d9dd60aa91f11dc76d451fb09ab8cc7ff9102abdd1c50f694860925303c7b3
+      date_document: '2023-01-16'
+      date_effet: '2023-01-16'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      sources_complementaires:
+      - type_document: prospectus
+        titre: 'Prospectus Multi Units Luxembourg, juillet 2026, fiche du compartiment « Amundi EUR Corporate Bond Climate Paris Aligned » (p. 193 de la table des matières) : « promeut des caractéristiques
+          environnementales et/ou sociales au sens de l''Article 8 du SFDR »'
+        url: https://www.amundietf.fr/pdfDocuments/download/c9c17419-4c53-4123-8535-ab23cb10991a/PSC_1_UM94506_fra_FRA_20260730_20260730.pdf
+        date_document: '2026-07-30'
+      - type_document: document_sfdr
+        titre: Document précontractuel SFDR (modèle article 8), « Amundi EUR Corporate Bond Climate Paris Aligned », version française du 2025-01-21
+        url: https://www.amundietf.fr/pdfDocuments/download/922dcdf1-2f98-4235-83cd-478005877507/PreContractualDocument_LU1829219127_FRA_FRA_20250121.pdf
+        date_document: '2025-01-21'
+      note: 'Premier document explicite consulté (modèle article 8, Règlement (UE) 2019/2088). Avant cette date : aucune classification établie ; le fonds s''appelait alors « Lyxor ESG Euro Corporate Bond
+        (DR) UCITS ETF ».'
+    - id: CRP.PA:indice:001
+      champ: indice
+      valeur: Bloomberg Barclays MSCI EUR Corporate Liquid SRI Sustainable Index
+      emetteur: gestionnaire_fonds
+      source: &id001
+        type_document: avis_actionnaires
+        titre: Avis aux actionnaires Multi Units Luxembourg – Lyxor ESG Euro Corporate Bond (DR) UCITS ETF, modification de l'indice (lettre du 2022-12-09, mise en ligne le 2022-12-12)
+        url: https://www.amundietf.fr/pdfDocuments/MUL_NS_Index%20Switch%20Corpo%20Bond_for%20CSSF_%2022092022(37608206.7)_France_French_3.pdf
+        sha256: 371f0a7442efae509a0290cb9a82fa0ce0afea4307e6f8d8e55e681f736feaf6
+      date_document: '2022-12-12'
+      date_effet: '2022-12-12'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'Indice précédent, cité par l''avis comme « Indice Précédent » : valable jusqu''au 2023-01-11 (date d''effet de l''entrée suivante). Date d''effet de départ non établie : bornée à la date de
+        l''avis.'
+    - id: CRP.PA:indice:002
+      champ: indice
+      valeur: Bloomberg MSCI Euro Corporate Paris Aligned Green Tilted Index
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: avis_actionnaires
+        titre: 'Avis aux actionnaires du 2023-01-11 : date d''effet du changement d''indice'
+        url: https://www.amundietf.fr/pdfDocuments/MUL_NS%20effectivite_Index%20Switch%20Corpo%20Bond_France_French.pdf
+        sha256: 124260cc40822f258ff28eeb0e07ec2eafd4a061ece369f05222008f5e8e1e3e
+      date_document: '2023-01-11'
+      date_effet: '2023-01-11'
+      effet_documente: true
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      sources_complementaires:
+      - type_document: document_sfdr
+        titre: Document précontractuel SFDR (modèle article 8), « Amundi EUR Corporate Bond Climate Net Zero Ambition PAB », version anglaise, mis en ligne le 2023-01-16
+        url: https://www.amundietf.fr/pdfDocuments/download/fc45f551-2b04-47f3-82b9-a157d2518042/91af44c0c20cd1143e107909440027d6.pdf
+        date_document: '2023-01-16'
+      - type_document: document_sfdr
+        titre: Document précontractuel SFDR (modèle article 8), « Amundi EUR Corporate Bond Climate Paris Aligned », version française du 2025-01-21
+        url: https://www.amundietf.fr/pdfDocuments/download/922dcdf1-2f98-4235-83cd-478005877507/PreContractualDocument_LU1829219127_FRA_FRA_20250121.pdf
+        date_document: '2025-01-21'
+      note: 'Changement d''indice effectif le 2023-01-11 (avis du 2023-01-11, qui renvoie à l''avis du 2022-12-09). Fusion avec « Amundi ICPR Euro Corp Climate Paris Aligned PAB » le 2023-06-02 (avis du
+        2023-04-26) : caractéristiques du fonds absorbant inchangées d''après l''avis.'
+    - id: CRP.PA:indice:003
+      champ: indice
+      valeur: Bloomberg MSCI EUR Corporate PAB Select
+      emetteur: gestionnaire_fonds
+      source: &id002
+        type_document: dic_kid
+        titre: DIC/KID « Amundi EUR Corporate Bond Climate Paris Aligned UCITS ETF Acc » du 2026-06-05
+        url: https://www.amundietf.fr/pdfDocuments/download/becef716-3cb9-45b5-bb6d-4ea330c9df43/KIDPRIIPs_1041544_80062_FRA_FRA_20260605.pdf
+        sha256: a2dbbee32ef7999d6871d5f9a29981a9cff0d3b94303611041e6868c5fdabc00
+      date_document: '2026-06-05'
+      date_effet: '2026-06-05'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      sources_complementaires:
+      - type_document: prospectus
+        titre: 'Prospectus Multi Units Luxembourg, juillet 2026, fiche du compartiment « Amundi EUR Corporate Bond Climate Paris Aligned » (p. 193 de la table des matières) : « Bloomberg MSCI EUR Corporate
+          PAB Select Index »'
+        url: https://www.amundietf.fr/pdfDocuments/download/c9c17419-4c53-4123-8535-ab23cb10991a/PSC_1_UM94506_fra_FRA_20260730_20260730.pdf
+        date_document: '2026-07-30'
+      - type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi EUR Corporate Bond Climate Paris Aligned UCITS ETF Acc » (LU1829219127), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-eur-corporate-bond-climate-paris-aligned-ucits-etf-acc/lu1829219127
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1829219127, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        date_document: '2026-10-03'
+      note: 'Libellé différent de celui du document du 2025-01-21 (« Paris Aligned Green Tilted »). Renommage ou changement d''indice : non documenté dans les documents consultés ; date de bascule inconnue
+        entre 2025-01-21 et 2026-06-05. Entrée datée du premier document qui porte ce libellé.'
+    - id: CRP.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: 'Caractère non établi avant le 2023-01-11 : l''avis du 2022-12-09 nomme l''indice précédent sans le qualifier (ESG, PAB, CTB ou standard) ; aucune qualification déduite du nom.'
+      date_saisie: '2026-10-03'
+    - id: CRP.PA:caractere_indice:002
+      champ: caractere_indice
+      valeur: pab
+      emetteur: gestionnaire_fonds
+      source: *id001
+      date_document: '2022-12-12'
+      date_effet: '2023-01-11'
+      effet_documente: true
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: Le Nouvel Indice … vise à respecter et à dépasser les normes minimales des Indices de référence alignés sur l'Accord de Paris de l'UE (« IRAAP »)
+      sources_complementaires:
+      - type_document: document_sfdr
+        titre: Document précontractuel SFDR (modèle article 8), « Amundi EUR Corporate Bond Climate Net Zero Ambition PAB », version anglaise, mis en ligne le 2023-01-16
+        url: https://www.amundietf.fr/pdfDocuments/download/fc45f551-2b04-47f3-82b9-a157d2518042/91af44c0c20cd1143e107909440027d6.pdf
+        date_document: '2023-01-16'
+      note: Le document dit que le nouvel indice « vise à respecter et à dépasser les normes minimales des Indices de référence alignés sur l'Accord de Paris de l'UE » (Règlement 2019/2089) ; le fonds est
+        renommé « … Climate Net Zero Ambition PAB ». La qualification réglementaire par l'administrateur (Bloomberg) n'a pas été vérifiée sur sa page d'indice.
+    - id: CRP.PA:caractere_indice:003
+      champ: caractere_indice
+      valeur: pab
+      emetteur: gestionnaire_fonds
+      source: *id002
+      date_document: '2026-06-05'
+      date_effet: '2026-06-05'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: vise à atteindre et dépasser les normes minimales des indices de référence alignés sur l'Accord de Paris de l'UE (le « EU PAB »)
+      note: Même caractère pour l'indice au libellé « PAB Select » ; garde la valeur « pab » d'après la formulation du KID.
+    - id: CRP.PA:exclusions:001
+      champ: exclusions
+      valeur:
+        controversial_weapons: indice
+        tobacco: indice
+        thermal_coal: indice
+      emetteur: gestionnaire_fonds
+      source: *id003
+      date_document: '2023-01-16'
+      date_effet: '2023-01-16'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: 'The Eligible Universe is screened to exclude issuers: Involved in activities such as Alcohol, Gambling, Tobacco, Thermal Coal, Oil & Gas, Unconventional Oil & Gas, Power Generation, Nuclear
+        Weapons, Controversial Weapons, Conventional Weapons, or Civilian Firearms activities based on revenue thresholds as defined in the Index methodology'
+      sources_complementaires:
+      - type_document: document_sfdr
+        titre: Document précontractuel SFDR (modèle article 8), « Amundi EUR Corporate Bond Climate Paris Aligned », version française du 2025-01-21
+        url: https://www.amundietf.fr/pdfDocuments/download/922dcdf1-2f98-4235-83cd-478005877507/PreContractualDocument_LU1829219127_FRA_FRA_20250121.pdf
+        date_document: '2025-01-21'
+      note: 'Exclusion par l''indice « Green Tilted » sur seuils de revenus définis dans sa méthodologie (seuils non relevés ici) : ce n''est pas une exclusion absolue de toute exposition.'
+    - id: CRP.PA:exclusions:002
+      champ: exclusions
+      valeur:
+        controversial_weapons: portefeuille_replication_directe
+        tobacco: portefeuille_replication_directe
+        thermal_coal: portefeuille_replication_directe
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: prospectus
+        titre: Prospectus Multi Units Luxembourg, juillet 2026, fiche du compartiment « Amundi EUR Corporate Bond Climate Paris Aligned » (p. 193 de la table des matières)
+        url: https://www.amundietf.fr/pdfDocuments/download/c9c17419-4c53-4123-8535-ab23cb10991a/PSC_1_UM94506_fra_FRA_20260730_20260730.pdf
+        sha256: 6acfa6dc69b0d641d1d016023f14aeb6810efae1b3fd96e23daf9a70956b4763
+      date_document: '2026-07-30'
+      date_effet: '2026-07-30'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: Il ne détiendra aucun titre de sociétés impliquées dans la production ou la vente d'armes controversées, ni de sociétés qui enfreignent les conventions internationales sur les Droits de l'homme
+        ou le Droit du travail, ou de sociétés impliquées dans des industries controversées, comme le tabac, le Charbon thermique, les armes nucléaires ou le pétrole et le gaz non conventionnels
+      note: 'Engagement du fonds (réplication directe : les titres détenus sont l''exposition). Remplace l''entrée précédente à partir de sa date, car l''indice « PAB Select » n''énumère pas ses exclusions
+        dans les documents consultés (renvoi au prospectus).'
+  AHYE.PA:
+    isin: LU1681040496
+    nom_fiche_consultee: Amundi Euro High Yield Bond ESG UCITS ETF Acc
+    entries:
+    - id: AHYE.PA:sfdr:001
+      champ: sfdr
+      valeur: article_8
+      emetteur: gestionnaire_fonds
+      source: &id005
+        type_document: document_sfdr
+        titre: Document précontractuel SFDR (modèle article 8), « Amundi Euro High Yield Bond ESG », version anglaise, mis en ligne le 2023-01-16
+        url: https://www.amundietf.fr/pdfDocuments/download/b9c0be33-ce8e-4c9f-8359-c5b9d2f2ca61/483e8262f10dad173d8cbd84533b974b.pdf
+        sha256: c0d6f48a7b5919fac6b969f244a5e2c484020f540dca0610f9e44b34f9e18f9c
+      date_document: '2023-01-16'
+      date_effet: '2023-01-16'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      sources_complementaires:
+      - type_document: prospectus
+        titre: 'Prospectus Amundi Index Solutions, version française du 2026-09-01, fiche du compartiment « Amundi Euro High Yield Bond ESG » : « promeut … des caractéristiques ESG en vertu de l''Article
+          8 du Règlement Disclosure »'
+        url: https://www.amundietf.fr/pdfDocuments/download/8c0bba4f-aa84-4e30-8358-c680a9a72b42/PSC_1_UM49675_fra_FRA_20260901_20260804.pdf
+        date_document: '2026-09-01'
+      - type_document: document_sfdr
+        titre: Publication SFDR du site (art. 10(1)), « Amundi Euro High Yield Bond ESG », version française du 2023-01-01
+        url: https://www.amundietf.fr/pdfDocuments/download/d1ab4c31-4707-4772-8937-2231a236730e/WebsiteSfdrDisclosure_LU1681040496_FRA_FRA_20230101.pdf
+        date_document: '2023-01-01'
+      note: 'Premier document explicite consulté. Fusion du compartiment « Lyxor iBoxx EUR Liquid High Yield BB UCITS ETF » dans ce compartiment (avis du 2023-08-16) : caractéristiques du fonds absorbant
+        inchangées d''après l''avis.'
+    - id: AHYE.PA:indice:001
+      champ: indice
+      valeur: iBoxx MSCI ESG EUR High Yield Corporates TCA Index
+      emetteur: gestionnaire_fonds
+      source: &id004
+        type_document: document_sfdr
+        titre: Publication SFDR du site (art. 10(1)), « Amundi Euro High Yield Bond ESG », version française du 2023-01-01
+        url: https://www.amundietf.fr/pdfDocuments/download/d1ab4c31-4707-4772-8937-2231a236730e/WebsiteSfdrDisclosure_LU1681040496_FRA_FRA_20230101.pdf
+        sha256: 315a261030411d789c8bf96f0419dae15913fe1e4033e559708001d4f299a5fd
+      date_document: '2023-01-01'
+      date_effet: '2023-01-01'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      sources_complementaires:
+      - type_document: dic_kid
+        titre: DIC/KID « Amundi Euro High Yield Bond ESG UCITS ETF Acc » du 2026-04-28
+        url: https://www.amundietf.fr/pdfDocuments/download/4726d6c3-772b-4ee0-a010-515a7d0018de/KIDPRIIPs_983781_51616_FRA_FRA_20260428.pdf
+        date_document: '2026-04-28'
+      - type_document: prospectus
+        titre: Prospectus Amundi Index Solutions, version française du 2026-09-01, fiche du compartiment « Amundi Euro High Yield Bond ESG »
+        url: https://www.amundietf.fr/pdfDocuments/download/8c0bba4f-aa84-4e30-8358-c680a9a72b42/PSC_1_UM49675_fra_FRA_20260901_20260804.pdf
+        date_document: '2026-09-01'
+      note: 'Même indice dans le KID du 2026-04-28 (« iBoxx MSCI ESG EUR High Yield Corporates TCA TRI ») et dans le prospectus du 2026-09-01 : aucun changement d''indice relevé.'
+    - id: AHYE.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: esg
+      emetteur: gestionnaire_fonds
+      source: *id004
+      date_document: '2023-01-01'
+      date_effet: '2023-01-01'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: iBoxx MSCI ESG EUR High Yield Corporates TCA Index (« l'Indice ») exclut les composantes de l'Indice parent sur la base des critères suivants
+      sources_complementaires:
+      - type_document: dic_kid
+        titre: DIC/KID « Amundi Euro High Yield Bond ESG UCITS ETF Acc » du 2026-04-28
+        url: https://www.amundietf.fr/pdfDocuments/download/4726d6c3-772b-4ee0-a010-515a7d0018de/KIDPRIIPs_983781_51616_FRA_FRA_20260428.pdf
+        date_document: '2026-04-28'
+      note: 'Indice ESG « best-in-class » d''après le KID et la publication SFDR. Le document ne le déclare ni PAB ni CTB ; il cite l''article 12 du Règlement délégué (UE) 2020/1818 pour ses exclusions
+        climat (prospectus 2026-09-01), sans le qualifier d''indice PAB : non retenu.'
+    - id: AHYE.PA:exclusions:001
+      champ: exclusions
+      valeur:
+        controversial_weapons: indice
+        tobacco: indice
+        thermal_coal: indice
+      emetteur: gestionnaire_fonds
+      source: *id005
+      date_document: '2023-01-16'
+      date_effet: '2023-01-16'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: … Controversial Weapons, Conventional Weapons, Gambling, Genetically Modified organisms (GMO), Nuclear Power, Nuclear Weapons, Tobacco, Oil Sands, Thermal Coal are excluded. 2. Securities
+        of companies with an MSCI ESG rating of BB and below are excluded.
+      sources_complementaires:
+      - type_document: document_sfdr
+        titre: Publication SFDR du site (art. 10(1)), « Amundi Euro High Yield Bond ESG », version française du 2023-01-01
+        url: https://www.amundietf.fr/pdfDocuments/download/d1ab4c31-4707-4772-8937-2231a236730e/WebsiteSfdrDisclosure_LU1681040496_FRA_FRA_20230101.pdf
+        date_document: '2023-01-01'
+      note: 'Exclusions de l''indice selon les critères MSCI ESG Research ; seuils non relevés ici : ce n''est pas une exclusion absolue de toute exposition.'
+    - id: AHYE.PA:exclusions:002
+      champ: exclusions
+      valeur:
+        controversial_weapons: portefeuille_replication_directe
+        tobacco: portefeuille_replication_directe
+        thermal_coal: portefeuille_replication_directe
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: prospectus
+        titre: Prospectus Amundi Index Solutions, version française du 2026-09-01, fiche du compartiment « Amundi Euro High Yield Bond ESG »
+        url: https://www.amundietf.fr/pdfDocuments/download/8c0bba4f-aa84-4e30-8358-c680a9a72b42/PSC_1_UM49675_fra_FRA_20260901_20260804.pdf
+        sha256: 148c032726b3bca0312ebf227abcfa90a7956214a23cda6d527c3cb3b9c6cdba
+      date_document: '2026-09-01'
+      date_effet: '2026-09-01'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: 'ne détiendra aucun titre de sociétés impliquées dans la production ou la vente d''armes controversées, de sociétés en violation des conventions internationales relatives aux droits de l''homme
+        ou au droit du travail, ou de sociétés impliquées dans des secteurs controversés : le tabac, le charbon thermique, les armes nucléaires ou le pétrole et le gaz non conventionnels'
+      note: Engagement du fonds (réplication directe, échantillonnée). Cumulable avec les exclusions de l'indice ; remplace l'entrée précédente à partir de sa date.
+  GOLD.PA:
+    isin: FR0013416716
+    nom_fiche_consultee: AMUNDI PHYSICAL GOLD ETC (C)
+    entries:
+    - id: GOLD.PA:sfdr:001
+      champ: sfdr
+      valeur: non_applicable
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « AMUNDI PHYSICAL GOLD ETC (C) » (FR0013416716), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/commodities/amundi-physical-gold-etc-c/fr0013416716
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0013416716, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
+          datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'La fiche indique « Not applicable » : titre de créance (ETC) adossé à de l''or physique, hors du champ des fonds classés article 6, 8 ou 9.'
+    - id: GOLD.PA:indice:001
+      champ: indice
+      valeur: LBMA Gold Price PM USD
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « AMUNDI PHYSICAL GOLD ETC (C) » (FR0013416716), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/commodities/amundi-physical-gold-etc-c/fr0013416716
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0013416716, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      sources_complementaires:
+      - type_document: dic_kid
+        titre: DIC/KID « AMUNDI PHYSICAL GOLD ETC (C) » du 2025-09-19
+        url: https://www.amundietf.fr/pdfDocuments/download/9f0702f3-6cd0-4ebd-b188-1bb8161f5d33/KIDPRIIPs_69376_FRA_FRA_20250919.pdf
+        sha256: 760e7cd6a97aa5e403e948123d76d3f0817a3b8a421831e0028c1cd0214f8e36
+        date_document: '2025-09-19'
+      note: 'La fiche écrit « LMBA Gold Price PM USD » (faute de frappe de la fiche, corrigée ici). Le KID du 2025-09-19 dit seulement que la valeur du titre « est basée sur le cours de l''or tel que déterminé
+        par la London Bullion Market Association (LBMA) » : c''est un cours de référence, pas un indice d''actions ou d''obligations.'
+    - id: GOLD.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: 'Sans objet établi : le sous-jacent est un cours de l''or (LBMA), non un indice de titres ; aucun caractère ESG, PAB ou CTB documenté.'
+      date_saisie: '2026-10-03'
+    - id: GOLD.PA:exclusions:001
+      champ: exclusions
+      valeur: inconnu
+      raison: Aucun document consulté n'énumère d'exclusion (armes controversées, tabac, charbon thermique) appliquée par l'indice ou le fonds. Un article 6 ou 8 n'implique pas ces exclusions ; rien n'est
+        déduit du nom.
+      date_saisie: '2026-10-03'
+  COMO.PA:
+    isin: LU1829218749
+    nom_fiche_consultee: Amundi Bloomberg Equal-weight Commodity ex-Agriculture UCITS ETF Acc
+    entries:
+    - id: COMO.PA:sfdr:001
+      champ: sfdr
+      valeur: article_6
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Bloomberg Equal-weight Commodity ex-Agriculture UCITS ETF Acc » (LU1829218749), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/commodities/amundi-bloomberg-equalweight-commodity-exagriculture-ucits-etf-acc/lu1829218749
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1829218749, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
+          datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'Classification lue sur la fiche produit à la date de consultation ; aucun document antérieur consulté : date d''effet = date de consultation (borne prudente, la classification a pu être la
+        même avant). SFDR classe un produit : ce n''est pas un score ESG.'
+    - id: COMO.PA:indice:001
+      champ: indice
+      valeur: Bloomberg Energy & Metals Equal Weighted Total Return
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: dic_kid
+        titre: DIC/KID « Amundi Bloomberg Equal-weight Commodity ex-Agriculture UCITS ETF Acc » du 2026-06-05
+        url: https://www.amundietf.fr/pdfDocuments/download/7660c797-3f2b-4a5b-ae4c-268c9d899d9a/KIDPRIIPs_1038857_79675_FRA_FRA_20260605.pdf
+        sha256: 63fb3440cd4e706536f6f76762d4e8a56956bd14e4248aa4c9b1dbdcc3193d69
+      date_document: '2026-06-05'
+      date_effet: '2026-06-05'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: 'l''Indice Bloomberg Energy & Metals Equal Weighted Total Return ; fiche produit : « Bloomberg Energy and Metals Equal-Weighted Total Return Index »'
+      sources_complementaires:
+      - type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Bloomberg Equal-weight Commodity ex-Agriculture UCITS ETF Acc » (LU1829218749), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/commodities/amundi-bloomberg-equalweight-commodity-exagriculture-ucits-etf-acc/lu1829218749
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1829218749, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        date_document: '2026-10-03'
+    - id: COMO.PA:exclusions:001
+      champ: exclusions
+      valeur:
+        controversial_weapons: titres_detenus_hors_swap
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: prospectus
+        titre: Prospectus Multi Units Luxembourg, juillet 2026, fiche du compartiment « Amundi Bloomberg Equal-weight Commodity ex-Agriculture »
+        url: https://www.amundietf.fr/pdfDocuments/download/c9c17419-4c53-4123-8535-ab23cb10991a/PSC_1_UM94506_fra_FRA_20260730_20260730.pdf
+        sha256: 6acfa6dc69b0d641d1d016023f14aeb6810efae1b3fd96e23daf9a70956b4763
+      date_document: '2026-07-30'
+      date_effet: '2026-07-30'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: Il ne détiendra aucun titre de sociétés impliquées dans la production ou la vente d'armes controversées, comme défini à la section OBJECTIFS D'INVESTISSEMENT
+      note: 'Indice de contrats à terme sur matières premières (pas de titres de sociétés dans l''exposition) ; entrée conservée pour mémoire, non comptée par la matrice. '
+    - id: COMO.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: Aucun document consulté (fiche produit, KID, prospectus) ne qualifie l'indice d'ESG, de Paris-Aligned, de Climate Transition ou de standard ; l'absence de mention n'est pas une preuve de caractère
+        « standard » et rien n'est déduit du nom de l'indice. La page de l'indice chez son administrateur n'a pas été consultée.
+      date_saisie: '2026-10-03'
+  C3M.PA:
+    isin: FR0010754200
+    nom_fiche_consultee: Amundi Euro Government Bond 0-6 M UCITS ETF Acc
+    entries:
+    - id: C3M.PA:sfdr:001
+      champ: sfdr
+      valeur: article_6
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 0-6 M UCITS ETF Acc » (FR0010754200), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-euro-government-bond-06-m-ucits-etf-acc/fr0010754200
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010754200, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
+          datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'Classification lue sur la fiche produit à la date de consultation ; aucun document antérieur consulté : date d''effet = date de consultation (borne prudente, la classification a pu être la
+        même avant). SFDR classe un produit : ce n''est pas un score ESG.'
+    - id: C3M.PA:indice:001
+      champ: indice
+      valeur: FTSE Eurozone Government Bill 0-6 Month Capped
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: dic_kid
+        titre: DIC/KID « Amundi Euro Government Bond 0-6 M UCITS ETF Acc » du 2026-04-28
+        url: https://www.amundietf.fr/pdfDocuments/download/5c61bc9c-f558-4402-af23-2e36d7c13bef/KIDPRIIPs_983386_16748_FRA_FRA_20260428.pdf
+        sha256: 7aab385c356497223ba3fbc7c010a6ab2a69c97e43d06cb9159747cc665bfe15
+      date_document: '2026-04-28'
+      date_effet: '2026-04-28'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      extrait: l'indice 100% FTSE EUROZONE GOVERNMENT BILL 0-6 MONTH CAPPED
+      sources_complementaires:
+      - type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 0-6 M UCITS ETF Acc » (FR0010754200), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-euro-government-bond-06-m-ucits-etf-acc/fr0010754200
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010754200, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        date_document: '2026-10-03'
+      note: Fonds renommé « Amundi Euro Government Bond 0-6 M » le 2025-09-11 (ancien nom « Amundi ETF Govies 0-6 Months Euro Investment Grade UCITS ETF DR », avis du 2025-08-28) ; l'indice avant le KID
+        du 2026-04-28 n'est pas établi par les documents consultés (Q-21).
+    - id: C3M.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: Aucun document consulté (fiche produit, KID, prospectus) ne qualifie l'indice d'ESG, de Paris-Aligned, de Climate Transition ou de standard ; l'absence de mention n'est pas une preuve de caractère
+        « standard » et rien n'est déduit du nom de l'indice. La page de l'indice chez son administrateur n'a pas été consultée.
+      date_saisie: '2026-10-03'
+    - id: C3M.PA:exclusions:001
+      champ: exclusions
+      valeur: inconnu
+      raison: Aucun document consulté n'énumère d'exclusion (armes controversées, tabac, charbon thermique) appliquée par l'indice ou le fonds. Un article 6 ou 8 n'implique pas ces exclusions ; rien n'est
+        déduit du nom.
+      date_saisie: '2026-10-03'
+  CW8.PA:
+    isin: LU1681043599
+    nom_fiche_consultee: Amundi MSCI World Swap UCITS ETF EUR Acc
+    entries:
+    - id: CW8.PA:sfdr:001
+      champ: sfdr
+      valeur: article_6
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi MSCI World Swap UCITS ETF EUR Acc » (LU1681043599), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-world-swap-ucits-etf-eur-acc/lu1681043599
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681043599, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
+          datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'Classification lue sur la fiche produit à la date de consultation ; aucun document antérieur consulté : date d''effet = date de consultation (borne prudente, la classification a pu être la
+        même avant). SFDR classe un produit : ce n''est pas un score ESG.'
+    - id: CW8.PA:indice:001
+      champ: indice
+      valeur: MSCI Daily Net TR World Euro
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi MSCI World Swap UCITS ETF EUR Acc » (LU1681043599), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-world-swap-ucits-etf-eur-acc/lu1681043599
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681043599, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: Fiche produit seule (aucun KID ni prospectus consulté pour cet ETF facultatif).
+    - id: CW8.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: Aucun document consulté (fiche produit, KID, prospectus) ne qualifie l'indice d'ESG, de Paris-Aligned, de Climate Transition ou de standard ; l'absence de mention n'est pas une preuve de caractère
+        « standard » et rien n'est déduit du nom de l'indice. La page de l'indice chez son administrateur n'a pas été consultée.
+      date_saisie: '2026-10-03'
+    - id: CW8.PA:exclusions:001
+      champ: exclusions
+      valeur: inconnu
+      raison: Aucun document consulté n'énumère d'exclusion (armes controversées, tabac, charbon thermique) appliquée par l'indice ou le fonds. Un article 6 ou 8 n'implique pas ces exclusions ; rien n'est
+        déduit du nom.
+      date_saisie: '2026-10-03'
+  EGOV.PA:
+    isin: LU1437018598
+    nom_fiche_consultee: Amundi Core Euro Government Bond UCITS ETF Acc
+    entries:
+    - id: EGOV.PA:sfdr:001
+      champ: sfdr
+      valeur: article_6
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Core Euro Government Bond UCITS ETF Acc » (LU1437018598), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-core-euro-government-bond-ucits-etf-acc/lu1437018598
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1437018598, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
+          datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'Classification lue sur la fiche produit à la date de consultation ; aucun document antérieur consulté : date d''effet = date de consultation (borne prudente, la classification a pu être la
+        même avant). SFDR classe un produit : ce n''est pas un score ESG.'
+    - id: EGOV.PA:indice:001
+      champ: indice
+      valeur: Bloomberg Euro Treasury 50bn Bond Index
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Core Euro Government Bond UCITS ETF Acc » (LU1437018598), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-core-euro-government-bond-ucits-etf-acc/lu1437018598
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1437018598, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: Fiche produit seule (aucun KID ni prospectus consulté pour cet ETF facultatif).
+    - id: EGOV.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: Aucun document consulté (fiche produit, KID, prospectus) ne qualifie l'indice d'ESG, de Paris-Aligned, de Climate Transition ou de standard ; l'absence de mention n'est pas une preuve de caractère
+        « standard » et rien n'est déduit du nom de l'indice. La page de l'indice chez son administrateur n'a pas été consultée.
+      date_saisie: '2026-10-03'
+    - id: EGOV.PA:exclusions:001
+      champ: exclusions
+      valeur: inconnu
+      raison: Aucun document consulté n'énumère d'exclusion (armes controversées, tabac, charbon thermique) appliquée par l'indice ou le fonds. Un article 6 ou 8 n'implique pas ces exclusions ; rien n'est
+        déduit du nom.
+      date_saisie: '2026-10-03'
+  CSH2.PA:
+    isin: LU1190417599
+    nom_fiche_consultee: Amundi Smart Overnight Return UCITS ETF Acc
+    entries:
+    - id: CSH2.PA:sfdr:001
+      champ: sfdr
+      valeur: article_6
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Smart Overnight Return UCITS ETF Acc » (LU1190417599), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-smart-overnight-return-ucits-etf-acc/lu1190417599
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1190417599, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
+          datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: 'Classification lue sur la fiche produit à la date de consultation ; aucun document antérieur consulté : date d''effet = date de consultation (borne prudente, la classification a pu être la
+        même avant). SFDR classe un produit : ce n''est pas un score ESG.'
+    - id: CSH2.PA:indice:001
+      champ: indice
+      valeur: ESTR Compounded Index
+      emetteur: gestionnaire_fonds
+      source:
+        type_document: fiche_produit
+        titre: Fiche produit Amundi ETF « Amundi Smart Overnight Return UCITS ETF Acc » (LU1190417599), données de la page produit
+        url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-smart-overnight-return-ucits-etf-acc/lu1190417599
+        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1190417599, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+      date_document: '2026-10-03'
+      date_effet: '2026-10-03'
+      effet_documente: false
+      date_consultation: '2026-10-03'
+      date_saisie: '2026-10-03'
+      note: Fiche produit seule (aucun KID ni prospectus consulté pour cet ETF facultatif).
+    - id: CSH2.PA:caractere_indice:001
+      champ: caractere_indice
+      valeur: inconnu
+      raison: Aucun document consulté (fiche produit, KID, prospectus) ne qualifie l'indice d'ESG, de Paris-Aligned, de Climate Transition ou de standard ; l'absence de mention n'est pas une preuve de caractère
+        « standard » et rien n'est déduit du nom de l'indice. La page de l'indice chez son administrateur n'a pas été consultée.
+      date_saisie: '2026-10-03'
+    - id: CSH2.PA:exclusions:001
+      champ: exclusions
+      valeur: inconnu
+      raison: Aucun document consulté n'énumère d'exclusion (armes controversées, tabac, charbon thermique) appliquée par l'indice ou le fonds. Un article 6 ou 8 n'implique pas ces exclusions ; rien n'est
+        déduit du nom.
+      date_saisie: '2026-10-03'
