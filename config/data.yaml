@@ -1,0 +1,129 @@
+# Couche de données (phase 2, L1 §3.2, §11.3). Aucune clé ici : FRED_API_KEY et
+# SEC_EDGAR_USER_AGENT sont lus dans l'environnement ou dans .env (ignoré par Git).
+# Les valeurs chiffrées marquées (H) sont des hypothèses de conception, pas des mesures.
+
+point_in_time:
+  timezone: Europe/Paris          # coupure : t 00:00 heure de Paris (D-023)
+  edgar_timezone: America/New_York
+  # L'horodatage `acceptanceDateTime` de l'API submissions n'a pas de sémantique unique selon le
+  # déposant : vrai UTC (MSFT, NVDA), « heure de New York + 2 x décalage » (AAPL), écart variable
+  # (JPM). "raw_as_utc" (DÉFAUT, règle prudente) : valeur brute lue comme UTC, jamais antérieure
+  # à l'instant réel dans les trois régimes observés ; un dépôt peut être servi quelques heures
+  # trop tard, jamais trop tôt. Une « correction » retranchant 4 à 5 h
+  # est fausse pour les vrais UTC : supprimée ; toute autre valeur est refusée au chargement.
+  edgar_acceptance_mode: raw_as_utc
+
+storage:
+  # Dossier ignoré par Git (.gitignore : .cache/). Surchargeable par AMUNDI_DATA_DIR.
+  data_dir: .cache/data
+
+http:
+  max_attempts: 5
+  base_backoff_s: 2.0
+  max_backoff_s: 120.0
+  timeout_s: 30
+  # Intervalle minimal entre deux requêtes d'une même source (pause) ; le cache évite tout rappel.
+  sources:
+    edgar: {min_interval_s: 0.15}   # limite SEC : 10 requêtes/s ; marge prise
+    fred: {min_interval_s: 0.6}     # limite FRED : 120 requêtes/min
+    ecb: {min_interval_s: 0.5}
+    rss: {min_interval_s: 1.0}
+    gdelt: {min_interval_s: 11.0}   # GDELT demande 1 requête / 5 s ; marge x2 après des 429 observés
+    wikipedia: {min_interval_s: 1.0}
+    yfinance: {min_interval_s: 1.5}
+
+quality:
+  max_gap_bdays: 5                  # (H) trou signalé au-delà de 5 jours ouvrés sans cotation
+  outlier_abs_return: 0.25          # (H) |rendement quotidien| au-delà : valeur aberrante signalée
+  split_jump: 0.40                  # (H) saut non expliqué par un split : split non ajusté suspecté
+  stale_run: 5                      # (H) clôtures identiques consécutives
+  min_history_weeks: 260            # L1 §9.1 : 260 semaines avant t
+  window_start: "2013-01-01"        # (H) fenêtre utile : stale/outlier avant cette date comptés à part
+  liquidity_since: "2018-01-01"     # liquidité mesurée depuis cette date
+  # Faux positifs structurels connus (signalement « stale » rangé à part, avec sa justification)
+  structural_stale:
+    C3M.PA: "ETF monétaire : cours quasi constant par construction (capitalisation de quelques centimes)"
+    CSH2.PA: "ETF monétaire : cours quasi constant par construction"
+    URTH: "ETF peu liquide à son lancement (2012) : voir le volume dans le tableau de liquidité"
+  min_news_weekly_items: 1          # semaine « couverte » si au moins 1 article pour l'actif
+
+# Limite connue de yfinance (N9) : Yahoo corrige rétroactivement ses historiques (splits,
+# dividendes, erreurs) sans en garder trace ; un retraitement n'est détecté qu'à la mise à jour
+# (recouvrement de overlap_days). Une correction ancienne reste invisible.
+# Creux du benchmark proxy (critère D-045) : ticker lu ici, jamais dans le code.
+drawdowns:
+  ticker: "500.PA"
+  threshold: 0.15
+  windows: ["2014-03-27", "2018-08-28"]
+  rate_series: DGS10
+
+prices:
+  history_start: "1990-01-01"
+  overlap_days: 10                  # recouvrement à la mise à jour, pour détecter les retraitements
+
+fred:
+  # Séries macro (identifiant FRED).
+  # revised: true  -> tous les millésimes ALFRED sont conservés (disponibilité = realtime_start).
+  # revised: false -> série de marché jamais révisée, dont ALFRED n'a pas (ou peu) de millésimes :
+  #   disponibilité = date de l'observation + lag_business_days JOURS OUVRÉS (H), colonne availability = "lag_rule".
+  series:
+    DGS10: {revised: false, lag_business_days: 1, note: "Rendement Trésor US 10 ans"}
+    DGS1MO: {revised: false, lag_business_days: 1, note: "Trésor US 1 mois (taux sans risque de la réplication, L1 §9.3)"}
+    DGS2: {revised: false, lag_business_days: 1, note: "Trésor US 2 ans"}
+    T10Y2Y: {revised: false, lag_business_days: 1, note: "Pente 10 ans - 2 ans"}
+    VIXCLS: {revised: false, lag_business_days: 1, note: "VIX"}
+    CPIAUCSL: {revised: true, note: "Prix à la consommation US, révisé"}
+    UNRATE: {revised: true, note: "Chômage US, révisé"}
+    GDPC1: {revised: true, note: "PIB réel US, révisé"}
+    BAMLH0A0HYM2: {revised: false, lag_business_days: 1, note: "ICE BofA US High Yield OAS (licence ICE : fenêtre glissante)"}
+    # Indices ICE BofA Euro : vérification de L1 §9.1
+    BAMLHE00EHYITRIV: {revised: false, lag_business_days: 1, note: "ICE BofA Euro High Yield, rendement total (fenêtre ICE de 3 ans : NON utilisé comme série de rendement, D-034)"}
+    BAMLHE00EHYIOAS: {revised: false, lag_business_days: 1, note: "ICE BofA Euro High Yield, OAS (fenêtre ICE de 3 ans, D-034)"}
+    BAMLEC0A0RMEY: {revised: false, lag_business_days: 1, note: "ICE BofA Euro Corporate, rendement effectif (existence à vérifier)"}
+    ECBESTRVOLWGTTRMDMNRT: {revised: false, lag_business_days: 1, note: "€STR sur FRED (existence à vérifier)"}
+
+ecb:
+  # Séries BCE (flux/clé SDMX). lag_days : délai de publication après la fin de la période (H).
+  # Les séries BCE n'ont pas de millésimes : revised=true signale celles qui sont révisées.
+  series:
+    ESTR: {flow: EST, key: "B.EU000A2X2A25.WT", lag_days: 1, revised: false, note: "€STR, depuis 2019-10-01"}
+    EONIA: {flow: EON, key: "D.EONIA_TO.RATE", lag_days: 1, revised: false, note: "EONIA, 1999-01-04 à 2021-12-31"}
+    YC_SPOT_10Y: {flow: YC, key: "B.U2.EUR.4F.G_N_A.SV_C_YM.SR_10Y", lag_days: 1, revised: false, note: "Courbe zéro-coupon AAA zone euro 10 ans"}
+    YC_SPOT_2Y: {flow: YC, key: "B.U2.EUR.4F.G_N_A.SV_C_YM.SR_2Y", lag_days: 1, revised: false, note: "Courbe zéro-coupon AAA zone euro 2 ans"}
+    YC_SPOT_7Y: {flow: YC, key: "B.U2.EUR.4F.G_N_A.SV_C_YM.SR_7Y", lag_days: 1, revised: false, note: "Courbe zéro-coupon AAA zone euro 7 ans"}
+  fx_currencies: [USD, JPY, GBP, CHF]
+  fx_lag_days: 0                    # taux de référence publié vers 16 h CET le jour même
+  fx_max_stale_days: 5              # report du dernier cours connu limité à 5 jours, compté et publié
+
+edgar:
+  forms: ["10-K", "10-Q", "8-K"]
+  text_forms: ["10-K", "10-Q"]      # texte intégral téléchargé pour ces formulaires seulement
+  text_since: "2022-01-01"          # textes téléchargés pour les dépôts depuis cette date (volume)
+  user_agent_env: SEC_EDGAR_USER_AGENT
+  xbrl_concepts:
+    - Revenues
+    - RevenueFromContractWithCustomerExcludingAssessedTax
+    - NetIncomeLoss
+    - OperatingIncomeLoss
+    - Assets
+    - Liabilities
+    - StockholdersEquity
+    - CashAndCashEquivalentsAtCarryingValue
+    - NetCashProvidedByUsedInOperatingActivities
+    - EarningsPerShareDiluted
+    - LongTermDebt
+
+news:
+  # Flux RSS d'institutions (gratuits). Un RSS ne donne que les articles récents : pas d'historique.
+  feeds:
+    - {name: fed_press, url: "https://www.federalreserve.gov/feeds/press_all.xml"}
+    - {name: ecb_press, url: "https://www.ecb.europa.eu/rss/press.html"}
+    - {name: sec_press, url: "https://www.sec.gov/news/pressreleases.rss"}
+  gdelt:
+    max_records: 100
+    probe_query: economy
+    backfill_max_records: 5         # sondage hebdomadaire : présence d'au moins un article, pas un décompte
+    # Sondage de profondeur historique de l'API DOC (L1 : environ 3 mois à vérifier)
+    probe_months_back: [1, 3, 6, 12, 24, 36, 60, 84, 120]
+  # Alias de recherche par actif (GDELT et filtre de lecture). Les noms d'actifs vivent ici.
+  aliases: {}

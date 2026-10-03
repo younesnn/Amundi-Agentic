@@ -229,11 +229,11 @@ Décisions D-009 à D-027 : phase 1 (L1 v1.1). Toutes les valeurs chiffrées son
 - **Choix :**
   - coupure à t 00:00, heure de Paris ;
   - macro : millésimes ALFRED ;
-  - rapports : date d'acceptation EDGAR, convertie de l'heure de New York en UTC ;
+  - rapports : date d'acceptation EDGAR, convertie de l'heure de New York en UTC (**remplacé par D-031** : le champ de l'API est lu comme UTC brut, règle prudente) ;
   - XBRL : pour chaque fait, la valeur du dernier dépôt avec `filed < t` ;
   - pas de fondamentaux yfinance en backtest ;
   - score ESG non daté réservé au live test ;
-  - agent Sentiment retiré du backtest sous un seuil de couverture des news mesuré en phase 2.
+  - agent Sentiment retiré du backtest sous un seuil de couverture des news mesuré en phase 2 (**remplacé par D-044** : retrait sans condition de seuil).
 
 ## D-024 — Modes d'exécution LLM (2026-10-02, complète D-008)
 
@@ -289,5 +289,204 @@ Décisions D-009 à D-027 : phase 1 (L1 v1.1). Toutes les valeurs chiffrées son
   - **Poche titres limitée à environ 15 titres**, en particulier pour la réplication AlphaAgents (15 actions tech). L1 prévoyait 15 à 50 titres : la borne haute est abandonnée.
   - **Décisions trimestrielles sur l'historique long**, mensuelles sur la période récente (levier prévu par la section 2 du prompt).
   - Les autres leviers du prompt restent disponibles : un appel par classe d'actifs plutôt que par actif, 2 tours de débat au maximum.
-- **Justification :** la poche titres consommait environ 94 % des appels (225 sur 239 par date et par profil) pour au plus 5 à 15 % du poids. Passer de 50 à 15 titres divise cette part environ par 3,3.
-- **Conséquences :** l'agent Fundamental porte sur 15 titres au plus ; les plafonds par titre de D-019 (1, 2 et 3 %) sont à revoir en phase 4, car moins de titres signifie un poids plus élevé par titre. À répercuter dans L1 (§7, §8, §11.2) avant le pré-enregistrement. Q-16 reste ouverte.
+- **Justification et correction (2026-10-02, relevée par l'`architect`) :** la poche titres consomme environ 94 % des appels (225 sur 239 par date et par profil). **Le chiffre de 239 était déjà calculé avec 15 titres** : limiter la poche à 15 titres est donc conforme au plan de L1 mais **ne réduit pas ce budget**. Ma première rédaction (« passer de 50 à 15 titres divise cette part environ par 3,3 ») était exacte seulement par rapport à la borne haute de 50 titres abandonnée (764 appels contre 239). Le vrai levier d'économie est la **cadence** :
+  - formule : N_main(S) = 14 + 15·S, avec les paramètres de L1 §11.2 ;
+  - en trimestriel : 4 × 239 = 956 appels par an d'historique long ; en mensuel : 12 × 239 = 2 868.
+- **Mise à jour (D-044, L1 v1.3) :** l'agent Sentiment étant retiré du backtest, le budget d'appels du backtest est N_main = 11 + 12·S, soit **191 appels** par date et par profil pour S = 15 (calcul, paramètres de L1 §11.2) ; le chiffre de 239 reste celui du live, Sentiment inclus. En trimestriel : 4 × 191 = 764 appels par an d'historique long ; en mensuel : 12 × 191 = 2 292.
+- **Conséquences :** les plafonds par titre de D-019 (1, 2 et 3 %) sont à revoir en phase 4 (D-040). L1 répercute D-029. Q-16 reste ouverte.
+
+---
+
+Décisions D-030 à D-038 : phase 2 (couche de données). Les chiffres cités sortent de `docs/couverture_donnees.md` (généré par script, recalculé de façon indépendante par le `reviewer-tester` : aucun écart sur 15 valeurs).
+
+## D-030 — Stockage, cache et reprise (2026-10-02)
+
+- **Options :** Parquet (pyarrow) ; DuckDB.
+- **Choix :** Parquet, un fichier par jeu de données dans `.cache/data/store`, écritures atomiques ; cache HTTP disque permanent, clé de cache sans secret, dans `.cache/data/http` ; points de reprise par jour et par élément ; journal d'événements.
+- **Justification :** aucune jointure SQL n'est nécessaire à ce volume ; pas de serveur ni de dépendance supplémentaire ; fichiers inspectables. Les données téléchargées (environ 850 Mo) restent hors de Git.
+- **Dépendances ajoutées (D-006) :** pandas 3.0.6 (traitement tabulaire), pyarrow 25 (Parquet), requests (client HTTP avec User-Agent, TLS, `Retry-After`), yfinance 1.7.0 (prix), feedparser (flux RSS mal formés).
+
+## D-031 — Accès point-in-time, précisions de D-023 (2026-10-02, révisée après revue)
+
+- **Règles :** coupure à t 00:00, heure de Paris ; une donnée disponible exactement à t est exclue.
+  - **Prix :** séances strictement antérieures à t ; splits et dividendes pris en compte seulement s'ils sont connus à t.
+  - **Macro FRED :** `realtime_start` < t (millésimes ALFRED). Pour les séries de marché sans millésimes (DGS10, VIX…), disponibilité = date + **1 jour ouvré** (H).
+  - **Macro BCE :** fin de période + délai (H).
+  - **XBRL :** `filed` < t, départage chronologique.
+  - **News :** date de publication ; pour GDELT, `seendate` (instant de première observation, étiquetée comme telle).
+  - **ESG :** instantané daté par collecte ; servi en mode strict seulement après sa date, sinon en mode `non_pit` marqué.
+- **Dépôts EDGAR, horodatage (constat du `reviewer-tester`, qui corrige celui du `data-engineer`) :** le champ `acceptanceDateTime` de l'API `submissions` est suffixé « Z » mais n'est pas toujours un UTC. Comparé à l'en-tête SGML et à la page d'index, il vaut :
+  - un vrai UTC pour MSFT et NVDA ;
+  - un UTC en retard de 4 h supplémentaires pour AAPL ;
+  - un écart variable d'un dépôt à l'autre pour JPM.
+  La « correction » de 4 à 5 h servait donc certains dépôts avant leur acceptation : une fuite de futur, touchant 22 % des dépôts du stockage.
+- **Choix :** lire la valeur brute comme UTC (`raw_as_utc`), jamais antérieure à l'instant réel dans les trois régimes observés. C'est la règle prudente : un dépôt peut être servi quelques heures trop tard, jamais trop tôt. **Cela remplace le littéral de D-023** (« heure de New York convertie en UTC »).
+- **Limite :** les prix servis sont ceux du dernier téléchargement, ajustés des seuls splits et dividendes connus à t. Une correction rétroactive de Yahoo ne se voit pas (limite connue de yfinance).
+
+## D-032 — Contrôle qualité (2026-10-02)
+
+- **Choix :** on signale, on ne corrige et on n'interpole jamais. Seuils (H) dans `config/data.yaml` : trou de plus de 5 jours ouvrés, rendement aberrant au-delà de 25 %, saut au-delà de 40 %, 5 clôtures identiques, 260 semaines d'historique.
+- **Constat :** les 4 « splits suspectés » (AAPL 2000-09-29, AMD 2016-04-22, NVDA 2000-03-07, ORCL 1992-12-23) sont de vrais mouvements de cours accompagnés d'un pic de volume. Le contrôle est reclassé en avertissement avec un test de volume.
+
+## D-033 — Licences et limites d'usage (2026-10-02, vérifiées par `config/data.yaml`)
+
+| Source | Licence et limites | Observations du 2026-10-02 |
+| --- | --- | --- |
+| yfinance | Bibliothèque non officielle sur des endpoints Yahoo ; usage personnel et recherche, pas de redistribution, aucun SLA | Endpoint ESG mort (404). Pause de 1,5 s entre tickers |
+| FRED et ALFRED | Clé gratuite, 120 requêtes/min ; séries ICE sous licence tierce, limitées à 3 ans glissants, sans redistribution | Plafond de 2000 millésimes par requête |
+| BCE (data-api) | Réutilisation libre avec mention de la source | Pas de millésimes |
+| SEC EDGAR | Domaine public ; User-Agent déclaré obligatoire ; 10 requêtes/s au plus (6 configurées) | Liste ticker→CIK courante, donc biais du survivant |
+| GDELT | Usage libre avec citation ; 1 requête / 5 s demandée | 429 persistants malgré 11 s entre requêtes |
+| RSS (Fed, BCE, SEC) | Sources institutionnelles, usage de recherche | Aucun historique avant la première collecte (2026-08-13) |
+| Wikipédia (pool de titres) | CC BY-SA 4.0 | Révision datée 1197645693 (2024-01-21) |
+
+Pour le plan de déploiement (L6) : en production, Amundi aurait ses propres sources sous licence ; ces sources gratuites sont réservées au prototype.
+
+## D-034 — Séries en euros et date de début du backtest (2026-10-02) — **corrige L1 §9.1 et D-011**
+
+- **Constat :**
+  - les indices ICE BofA Euro n'existent pas sur FRED en rendement total long : seul l'Euro High Yield existe, depuis 2023-10-02 seulement (fenêtre glissante de 3 ans imposée par la licence) ; l'Euro Corporate et l'Euro Government n'existent pas ;
+  - monétaire capitalisé : EONIA (1999-01-04 à 2021-12-31, clé BCE `EON/D.EONIA_TO.RATE`) puis €STR (depuis 2019-10-01), faisable depuis 2003-12 avec 260 semaines ;
+  - courbes zéro-coupon AAA zone euro (BCE) depuis 2004-09-06 : ce sont des taux, pas un rendement total, et leur reconstruction n'est pas faite.
+- **Choix :** les séries de rendement total sont les ETF eux-mêmes, plus le monétaire capitalisé EONIA puis €STR. Aucun indice ICE n'est utilisé. Reconstruire un rendement total obligataire à partir de la courbe BCE est écarté pour l'instant : on ne l'invente pas.
+- **Date de début du backtest** (260 semaines d'historique avant t, mesuré par script) :
+  - **2018-08-28** avec le haut rendement (AHYE.PA, seul historique réel en euros) ;
+  - **2014-03-27** sans la classe haut rendement (limite : crédit IG, CRP.PA ; puis souverain 2013-12-27) ;
+  - **2024-05-16** si l'on exige des ETF primaires sans proxy (limite : GOLD.PA).
+- **Question ouverte :** garder le haut rendement (début 2018-08, période hors échantillon plus courte) ou en faire un actif optionnel (début 2014-03). Je recommande de décider en phase 4, avec les profils. Q-15 et Q-19.
+
+## D-035 — ESG : aucun score gratuit exploitable (2026-10-02) — **corrige L1 §9.4, R-04 et D-022**
+
+- **Constat :** couverture des scores ESG : **0 % des 28 actifs** (l'endpoint `sustainability` de yfinance renvoie 404). Une règle d'exclusion est applicable à 16 actifs sur 28 (57 %), ce qui **n'est pas une couverture** : aucune exclusion n'est déterminée par une donnée (matrice actif × critère du rapport : armes controversées 0 déterminé / 1 supposé / 27 inconnu ; tabac 0 / 16 / 12 ; charbon thermique 0 / 16 / 12) :
+  - titres : 15 sur 15 par code SIC EDGAR (proxy, pas une mesure de chiffre d'affaires) ; aucune exclusion détectée sur ce pool tech ;
+  - ETF : 1 sur 13 (CRP.PA, indice « Paris Aligned » déduit du nom Yahoo, non vérifié au prospectus) ; AHYE.PA (indice ESG) marqué « contenu inconnu ».
+- **Choix :** l'ESG du prototype repose sur les exclusions normatives (SIC et méthodologie d'indice), jamais sur un score. **La contrainte CT-06 (score ESG minimal) n'est pas alimentée** et est documentée comme telle, sans masquer la limite (section 2 du prompt).
+- **Conséquence :** la contrainte « score au moins égal à celui du benchmark » de D-017 est suspendue tant qu'aucune source n'existe. Q-12, Q-14 et Q-19.
+
+## D-036 — News et sentiment en backtest (2026-10-02)
+
+- **Constat :**
+  - les flux RSS ne donnent que les articles récents (15 à 25 par flux) et n'ont aucun historique avant la première collecte ;
+  - GDELT DOC accepte des fenêtres explicites jusqu'à 2019-11 au moins (« Invalid query start date » pour 2016-11) : l'hypothèse de L1 (« environ 3 mois ») est vraie du défaut, pas des fenêtres explicites ;
+  - GDELT donne la date de première observation (`seendate`), pas la date de publication ; débit très limité (429) ;
+  - couverture hebdomadaire mesurée sur 4 titres seulement (8 semaines récentes) : 6/6 à 7/7 semaines avec au moins un article.
+- **Choix :** le seuil de couverture qui conditionne le retrait de l'agent Sentiment (D-023) se calculera sur des sondages hebdomadaires pour chaque titre et chaque semaine, pas sur les 100 derniers articles. Si le sondage complet coûte trop d'heures au rythme de GDELT, l'agent Sentiment est retiré du backtest et conservé en live (EX-O1-17). Seuil à fixer au pré-enregistrement (D-027).
+
+## D-037 — Poche titres et pool de réplication (2026-10-02)
+
+- **Constat :** pool daté (révision Wikipédia du 2024-01-21, S&P 500, secteur IT) : 64 titres, dont 62 utilisables (dépôt EDGAR accepté avant 2024-02-01 et prix en janvier 2024). ANSS et JNPR sont absents de Yahoo et d'EDGAR (sociétés rachetées : biais du survivant). **ZS n'est pas dans le pool** : il est ajouté hors pool, comme L1 le prévoit.
+- **Choix :** le connecteur accepte n'importe quelle liste de tickers ; la liste de 15 titres de `config/universe.yaml` est une démonstration, pas le tirage de réplication (phase 3, D-021, D-029).
+- **Limite (`reviewer-tester`) :** un pool de janvier 2024 sélectionne les titres avec la connaissance de 2024. Utilisé pour un backtest démarrant en 2018, il ajoute un biais du survivant plus fort que les deux seuls titres radiés. À contrôler en phase 7 ; les résultats de la réplication sont déjà étiquetés « contaminés » (D-025).
+
+## D-038 — Prix : date de séance et cours ajustés (2026-10-02)
+
+- **Choix :** un prix servi à t est la clôture d'une séance strictement antérieure à t. L1 écrit « clôtures jusqu'à t−1 » (§3.3), « dernier jour ouvré avant t » (§11.3) et « exécution à la clôture de t » (§10.1) : ces trois phrases se concilient ainsi (décision prise avec les données de t−1, exécution au cours de la clôture de t, qui n'est pas visible au moment de la décision). L1 sera clarifié.
+- **ETF retenus (proposition, non figée) :** les ETF primaires de L1 §9.1 (500.PA, MEU.PA, JPN.PA, AEEM.PA, MTD.PA, CRP.PA, AHYE.PA, GOLD.PA, COMO.PA, C3M.PA), avec CW8.PA en contrôle ; EGOV.PA et CSH2.PA en alternatives (CSH2.PA a trop peu d'historique). GOLD.PA est étiqueté USD par Yahoo ; la configuration le traite en EUR (cotation à Paris, corrélation des écarts de rendement avec GOLD/GLD et EUR/USD compatible), à confirmer au prospectus (Q-20).
+
+## D-039 — Cadence : allocation mensuelle, poche titres trimestrielle sur l'historique long (2026-10-03, décision de Younes) — **remplace la version du 2026-10-02**
+
+- **Choix :**
+  - **allocation (ETF) : décisions mensuelles sur tout l'historique** ;
+  - **poche titres : cadence trimestrielle sur l'historique long**, mensuelle sur la période récente ;
+  - la frontière entre les deux est gelée au pré-enregistrement (H : au plus tard à la date de fin d'entraînement du modèle, pour que la période hors échantillon soit mensuelle pour les deux niveaux) ;
+  - les déclencheurs de dérive et de régime de volatilité restent actifs entre deux dates ; le déclencheur de changement de vue n'est évalué qu'aux dates de décision de chaque niveau.
+- **Justification :** la poche titres consomme la quasi-totalité des appels (D-029) ; l'allocation, peu coûteuse, garde la cadence mensuelle du prompt. Cela corrige ma lecture du 2026-10-02 (cadence trimestrielle aux deux niveaux), que Younes n'avait pas voulue.
+- **Conséquence :** la fréquence de l'allocation étant plus élevée, la rotation mensuelle maximale de D-019 s'applique à l'allocation à chaque date, et à la poche titres à chaque date de décision de la poche. Budget d'appels à recalculer dans L1 §11.2 (allocation mensuelle sur tout l'historique, titres trimestriels avant la frontière).
+
+## D-040 — Plafonds par titre à recalibrer (2026-10-02, H)
+
+- **Choix :** les plafonds de D-019 (1, 2 et 3 %) sont provisoires. Avec 15 titres au plus, une poche de 5 à 15 % donne un poids moyen de 0,33 %, 0,67 % et 1 % (calcul, pas une mesure). Règle candidate : u = k·U_poche/15 avec k ≈ 2 (H), à fixer en phase 4 avant le pré-enregistrement ; κ_t suit u_titre par construction.
+
+## D-041 — Début du backtest reporté en phase 4 (2026-10-02)
+
+- **Choix :** décision entre 2018-08-28 (avec le haut rendement) et 2014-03-27 (sans) reportée en phase 4, puis gelée par le pré-enregistrement (EX-O2-13). La variante 2024-05-16 (sans proxy) est écartée : moins de 3 ans de données, incompatible avec EX-O3-07.
+- **Remarque :** le choix du début n'allonge pas la période hors échantillon, qui ne dépend que de la date de fin d'entraînement ; il change la période « contaminée » (environ 4,4 ans de plus sans le haut rendement). Règle de jonction EONIA/€STR (chevauchement 2019-10-01 à 2021-12-31) à documenter en phase 4.
+
+## D-042 — Source des chiffres de données (2026-10-02)
+
+- **Choix :** `docs/couverture_donnees.md` (généré par script) est la source des chiffres de données de L1 ; aucune valeur n'y est recopiée sans renvoi. CT-06 reste suspendue (D-035).
+
+---
+
+Décisions D-043 à D-047 : suites de la revue du `financial-critic` sur la couche de données (verdict « acceptable avec réserves »).
+
+## D-043 — Rejouabilité des données (2026-10-02)
+
+- **Constat (`financial-critic`) :** le stockage écrasait les jeux de données lors d'un retraitement et ne gardait que le dernier `fetched_at`, sans manifeste ni hash. Une correction rétroactive de Yahoo était invisible, et L1 R-17 (« stockage horodaté par collecte ») était inexact pour les prix.
+- **Choix :**
+  - instantané brut append-only par date de collecte (`.cache/data/snapshots/`) ;
+  - manifeste `data_manifest.json` à chaque exécution : SHA-256 des jeux de données, plages de dates, versions des bibliothèques, hash de la configuration ;
+  - le hash du manifeste est lié au pré-enregistrement (D-027).
+- **Limite assumée :** ce qui a été téléchargé avant la mise en place des instantanés n'est pas rejouable à l'identique. Les 191 instantanés actuels sont tous « reconstruits depuis le stockage le 2026-10-02 » : ils figent l'état courant, pas le brut reçu à l'origine (un retraitement Yahoo passé est déjà absorbé). La rejouabilité commence réellement à la prochaine collecte. Le cache HTTP permanent conserve en plus les réponses brutes déjà reçues de FRED, de la BCE, d'EDGAR, des flux RSS et de GDELT. Seules les collectes à partir de maintenant le seront. Le live test dépend de cet instantané quotidien.
+
+## D-044 — Agent Sentiment hors backtest (2026-10-02) — **précise D-036**
+
+- **Constat :** RSS sans historique ; GDELT limité par des 429 persistants (8 titres sur 15 sans article). Le sondage hebdomadaire par titre sur tout l'historique n'est pas réaliste, et un seuil « au moins 1 article par semaine » est trivial pour une grande capitalisation.
+- **Choix :** l'agent Sentiment est **retiré du backtest**, sans condition de seuil. On perd toute évaluation chiffrée de son apport historique, et L4 le dit.
+- **Évaluation en live :** portefeuille « avec » et « sans » Sentiment exécutés en parallèle (ombre) dès le premier jour ; instantané quotidien brut des flux RSS et GDELT ; corrélation de rang entre sentiment et rendement à 1 semaine, avec intervalle et mention de la puissance (moins de 400 observations après 6 mois). La différence live n'est pas présentée comme un gain.
+
+## D-045 — Règle de début du backtest (2026-10-02, H) — **précise D-041**
+
+- **Constat :** reporter le choix du début « avec les profils » (phase 4) l'exposait à un choix après avoir vu des résultats. La fenêtre 2018-08-28 contient 4 creux de 500.PA (EUR, ETF capitalisant) d'au moins 15 % (2018-T4 −15,8 %, 2020 −33,7 %, 2022 −17,1 % avec une hausse du DGS10 de 162 points de base, 2025 −23,3 %) ; 2014-03-27 en ajoute deux (2015 −17,2 % et 2015-16 −18,4 %), dont un seul avec hausse des taux faible (+10 points de base). Source : tableau « Creux » de `docs/couverture_donnees.md`, généré par script (seuil de 15 % : H). Le second creux de 2022 (environ −15 %) cité par le `financial-critic` n'apparaît pas dans le script : un seul épisode de 2022, récupéré le 2022-08-16.
+- **Choix :** règle fondée uniquement sur la disponibilité des données, fixée avant tout run LLM :
+  - **début principal : 2018-08-28**, avec la classe haut rendement ;
+  - **sensibilité obligatoire : 2014-03-27**, haut rendement exclu et poids renormalisés, toujours rapportée ; le meilleur des deux n'est jamais choisi après coup ;
+  - critère minimal : au moins 2 creux du benchmark d'au moins 15 % et au moins une phase de hausse des taux.
+- **Validée par Younes le 2026-10-03, avec deux compléments :**
+  - **la classe haut rendement est conservée** dans le cas principal ;
+  - **toute période de performance construite sur des séries synthétiques (proxys raccordés avant l'ETF primaire, par exemple l'or avant 2019-05-23, ou toute classe avec proxy USD converti) porte l'étiquette « non investissable »** dans les tableaux, graphiques et textes de L4 et de l'interface. Les périodes sur séries d'ETF réels ne la portent pas.
+
+## D-046 — Points de la couche de données reportés (2026-10-02)
+
+| Point (revue du critique) | Phase | Gravité |
+| --- | --- | --- |
+| Règle de raccord des séries proxy (or avant 2024-05 : GLD converti raccordé à GOLD.PA, raccord sur rendements, chevauchement et erreur de suivi publiés ; P&L sur proxy étiqueté « non investissable ») | 4 | Bloquante pour L4 |
+| Fenêtre de Σ de la poche titres (ZS n'a 260 semaines qu'en 2023-03) : fenêtre minimale avec shrinkage, ou titres exclus de Σ avant éligibilité | 4 | Bloquante pour la poche titres |
+| Cash de référence (€STR) distinct de l'actif détenu (C3M.PA, rendements négatifs 2015-2022) ; jonction EONIA/€STR (EONIA = €STR + 8,5 pb) | 4 | Non bloquante |
+| Benchmark et portefeuille construits sur les mêmes séries raccordées | 4 | Importante |
+| Biais du survivant du pool 2024 : pool reconstruit à chaque date (révisions Wikipédia), mesure du biais, étiquette « contaminé » avant 2024-02 | 7 | Importante |
+| Fuites implicites : SIC courant, noms courants dans les requêtes GDELT, indice courant des ETF ; anonymisation à étendre aux noms et indices cités | 3, 7 | Importante |
+| IR_min avec correction de Holm (environ 3,6/√T, 30 % de plus que 2,8/√T) et bootstrap en blocs | L1, 7 | Non bloquante |
+| Cadence trimestrielle/mensuelle confondue avec la frontière de contamination dans le test d'anonymisation : même cadence des deux côtés | L1, 7 | Importante |
+| Date de fin d'entraînement des modèles à relever (la fraction contaminée de 2018-08 à 2026-09, soit 8,1 ans, n'est pas calculable : de 6,4 ans si 2025-01 à 6,9 ans si 2025-06 selon les scénarios du critique) | 3, avant le pré-enregistrement | Bloquante pour le pré-enregistrement |
+| ETF dont l'indice a changé (CRP.PA « Climate Paris Aligned », AHYE.PA « ESG ») : prospectus et dates de changement | 2 (doc), L1 | Importante |
+| Liquidité et coûts : AHYE.PA et C3M.PA peu liquides ; plafond de participation au volume | 4, 7 | Importante |
+| Seconde source gratuite de contrôle des prix et règle d'arrêt en cas de panne de yfinance pendant le live test | 9 (L6) | Importante |
+| `manifest.py` : `fetched_at` des jeux dérivés vient du journal d'événements ; relancer un téléchargement sans changement de données peut changer `manifest_sha256`. Exclure `fetched_at` du contenu haché ou le tirer des instantanés avant de lier le hash au pré-enregistrement | 3, avant D-027 | Importante |
+| `store.snapshot` : une collecte identique à un instantané « reconstruit » du même jour reste étiquetée « reconstruit » ; `_origin.json` réécrit en place, non atomique entre processus | 3 | Non bloquante |
+| Jours fériés fédéraux (Columbus, Veterans) : FRED est vide à ces dates dans le stockage, sauf le vendredi 2023-11-10 (Veterans observé) : le calendrier retarde alors d'une séance (prudent, pas de fuite) ; à vérifier avec le réseau | 7 | Non bloquante |
+
+## D-047 — Vérité des chiffres de données (2026-10-02)
+
+- **Choix :** tout chiffre de données cité dans `DECISIONS.md` ou L1 renvoie à un script ou est marqué (H) ou « calcul ». Les valeurs non rejouables ont été retirées ou sont étiquetées comme constat d'un relecteur (`reviewer-tester` pour les 22 % de dépôts EDGAR ré-indexés, `financial-critic` pour les mesures de régimes et de liquidité).
+- **Corrige :** l'argument « corrélation de −0,3 » pour GOLD.PA, non rejouable (le critique trouve −0,68 sur différences hebdomadaires). Il est remplacé par le contrôle croisé GOLD.PA / (GLD converti en euros) du rapport de couverture.
+
+---
+
+Décisions du 2026-10-03 (validation de la phase 2 par Younes).
+
+## D-048 — Source ESG manuelle et historisée par ETF, en phase 3 (2026-10-03, décision de Younes) — **complète D-035 et D-022**
+
+- **Constat :** aucun score ESG gratuit exploitable (0 sur 28 actifs) ; les exclusions des ETF sont déduites du nom Yahoo ou de l'indice, sans vérification (matrice ESG : armes controversées 0 déterminé / 1 supposé / 27 inconnu).
+- **Choix :** ajouter en phase 3 une **source ESG manuelle et historisée par ETF**, alimentée à la main depuis la documentation du fonds (prospectus, DIC/KID, fiche produit, page de l'indice) :
+  - classification **SFDR (article 6, 8 ou 9)** ;
+  - **indice suivi**, avec le caractère ESG, Paris-Aligned (PAB) ou Climate Transition (CTB) de l'indice ;
+  - pour chaque valeur : **source (URL ou référence du document), date du document, date d'effet, date de saisie**, et une version datée si la valeur change (historisation append-only, comme les instantanés de D-043) ;
+  - une valeur sans document n'est **pas saisie** : elle reste `inconnu` (aucune valeur déduite d'un nom ou d'une habitude).
+- **Usage :** alimente la matrice ESG du rapport de couverture (états `determine_par_donnee` quand un document le prouve) et l'agent ESG ; sert à étudier une contrainte d'allocation sur la part d'ETF article 8 ou 9 (à proposer en phase 4, pas décidée ici). Point-in-time : une valeur n'est servie qu'à partir de sa date d'effet connue.
+- **Limites :** SFDR classe des produits, ce n'est pas un score ESG ; une classification article 8 n'implique pas l'exclusion des armes controversées. CT-06 reste suspendue (D-035) tant qu'aucun score n'existe. Q-14 et Q-26 restent ouvertes.
+
+## D-049 — Règle sur les tests (2026-10-03, décision de Younes)
+
+- **Choix :** aucun test ne peut être supprimé ou affaibli sans l'accord du `reviewer-tester` (règle ajoutée à `CLAUDE.md`). Un test qui devient faux parce que le code change est réécrit par le `reviewer-tester`.
+- **Origine :** pendant la phase 2, le `data-engineer` a supprimé un test du `reviewer-tester` après une correction. Le test a été réécrit par son propriétaire.
+
+## D-050 — Graphe de connaissances graphify (2026-10-03)
+
+- **Choix :**
+  - graphify 0.9.65 est installé (`uv tool`), avec `.graphifyignore` (secrets, `.cache/`, `data_store/`, `runs/`, environnements, `uv.lock`) ;
+  - mise à jour en mode code seulement (`graphify update .`, hooks Git `post-commit` et `post-checkout`), **sans LLM** ; les hooks ont été lus : aucun appel de LLM ;
+  - `graphify-out/` n'est modifié que par graphify (règle de `CLAUDE.md` reformulée) ;
+  - versionnés : `graph.json`, `GRAPH_REPORT.md`, `manifest.json` ; ignorés : `graph.html`, `cache/`, `.graphify_*`.
+- **Nommage des communautés :** uniquement avec Ollama en local (`llama3.1:8b`, `--missing-only`), jamais avec une API ; abandonné s'il exige une clé.
+

@@ -6,8 +6,8 @@ Mis à jour par le chef de projet à chaque étape.
 | --- | --- | --- |
 | 0 | Cadrage et socle du dépôt | Validée par Younes le 2026-10-02 |
 | 1 | Spécifications (L1) | Validée par Younes le 2026-10-02 |
-| 2 | Couche de données | En cours |
-| 3 | Agents et débat (L2) | À faire |
+| 2 | Couche de données | Validée par Younes le 2026-10-03 |
+| 3 | Agents et débat (L2) | En cours |
 | 4 | Construction du portefeuille (L3) | À faire |
 | 5 | Rééquilibrage automatique (O3) | À faire |
 | 6 | Explicabilité et interface (O4) | À faire |
@@ -42,3 +42,16 @@ Mis à jour par le chef de projet à chaque étape.
   - anonymisation limitée à l'agent Valuation.
 - Décisions de Younes : D-024 validée (versions figées en évaluation, `config/llm.yaml`), D-028 validée (`--import-mode=importlib`), D-029 (plan réduit : environ 15 titres, décisions trimestrielles sur l'historique long).
 - À répercuter dans L1 avant le pré-enregistrement : D-029 (poche titres de 15 titres au plus, plafonds par titre).
+
+## Phase 2 — 2026-10-02
+
+- Couche de données (data-engineer) : connecteurs (yfinance, FRED/ALFRED, BCE, EDGAR, RSS, GDELT, ESG par exclusions, change), stockage Parquet, cache HTTP, contrôle qualité, accès `as_of(date)`, instantanés bruts append-only et manifeste SHA-256, rapport de couverture (`docs/couverture_donnees.md`, généré par script).
+- Revues :
+  - `reviewer-tester` : 1 objection bloquante (horodatage EDGAR : la « correction » servait des dépôts avant leur acceptation), corrigée (`raw_as_utc`, mode `corrected` supprimé). Il a ajouté 4 fichiers de tests adverses. Validation finale : 304 tests verts, aucun `xfail`, CI Python 3.11 simulée verte, 7 tests réseau verts.
+  - `financial-critic` : « acceptable avec réserves ». Rejouabilité (instantanés, manifeste) faite ; matrice ESG, liquidité, contrôle croisé de l'or, creux du benchmark ajoutés ; points restants reportés aux phases 3, 4 et 7 (D-046).
+- Décisions D-030 à D-047 ; questions Q-19 à Q-26 ; L1 v1.3 (66 exigences).
+- Constats qui contredisaient L1 : indices ICE Euro absents de FRED (début du backtest 2018-08-28 avec le haut rendement, 2014-03-27 sans) ; aucun score ESG gratuit exploitable ; champ `acceptanceDateTime` d'EDGAR non fiable comme UTC.
+- Mon erreur corrigée : D-029 laissait croire que limiter la poche à 15 titres réduisait le budget d'appels ; le chiffre était déjà calculé avec 15 titres.
+- Décisions de Younes du 2026-10-03 : D-039 corrigée (allocation mensuelle sur tout l'historique, poche titres trimestrielle sur l'historique long) ; D-045 validée avec haut rendement conservé et étiquette « non investissable » sur les périodes de séries synthétiques ; source ESG manuelle par ETF à construire en phase 3 (D-048) ; règle sur les tests (D-049) ; graphify installé en mode code seulement (D-050).
+- L1 v1.4 : 69 exigences (O1 18, O2 14, O3 11, O4 9, O5 17). Budget d'appels recalculé (calcul de L1 §11.2) : 852 appels par profil et par an d'historique long (φ = 1), environ 9 060 par profil sur 8,1 ans avant ablations ; la faisabilité dépend des quotas à relever en phase 3.
+- Point à confirmer par Younes : l'étiquette « non investissable » s'applique dès qu'une classe détenue ou du benchmark repose sur un segment synthétique ; les titres de la poche (instruments réels cotés en dollars) ne sont pas des proxys.

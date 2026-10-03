@@ -1,0 +1,2493 @@
+{
+ "generated_at": "2026-10-02T14:08:08+00:00",
+ "prices_etf": [
+  {
+   "classe": "actions_etats_unis",
+   "role": "primary",
+   "ticker": "500.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2010-06-08 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 4174,
+   "semaines": 851,
+   "eligible_260s_des": "2015-06-02 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "acc",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "actions_etats_unis",
+   "role": "proxy",
+   "ticker": "SPY",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1993-01-29 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 8476,
+   "semaines": 1757,
+   "eligible_260s_des": "1998-01-23 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "dist",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "actions_europe",
+   "role": "primary",
+   "ticker": "MEU.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2008-01-02 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 4796,
+   "semaines": 978,
+   "eligible_260s_des": "2012-12-26 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "acc",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "actions_europe",
+   "role": "proxy",
+   "ticker": "VGK",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "2005-03-10 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 5425,
+   "semaines": 1125,
+   "eligible_260s_des": "2010-03-04 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "dist",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "actions_japon",
+   "role": "primary",
+   "ticker": "JPN.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2008-01-02 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 4795,
+   "semaines": 978,
+   "eligible_260s_des": "2012-12-26 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "dist",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "actions_japon",
+   "role": "proxy",
+   "ticker": "EWJ",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1996-03-18 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 7685,
+   "semaines": 1593,
+   "eligible_260s_des": "2001-03-12 00:00:00",
+   "trous": 0,
+   "splits_declares": 1,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "dist",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "actions_emergents",
+   "role": "primary",
+   "ticker": "AEEM.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2010-11-30 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 4049,
+   "semaines": 826,
+   "eligible_260s_des": "2015-11-24 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 1,
+   "devise_ecart": 0,
+   "distribution": "acc",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "actions_emergents",
+   "role": "proxy",
+   "ticker": "EEM",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "2003-04-14 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 5905,
+   "semaines": 1224,
+   "eligible_260s_des": "2008-04-07 00:00:00",
+   "trous": 0,
+   "splits_declares": 2,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "dist",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "souverain_euro",
+   "role": "primary",
+   "ticker": "MTD.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2009-01-02 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 4538,
+   "semaines": 926,
+   "eligible_260s_des": "2013-12-27 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "acc",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "souverain_euro",
+   "role": "alternative",
+   "ticker": "EGOV.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2016-11-11 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 2530,
+   "semaines": 516,
+   "eligible_260s_des": "2021-11-05 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "a_verifier",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "credit_ig_euro",
+   "role": "primary",
+   "ticker": "CRP.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2009-04-02 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 4471,
+   "semaines": 913,
+   "eligible_260s_des": "2014-03-27 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "acc",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "haut_rendement_euro",
+   "role": "primary",
+   "ticker": "AHYE.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2013-09-03 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 3347,
+   "semaines": 682,
+   "eligible_260s_des": "2018-08-28 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "a_verifier",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "or",
+   "role": "primary",
+   "ticker": "GOLD.PA",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "EUR",
+   "premiere_date": "2019-05-23 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 1884,
+   "semaines": 384,
+   "eligible_260s_des": "2024-05-16 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 1,
+   "distribution": "a_verifier",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "or",
+   "role": "proxy",
+   "ticker": "GLD",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "2004-11-18 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 5501,
+   "semaines": 1141,
+   "eligible_260s_des": "2009-11-12 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "a_verifier",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "matieres_premieres",
+   "role": "primary",
+   "ticker": "COMO.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2008-01-02 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 4797,
+   "semaines": 978,
+   "eligible_260s_des": "2012-12-26 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 1,
+   "devise_ecart": 0,
+   "distribution": "acc",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "matieres_premieres",
+   "role": "proxy",
+   "ticker": "DBC",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "2006-02-06 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 5196,
+   "semaines": 1077,
+   "eligible_260s_des": "2011-01-31 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "dist",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "monetaire_euro",
+   "role": "primary",
+   "ticker": "C3M.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2009-06-22 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 4421,
+   "semaines": 901,
+   "eligible_260s_des": "2014-06-16 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "acc",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "monetaire_euro",
+   "role": "alternative",
+   "ticker": "CSH2.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2025-03-17 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 392,
+   "semaines": 80,
+   "eligible_260s_des": "2030-03-11 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "a_verifier",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "actions_monde",
+   "role": "control",
+   "ticker": "CW8.PA",
+   "statut": "ok",
+   "devise_yahoo": "EUR",
+   "devise_config": "EUR",
+   "premiere_date": "2009-06-16 00:00:00",
+   "derniere_date": "2026-09-30 00:00:00",
+   "barres": 4424,
+   "semaines": 902,
+   "eligible_260s_des": "2014-06-10 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "acc",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "actions_monde",
+   "role": "proxy",
+   "ticker": "URTH",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "2012-01-12 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 3701,
+   "semaines": 768,
+   "eligible_260s_des": "2017-01-05 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "dist",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "actions_monde",
+   "role": "proxy",
+   "ticker": "ACWI",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "2008-03-28 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 4658,
+   "semaines": 966,
+   "eligible_260s_des": "2013-03-22 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": "dist",
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  }
+ ],
+ "backtest_start": [
+  {
+   "classe": "actions_etats_unis",
+   "ETF_primaire_seul": "2015-06-02 00:00:00",
+   "avec_proxy_USD_converti": "1998-01-23 00:00:00",
+   "serie_EUR_publique": "aucune",
+   "debut_au_plus_tot": "1998-01-23 00:00:00"
+  },
+  {
+   "classe": "actions_europe",
+   "ETF_primaire_seul": "2012-12-26 00:00:00",
+   "avec_proxy_USD_converti": "2010-03-04 00:00:00",
+   "serie_EUR_publique": "aucune",
+   "debut_au_plus_tot": "2010-03-04 00:00:00"
+  },
+  {
+   "classe": "actions_japon",
+   "ETF_primaire_seul": "2012-12-26 00:00:00",
+   "avec_proxy_USD_converti": "2001-03-12 00:00:00",
+   "serie_EUR_publique": "aucune",
+   "debut_au_plus_tot": "2001-03-12 00:00:00"
+  },
+  {
+   "classe": "actions_emergents",
+   "ETF_primaire_seul": "2015-11-24 00:00:00",
+   "avec_proxy_USD_converti": "2008-04-07 00:00:00",
+   "serie_EUR_publique": "aucune",
+   "debut_au_plus_tot": "2008-04-07 00:00:00"
+  },
+  {
+   "classe": "souverain_euro",
+   "ETF_primaire_seul": "2013-12-27 00:00:00",
+   "avec_proxy_USD_converti": "interdit (D-011)",
+   "serie_EUR_publique": "taux seulement : reconstruction requise",
+   "debut_au_plus_tot": "2013-12-27 00:00:00"
+  },
+  {
+   "classe": "credit_ig_euro",
+   "ETF_primaire_seul": "2014-03-27 00:00:00",
+   "avec_proxy_USD_converti": "interdit (D-011)",
+   "serie_EUR_publique": "aucune",
+   "debut_au_plus_tot": "2014-03-27 00:00:00"
+  },
+  {
+   "classe": "haut_rendement_euro",
+   "ETF_primaire_seul": "2018-08-28 00:00:00",
+   "avec_proxy_USD_converti": "interdit (D-011)",
+   "serie_EUR_publique": "aucune avant l'ETF (série depuis 2023-10-02)",
+   "debut_au_plus_tot": "2018-08-28 00:00:00"
+  },
+  {
+   "classe": "or",
+   "ETF_primaire_seul": "2024-05-16 00:00:00",
+   "avec_proxy_USD_converti": "2009-11-12 00:00:00",
+   "serie_EUR_publique": "aucune",
+   "debut_au_plus_tot": "2009-11-12 00:00:00"
+  },
+  {
+   "classe": "matieres_premieres",
+   "ETF_primaire_seul": "2012-12-26 00:00:00",
+   "avec_proxy_USD_converti": "2011-01-31 00:00:00",
+   "serie_EUR_publique": "aucune",
+   "debut_au_plus_tot": "2011-01-31 00:00:00"
+  },
+  {
+   "classe": "monetaire_euro",
+   "ETF_primaire_seul": "2014-06-16 00:00:00",
+   "avec_proxy_USD_converti": "interdit (D-011)",
+   "serie_EUR_publique": "2003-12-29 00:00:00",
+   "debut_au_plus_tot": "2003-12-29 00:00:00"
+  }
+ ],
+ "backtest_global": {
+  "limitante": "haut_rendement_euro",
+  "debut": "2018-08-28",
+  "sans_la_limitante": "2014-03-27",
+  "ETF_primaires_seuls": "2024-05-16"
+ },
+ "liquidity": [
+  {
+   "ticker": "500.PA",
+   "role": "primary",
+   "devise_cotation": "EUR",
+   "jours_depuis": 2240,
+   "valeur_mediane_par_jour": 948725.0523605347,
+   "valeur_p10": 231845.5680145264,
+   "part_jours_sans_volume": 0.026785714285714284
+  },
+  {
+   "ticker": "SPY",
+   "role": "proxy",
+   "devise_cotation": "USD",
+   "jours_depuis": 2199,
+   "valeur_mediane_par_jour": 30366949557.232666,
+   "valeur_p10": 17289599962.56836,
+   "part_jours_sans_volume": 0.0
+  },
+  {
+   "ticker": "MEU.PA",
+   "role": "primary",
+   "devise_cotation": "EUR",
+   "jours_depuis": 2240,
+   "valeur_mediane_par_jour": 486937.08417510986,
+   "valeur_p10": 115804.6388168335,
+   "part_jours_sans_volume": 0.0013392857142857143
+  },
+  {
+   "ticker": "VGK",
+   "role": "proxy",
+   "devise_cotation": "USD",
+   "jours_depuis": 2199,
+   "valeur_mediane_par_jour": 210082956.04248047,
+   "valeur_p10": 108065417.51419067,
+   "part_jours_sans_volume": 0.0
+  },
+  {
+   "ticker": "JPN.PA",
+   "role": "primary",
+   "devise_cotation": "EUR",
+   "jours_depuis": 2240,
+   "valeur_mediane_par_jour": 132255.90286254883,
+   "valeur_p10": 14097.054399108887,
+   "part_jours_sans_volume": 0.005357142857142857
+  },
+  {
+   "ticker": "EWJ",
+   "role": "proxy",
+   "devise_cotation": "USD",
+   "jours_depuis": 2199,
+   "valeur_mediane_par_jour": 385804756.1798096,
+   "valeur_p10": 212107261.11564636,
+   "part_jours_sans_volume": 0.0
+  },
+  {
+   "ticker": "AEEM.PA",
+   "role": "primary",
+   "devise_cotation": "EUR",
+   "jours_depuis": 2240,
+   "valeur_mediane_par_jour": 1408318.5712528229,
+   "valeur_p10": 280695.5060856819,
+   "part_jours_sans_volume": 0.034375
+  },
+  {
+   "ticker": "EEM",
+   "role": "proxy",
+   "devise_cotation": "USD",
+   "jours_depuis": 2199,
+   "valeur_mediane_par_jour": 1734174693.439865,
+   "valeur_p10": 922517148.3068848,
+   "part_jours_sans_volume": 0.0
+  },
+  {
+   "ticker": "MTD.PA",
+   "role": "primary",
+   "devise_cotation": "EUR",
+   "jours_depuis": 2240,
+   "valeur_mediane_par_jour": 161409.12866973877,
+   "valeur_p10": 13937.24649658203,
+   "part_jours_sans_volume": 0.005357142857142857
+  },
+  {
+   "ticker": "EGOV.PA",
+   "role": "alternative",
+   "devise_cotation": "EUR",
+   "jours_depuis": 2240,
+   "valeur_mediane_par_jour": 34701.307638168335,
+   "valeur_p10": 0.0,
+   "part_jours_sans_volume": 0.11428571428571428
+  },
+  {
+   "ticker": "CRP.PA",
+   "role": "primary",
+   "devise_cotation": "EUR",
+   "jours_depuis": 2240,
+   "valeur_mediane_par_jour": 173746.59240722656,
+   "valeur_p10": 5043.468748474123,
+   "part_jours_sans_volume": 0.09642857142857143
+  },
+  {
+   "ticker": "AHYE.PA",
+   "role": "primary",
+   "devise_cotation": "EUR",
+   "jours_depuis": 2240,
+   "valeur_mediane_par_jour": 95329.88177490234,
+   "valeur_p10": 1104.8690948486328,
+   "part_jours_sans_volume": 0.08482142857142858
+  },
+  {
+   "ticker": "GOLD.PA",
+   "role": "primary",
+   "devise_cotation": "EUR",
+   "jours_depuis": 1884,
+   "valeur_mediane_par_jour": 1107654.628780365,
+   "valeur_p10": 229095.78014450075,
+   "part_jours_sans_volume": 0.012738853503184714
+  },
+  {
+   "ticker": "GLD",
+   "role": "proxy",
+   "devise_cotation": "USD",
+   "jours_depuis": 2199,
+   "valeur_mediane_par_jour": 1387185525.6713867,
+   "valeur_p10": 709835337.713623,
+   "part_jours_sans_volume": 0.0
+  },
+  {
+   "ticker": "COMO.PA",
+   "role": "primary",
+   "devise_cotation": "EUR",
+   "jours_depuis": 2240,
+   "valeur_mediane_par_jour": 196753.68122386932,
+   "valeur_p10": 43027.88461742401,
+   "part_jours_sans_volume": 0.005803571428571429
+  },
+  {
+   "ticker": "DBC",
+   "role": "proxy",
+   "devise_cotation": "USD",
+   "jours_depuis": 2199,
+   "valeur_mediane_par_jour": 26236748.656654358,
+   "valeur_p10": 9859610.508880615,
+   "part_jours_sans_volume": 0.0
+  },
+  {
+   "ticker": "C3M.PA",
+   "role": "primary",
+   "devise_cotation": "EUR",
+   "jours_depuis": 2240,
+   "valeur_mediane_par_jour": 21046.470096588135,
+   "valeur_p10": 0.0,
+   "part_jours_sans_volume": 0.37142857142857144
+  },
+  {
+   "ticker": "CSH2.PA",
+   "role": "alternative",
+   "devise_cotation": "EUR",
+   "jours_depuis": 392,
+   "valeur_mediane_par_jour": 3009061.339553833,
+   "valeur_p10": 1534339.3458045959,
+   "part_jours_sans_volume": 0.0
+  },
+  {
+   "ticker": "CW8.PA",
+   "role": "control",
+   "devise_cotation": "EUR",
+   "jours_depuis": 2240,
+   "valeur_mediane_par_jour": 1836388.988998413,
+   "valeur_p10": 367580.91112976073,
+   "part_jours_sans_volume": 0.034375
+  },
+  {
+   "ticker": "URTH",
+   "role": "proxy",
+   "devise_cotation": "USD",
+   "jours_depuis": 2199,
+   "valeur_mediane_par_jour": 19674635.21118164,
+   "valeur_p10": 2326176.16897583,
+   "part_jours_sans_volume": 0.0
+  },
+  {
+   "ticker": "ACWI",
+   "role": "proxy",
+   "devise_cotation": "USD",
+   "jours_depuis": 2199,
+   "valeur_mediane_par_jour": 282215317.39349365,
+   "valeur_p10": 121106779.03259277,
+   "part_jours_sans_volume": 0.0
+  }
+ ],
+ "cross_checks": [
+  {
+   "classe": "actions_etats_unis",
+   "primaire": "500.PA",
+   "proxy": "SPY",
+   "jours_communs": 4062,
+   "debut": "2010-06-08 00:00:00",
+   "fin": "2026-09-30 00:00:00",
+   "ratio_moyen": 0.20271965012006984,
+   "coef_variation": 0.011255821144670839,
+   "derive_annuelle": -0.0020643446104295915,
+   "erreur_suivi_hebdo_annualisee": 0.060242710442132814
+  },
+  {
+   "classe": "actions_europe",
+   "primaire": "MEU.PA",
+   "proxy": "VGK",
+   "jours_communs": 4669,
+   "debut": "2008-01-02 00:00:00",
+   "fin": "2026-09-30 00:00:00",
+   "ratio_moyen": 3.7453728428094326,
+   "coef_variation": 0.15702736879996468,
+   "derive_annuelle": -0.023806434030959167,
+   "erreur_suivi_hebdo_annualisee": 0.09868589346017557
+  },
+  {
+   "classe": "actions_japon",
+   "primaire": "JPN.PA",
+   "proxy": "EWJ",
+   "jours_communs": 4668,
+   "debut": "2008-01-02 00:00:00",
+   "fin": "2026-09-30 00:00:00",
+   "ratio_moyen": 2.716273432685133,
+   "coef_variation": 0.02425412608291517,
+   "derive_annuelle": -0.0032936965479374303,
+   "erreur_suivi_hebdo_annualisee": 0.08618607229799236
+  },
+  {
+   "classe": "actions_emergents",
+   "primaire": "AEEM.PA",
+   "proxy": "EEM",
+   "jours_communs": 3940,
+   "debut": "2010-11-30 00:00:00",
+   "fin": "2026-09-30 00:00:00",
+   "ratio_moyen": 0.12879301555756795,
+   "coef_variation": 0.015543060546605734,
+   "derive_annuelle": 0.0023580904427107363,
+   "erreur_suivi_hebdo_annualisee": 0.07498583296502617
+  },
+  {
+   "classe": "or",
+   "primaire": "GOLD.PA",
+   "proxy": "GLD",
+   "jours_communs": 1831,
+   "debut": "2019-05-23 00:00:00",
+   "fin": "2026-09-30 00:00:00",
+   "ratio_moyen": 0.4278393965192523,
+   "coef_variation": 0.008485869974796483,
+   "derive_annuelle": 0.0022807138218767786,
+   "erreur_suivi_hebdo_annualisee": 0.06747486180196591
+  },
+  {
+   "classe": "matieres_premieres",
+   "primaire": "COMO.PA",
+   "proxy": "DBC",
+   "jours_communs": 4670,
+   "debut": "2008-01-02 00:00:00",
+   "fin": "2026-09-30 00:00:00",
+   "ratio_moyen": 1.2715213086178425,
+   "coef_variation": 0.06068634020375892,
+   "derive_annuelle": 0.0025993557320123095,
+   "erreur_suivi_hebdo_annualisee": 0.1025936674876395
+  }
+ ],
+ "composition": [
+  {
+   "classe": "actions_etats_unis",
+   "segment": 1,
+   "source": "proxy SPY converti en EUR (BCE) : SYNTHÉTIQUE",
+   "debut": "1993-01-29 00:00:00",
+   "fin": "2010-06-07 00:00:00"
+  },
+  {
+   "classe": "actions_etats_unis",
+   "segment": 2,
+   "source": "ETF primaire 500.PA (réel)",
+   "debut": "2010-06-08 00:00:00",
+   "fin": "2026-09-30 00:00:00"
+  },
+  {
+   "classe": "actions_europe",
+   "segment": 1,
+   "source": "proxy VGK converti en EUR (BCE) : SYNTHÉTIQUE",
+   "debut": "2005-03-10 00:00:00",
+   "fin": "2008-01-01 00:00:00"
+  },
+  {
+   "classe": "actions_europe",
+   "segment": 2,
+   "source": "ETF primaire MEU.PA (réel)",
+   "debut": "2008-01-02 00:00:00",
+   "fin": "2026-09-30 00:00:00"
+  },
+  {
+   "classe": "actions_japon",
+   "segment": 1,
+   "source": "proxy EWJ converti en EUR (BCE) : SYNTHÉTIQUE",
+   "debut": "1996-03-18 00:00:00",
+   "fin": "2008-01-01 00:00:00"
+  },
+  {
+   "classe": "actions_japon",
+   "segment": 2,
+   "source": "ETF primaire JPN.PA (réel)",
+   "debut": "2008-01-02 00:00:00",
+   "fin": "2026-09-30 00:00:00"
+  },
+  {
+   "classe": "actions_emergents",
+   "segment": 1,
+   "source": "proxy EEM converti en EUR (BCE) : SYNTHÉTIQUE",
+   "debut": "2003-04-14 00:00:00",
+   "fin": "2010-11-29 00:00:00"
+  },
+  {
+   "classe": "actions_emergents",
+   "segment": 2,
+   "source": "ETF primaire AEEM.PA (réel)",
+   "debut": "2010-11-30 00:00:00",
+   "fin": "2026-09-30 00:00:00"
+  },
+  {
+   "classe": "souverain_euro",
+   "segment": 1,
+   "source": "ETF primaire MTD.PA seul (réel, aucun proxy admis)",
+   "debut": "2009-01-02 00:00:00",
+   "fin": "2026-09-30 00:00:00"
+  },
+  {
+   "classe": "credit_ig_euro",
+   "segment": 1,
+   "source": "ETF primaire CRP.PA seul (réel, aucun proxy admis)",
+   "debut": "2009-04-02 00:00:00",
+   "fin": "2026-09-30 00:00:00"
+  },
+  {
+   "classe": "haut_rendement_euro",
+   "segment": 1,
+   "source": "ETF primaire AHYE.PA seul (réel) ; aucune série EUR publique avant l'ETF",
+   "debut": "2013-09-03 00:00:00",
+   "fin": "2026-09-30 00:00:00"
+  },
+  {
+   "classe": "or",
+   "segment": 1,
+   "source": "proxy GLD converti en EUR (BCE) : SYNTHÉTIQUE",
+   "debut": "2004-11-18 00:00:00",
+   "fin": "2019-05-22 00:00:00"
+  },
+  {
+   "classe": "or",
+   "segment": 2,
+   "source": "ETF primaire GOLD.PA (réel)",
+   "debut": "2019-05-23 00:00:00",
+   "fin": "2026-09-30 00:00:00"
+  },
+  {
+   "classe": "matieres_premieres",
+   "segment": 1,
+   "source": "proxy DBC converti en EUR (BCE) : SYNTHÉTIQUE",
+   "debut": "2006-02-06 00:00:00",
+   "fin": "2008-01-01 00:00:00"
+  },
+  {
+   "classe": "matieres_premieres",
+   "segment": 2,
+   "source": "ETF primaire COMO.PA (réel)",
+   "debut": "2008-01-02 00:00:00",
+   "fin": "2026-09-30 00:00:00"
+  },
+  {
+   "classe": "monetaire_euro",
+   "segment": 1,
+   "source": "ETF primaire C3M.PA (réel) ; série EUR publique antérieure : ecb:EONIA",
+   "debut": "2009-06-22 00:00:00",
+   "fin": "2026-09-30 00:00:00"
+  }
+ ],
+ "drawdowns": [
+  {
+   "fenetre": "2014-03-27 -> 2026-09-30",
+   "pic_date": "2015-04-15 00:00:00",
+   "pic_prix": 33.390201568603516,
+   "creux_date": "2015-08-24 00:00:00",
+   "creux_prix": 27.657400131225586,
+   "amplitude": -0.1716911299741427,
+   "recuperation": "2015-11-25 00:00:00",
+   "dgs10_pic_pct": 1.91,
+   "dgs10_creux_pct": 2.01,
+   "variation_taux_pb": 9.999999999999986,
+   "hausse_des_taux": true
+  },
+  {
+   "fenetre": "2014-03-27 -> 2026-09-30",
+   "pic_date": "2015-12-01 00:00:00",
+   "pic_prix": 33.668800354003906,
+   "creux_date": "2016-02-11 00:00:00",
+   "creux_prix": 27.476900100708008,
+   "amplitude": -0.1839061739115262,
+   "recuperation": "2016-07-19 00:00:00",
+   "dgs10_pic_pct": 2.15,
+   "dgs10_creux_pct": 1.63,
+   "variation_taux_pb": -52.0,
+   "hausse_des_taux": false
+  },
+  {
+   "fenetre": "2014-03-27 -> 2026-09-30",
+   "pic_date": "2018-10-03 00:00:00",
+   "pic_prix": 45.404998779296875,
+   "creux_date": "2018-12-27 00:00:00",
+   "creux_prix": 38.250999450683594,
+   "amplitude": -0.15755972956605957,
+   "recuperation": "2019-04-01 00:00:00",
+   "dgs10_pic_pct": 3.15,
+   "dgs10_creux_pct": 2.77,
+   "variation_taux_pb": -37.999999999999986,
+   "hausse_des_taux": false
+  },
+  {
+   "fenetre": "2014-03-27 -> 2026-09-30",
+   "pic_date": "2020-02-19 00:00:00",
+   "pic_prix": 57.507598876953125,
+   "creux_date": "2020-03-23 00:00:00",
+   "creux_prix": 38.14910125732422,
+   "amplitude": -0.3366250373459265,
+   "recuperation": "2021-01-07 00:00:00",
+   "dgs10_pic_pct": 1.56,
+   "dgs10_creux_pct": 0.76,
+   "variation_taux_pb": -80.0,
+   "hausse_des_taux": false
+  },
+  {
+   "fenetre": "2014-03-27 -> 2026-09-30",
+   "pic_date": "2022-01-04 00:00:00",
+   "pic_prix": 80.0239028930664,
+   "creux_date": "2022-06-16 00:00:00",
+   "creux_prix": 66.36910247802734,
+   "amplitude": -0.17063402210319045,
+   "recuperation": "2022-08-16 00:00:00",
+   "dgs10_pic_pct": 1.66,
+   "dgs10_creux_pct": 3.28,
+   "variation_taux_pb": 162.0,
+   "hausse_des_taux": true
+  },
+  {
+   "fenetre": "2014-03-27 -> 2026-09-30",
+   "pic_date": "2025-02-19 00:00:00",
+   "pic_prix": 115.82009887695312,
+   "creux_date": "2025-04-09 00:00:00",
+   "creux_prix": 88.88529968261719,
+   "amplitude": -0.23255721118794226,
+   "recuperation": "2025-10-27 00:00:00",
+   "dgs10_pic_pct": 4.53,
+   "dgs10_creux_pct": 4.34,
+   "variation_taux_pb": -19.00000000000004,
+   "hausse_des_taux": false
+  },
+  {
+   "fenetre": "2018-08-28 -> 2026-09-30",
+   "pic_date": "2018-10-03 00:00:00",
+   "pic_prix": 45.404998779296875,
+   "creux_date": "2018-12-27 00:00:00",
+   "creux_prix": 38.250999450683594,
+   "amplitude": -0.15755972956605957,
+   "recuperation": "2019-04-01 00:00:00",
+   "dgs10_pic_pct": 3.15,
+   "dgs10_creux_pct": 2.77,
+   "variation_taux_pb": -37.999999999999986,
+   "hausse_des_taux": false
+  },
+  {
+   "fenetre": "2018-08-28 -> 2026-09-30",
+   "pic_date": "2020-02-19 00:00:00",
+   "pic_prix": 57.507598876953125,
+   "creux_date": "2020-03-23 00:00:00",
+   "creux_prix": 38.14910125732422,
+   "amplitude": -0.3366250373459265,
+   "recuperation": "2021-01-07 00:00:00",
+   "dgs10_pic_pct": 1.56,
+   "dgs10_creux_pct": 0.76,
+   "variation_taux_pb": -80.0,
+   "hausse_des_taux": false
+  },
+  {
+   "fenetre": "2018-08-28 -> 2026-09-30",
+   "pic_date": "2022-01-04 00:00:00",
+   "pic_prix": 80.0239028930664,
+   "creux_date": "2022-06-16 00:00:00",
+   "creux_prix": 66.36910247802734,
+   "amplitude": -0.17063402210319045,
+   "recuperation": "2022-08-16 00:00:00",
+   "dgs10_pic_pct": 1.66,
+   "dgs10_creux_pct": 3.28,
+   "variation_taux_pb": 162.0,
+   "hausse_des_taux": true
+  },
+  {
+   "fenetre": "2018-08-28 -> 2026-09-30",
+   "pic_date": "2025-02-19 00:00:00",
+   "pic_prix": 115.82009887695312,
+   "creux_date": "2025-04-09 00:00:00",
+   "creux_prix": 88.88529968261719,
+   "amplitude": -0.23255721118794226,
+   "recuperation": "2025-10-27 00:00:00",
+   "dgs10_pic_pct": 4.53,
+   "dgs10_creux_pct": 4.34,
+   "variation_taux_pb": -19.00000000000004,
+   "hausse_des_taux": false
+  }
+ ],
+ "prices_stocks": [
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "ZS",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "2018-03-16 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 2148,
+   "semaines": 446,
+   "eligible_260s_des": "2023-03-10 00:00:00",
+   "trous": 0,
+   "splits_declares": 0,
+   "split_suspect": 0,
+   "aberrantes": 3,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "AAPL",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1990-01-02 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 9255,
+   "semaines": 1917,
+   "eligible_260s_des": "1994-12-27 00:00:00",
+   "trous": 0,
+   "splits_declares": 4,
+   "split_suspect": 1,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 1
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "MSFT",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1990-01-02 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 9255,
+   "semaines": 1917,
+   "eligible_260s_des": "1994-12-27 00:00:00",
+   "trous": 0,
+   "splits_declares": 8,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "NVDA",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1999-01-22 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 6966,
+   "semaines": 1445,
+   "eligible_260s_des": "2004-01-16 00:00:00",
+   "trous": 0,
+   "splits_declares": 6,
+   "split_suspect": 1,
+   "aberrantes": 1,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 8
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "AVGO",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "2009-08-06 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 4315,
+   "semaines": 895,
+   "eligible_260s_des": "2014-07-31 00:00:00",
+   "trous": 0,
+   "splits_declares": 1,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "ORCL",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1990-01-02 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 9255,
+   "semaines": 1917,
+   "eligible_260s_des": "1994-12-27 00:00:00",
+   "trous": 0,
+   "splits_declares": 7,
+   "split_suspect": 1,
+   "aberrantes": 1,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 4
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "CRM",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "2004-06-23 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 5605,
+   "semaines": 1162,
+   "eligible_260s_des": "2009-06-17 00:00:00",
+   "trous": 0,
+   "splits_declares": 1,
+   "split_suspect": 0,
+   "aberrantes": 1,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 1
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "ADBE",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1990-01-02 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 9255,
+   "semaines": 1917,
+   "eligible_260s_des": "1994-12-27 00:00:00",
+   "trous": 0,
+   "splits_declares": 4,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 5
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "AMD",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1990-01-02 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 9255,
+   "semaines": 1917,
+   "eligible_260s_des": "1994-12-27 00:00:00",
+   "trous": 0,
+   "splits_declares": 1,
+   "split_suspect": 1,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 7
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "CSCO",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1990-02-16 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 9222,
+   "semaines": 1911,
+   "eligible_260s_des": "1995-02-10 00:00:00",
+   "trous": 0,
+   "splits_declares": 9,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "INTC",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1990-01-02 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 9255,
+   "semaines": 1917,
+   "eligible_260s_des": "1994-12-27 00:00:00",
+   "trous": 0,
+   "splits_declares": 5,
+   "split_suspect": 0,
+   "aberrantes": 1,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "QCOM",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1991-12-13 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 8761,
+   "semaines": 1816,
+   "eligible_260s_des": "1996-12-06 00:00:00",
+   "trous": 0,
+   "splits_declares": 4,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 3
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "TXN",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1990-01-02 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 9255,
+   "semaines": 1917,
+   "eligible_260s_des": "1994-12-27 00:00:00",
+   "trous": 0,
+   "splits_declares": 4,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "IBM",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "1990-01-02 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 9255,
+   "semaines": 1917,
+   "eligible_260s_des": "1994-12-27 00:00:00",
+   "trous": 0,
+   "splits_declares": 3,
+   "split_suspect": 0,
+   "aberrantes": 1,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  },
+  {
+   "classe": "titre",
+   "role": "demo",
+   "ticker": "NOW",
+   "statut": "ok",
+   "devise_yahoo": "USD",
+   "devise_config": "USD",
+   "premiere_date": "2012-06-29 00:00:00",
+   "derniere_date": "2026-10-01 00:00:00",
+   "barres": 3584,
+   "semaines": 744,
+   "eligible_260s_des": "2017-06-23 00:00:00",
+   "trous": 0,
+   "splits_declares": 1,
+   "split_suspect": 0,
+   "aberrantes": 0,
+   "doublons": 0,
+   "figees": 0,
+   "devise_ecart": 0,
+   "distribution": null,
+   "dist_ecart": 0,
+   "avant_fenetre": 0
+  }
+ ],
+ "macro": [
+  {
+   "serie": "fred:DGS10",
+   "statut": "ok",
+   "premiere_obs": "1962-01-02 00:00:00",
+   "derniere_obs": "2026-09-30 00:00:00",
+   "observations": 16172,
+   "premier_millesime": "1962-01-03 00:00:00",
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": 16172,
+   "obs_revisees": 0,
+   "note": "Rendement Trésor US 10 ans"
+  },
+  {
+   "serie": "fred:DGS1MO",
+   "statut": "ok",
+   "premiere_obs": "2001-07-31 00:00:00",
+   "derniere_obs": "2026-09-30 00:00:00",
+   "observations": 6294,
+   "premier_millesime": "2001-08-01 00:00:00",
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": 6294,
+   "obs_revisees": 0,
+   "note": "Trésor US 1 mois (taux sans risque de la réplication, L1 §9.3)"
+  },
+  {
+   "serie": "fred:DGS2",
+   "statut": "ok",
+   "premiere_obs": "1976-06-01 00:00:00",
+   "derniere_obs": "2026-09-30 00:00:00",
+   "observations": 12580,
+   "premier_millesime": "1976-06-02 00:00:00",
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": 12580,
+   "obs_revisees": 0,
+   "note": "Trésor US 2 ans"
+  },
+  {
+   "serie": "fred:T10Y2Y",
+   "statut": "ok",
+   "premiere_obs": "1976-06-01 00:00:00",
+   "derniere_obs": "2026-10-01 00:00:00",
+   "observations": 12581,
+   "premier_millesime": "1976-06-02 00:00:00",
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": 12581,
+   "obs_revisees": 0,
+   "note": "Pente 10 ans - 2 ans"
+  },
+  {
+   "serie": "fred:VIXCLS",
+   "statut": "ok",
+   "premiere_obs": "1990-01-02 00:00:00",
+   "derniere_obs": "2026-09-30 00:00:00",
+   "observations": 9285,
+   "premier_millesime": "1990-01-03 00:00:00",
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": 9285,
+   "obs_revisees": 0,
+   "note": "VIX"
+  },
+  {
+   "serie": "fred:CPIAUCSL",
+   "statut": "ok",
+   "premiere_obs": "1947-01-01 00:00:00",
+   "derniere_obs": "2026-08-01 00:00:00",
+   "observations": 955,
+   "premier_millesime": "1972-07-21 00:00:00",
+   "disponibilite": "ALFRED",
+   "lignes_millesimes": 3103,
+   "obs_revisees": 658,
+   "note": "Prix à la consommation US, révisé"
+  },
+  {
+   "serie": "fred:UNRATE",
+   "statut": "ok",
+   "premiere_obs": "1948-01-01 00:00:00",
+   "derniere_obs": "2026-08-01 00:00:00",
+   "observations": 943,
+   "premier_millesime": "1960-03-15 00:00:00",
+   "disponibilite": "ALFRED",
+   "lignes_millesimes": 2197,
+   "obs_revisees": 703,
+   "note": "Chômage US, révisé"
+  },
+  {
+   "serie": "fred:GDPC1",
+   "statut": "ok",
+   "premiere_obs": "1947-01-01 00:00:00",
+   "derniere_obs": "2026-04-01 00:00:00",
+   "observations": 318,
+   "premier_millesime": "1991-12-04 00:00:00",
+   "disponibilite": "ALFRED",
+   "lignes_millesimes": 4186,
+   "obs_revisees": 318,
+   "note": "PIB réel US, révisé"
+  },
+  {
+   "serie": "fred:BAMLH0A0HYM2",
+   "statut": "ok",
+   "premiere_obs": "2023-10-02 00:00:00",
+   "derniere_obs": "2026-09-30 00:00:00",
+   "observations": 786,
+   "premier_millesime": "2023-10-03 00:00:00",
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": 786,
+   "obs_revisees": 0,
+   "note": "ICE BofA US High Yield OAS (licence ICE : fenêtre glissante)"
+  },
+  {
+   "serie": "fred:BAMLHE00EHYITRIV",
+   "statut": "ok",
+   "premiere_obs": "2023-10-02 00:00:00",
+   "derniere_obs": "2026-09-30 00:00:00",
+   "observations": 786,
+   "premier_millesime": "2023-10-03 00:00:00",
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": 786,
+   "obs_revisees": 0,
+   "note": "ICE BofA Euro High Yield, rendement total (fenêtre ICE de 3 ans : NON utilisé comme série de rendement, D-034)"
+  },
+  {
+   "serie": "fred:BAMLHE00EHYIOAS",
+   "statut": "ok",
+   "premiere_obs": "2023-10-02 00:00:00",
+   "derniere_obs": "2026-09-30 00:00:00",
+   "observations": 786,
+   "premier_millesime": "2023-10-03 00:00:00",
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": 786,
+   "obs_revisees": 0,
+   "note": "ICE BofA Euro High Yield, OAS (fenêtre ICE de 3 ans, D-034)"
+  },
+  {
+   "serie": "fred:BAMLEC0A0RMEY",
+   "statut": "indisponible",
+   "note": "ICE BofA Euro Corporate, rendement effectif (existence à vérifier)"
+  },
+  {
+   "serie": "fred:ECBESTRVOLWGTTRMDMNRT",
+   "statut": "ok",
+   "premiere_obs": "2019-10-01 00:00:00",
+   "derniere_obs": "2026-10-01 00:00:00",
+   "observations": 1794,
+   "premier_millesime": "2019-10-02 00:00:00",
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": 1794,
+   "obs_revisees": 0,
+   "note": "€STR sur FRED (existence à vérifier)"
+  },
+  {
+   "serie": "ecb:ESTR",
+   "statut": "ok",
+   "premiere_obs": "2019-10-01 00:00:00",
+   "derniere_obs": "2026-10-01 00:00:00",
+   "observations": 1794,
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": "aucun millésime",
+   "obs_revisees": "n/d",
+   "note": "€STR, depuis 2019-10-01"
+  },
+  {
+   "serie": "ecb:EONIA",
+   "statut": "ok",
+   "premiere_obs": "1999-01-04 00:00:00",
+   "derniere_obs": "2021-12-31 00:00:00",
+   "observations": 5890,
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": "aucun millésime",
+   "obs_revisees": "n/d",
+   "note": "EONIA, 1999-01-04 à 2021-12-31"
+  },
+  {
+   "serie": "ecb:YC_SPOT_10Y",
+   "statut": "ok",
+   "premiere_obs": "2004-09-06 00:00:00",
+   "derniere_obs": "2026-10-01 00:00:00",
+   "observations": 5643,
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": "aucun millésime",
+   "obs_revisees": "n/d",
+   "note": "Courbe zéro-coupon AAA zone euro 10 ans"
+  },
+  {
+   "serie": "ecb:YC_SPOT_2Y",
+   "statut": "ok",
+   "premiere_obs": "2004-09-06 00:00:00",
+   "derniere_obs": "2026-10-01 00:00:00",
+   "observations": 5643,
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": "aucun millésime",
+   "obs_revisees": "n/d",
+   "note": "Courbe zéro-coupon AAA zone euro 2 ans"
+  },
+  {
+   "serie": "ecb:YC_SPOT_7Y",
+   "statut": "ok",
+   "premiere_obs": "2004-09-06 00:00:00",
+   "derniere_obs": "2026-10-01 00:00:00",
+   "observations": 5643,
+   "disponibilite": "lag_rule (H)",
+   "lignes_millesimes": "aucun millésime",
+   "obs_revisees": "n/d",
+   "note": "Courbe zéro-coupon AAA zone euro 7 ans"
+  }
+ ],
+ "fx": [
+  {
+   "devise": "USD",
+   "statut": "ok",
+   "premier": "1999-01-04 00:00:00",
+   "dernier": "2026-10-01 00:00:00",
+   "fixings": 7105,
+   "trous_sup_seuil": 0
+  },
+  {
+   "devise": "JPY",
+   "statut": "ok",
+   "premier": "1999-01-04 00:00:00",
+   "dernier": "2026-10-01 00:00:00",
+   "fixings": 7105,
+   "trous_sup_seuil": 0
+  },
+  {
+   "devise": "GBP",
+   "statut": "ok",
+   "premier": "1999-01-04 00:00:00",
+   "dernier": "2026-10-01 00:00:00",
+   "fixings": 7105,
+   "trous_sup_seuil": 0
+  },
+  {
+   "devise": "CHF",
+   "statut": "ok",
+   "premier": "1999-01-04 00:00:00",
+   "dernier": "2026-10-01 00:00:00",
+   "fixings": 7105,
+   "trous_sup_seuil": 0
+  }
+ ],
+ "filings": [
+  {
+   "ticker": "ZS",
+   "statut": "ok",
+   "sic": "7371",
+   "10-K": 9,
+   "10-Q": 25,
+   "8-K": 60,
+   "premier_depot_utc": "2018-05-03 10:16:02+00:00",
+   "dernier_depot_utc": "2026-09-24 20:07:41+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 903,
+   "premier_filed_xbrl": "2018-06-07 00:00:00"
+  },
+  {
+   "ticker": "AAPL",
+   "statut": "ok",
+   "sic": "3571",
+   "10-K": 30,
+   "10-Q": 98,
+   "8-K": 233,
+   "premier_depot_utc": "1994-01-26 10:00:00+00:00",
+   "dernier_depot_utc": "2026-07-31 14:01:02+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 2008,
+   "premier_filed_xbrl": "2009-07-22 00:00:00"
+  },
+  {
+   "ticker": "MSFT",
+   "statut": "ok",
+   "sic": "7372",
+   "10-K": 33,
+   "10-Q": 98,
+   "8-K": 281,
+   "premier_depot_utc": "1994-02-14 05:00:00+00:00",
+   "dernier_depot_utc": "2026-09-02 20:30:24+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 2178,
+   "premier_filed_xbrl": "2009-10-23 00:00:00"
+  },
+  {
+   "ticker": "NVDA",
+   "statut": "ok",
+   "sic": "3674",
+   "10-K": 25,
+   "10-Q": 83,
+   "8-K": 243,
+   "premier_depot_utc": "1999-06-15 04:00:00+00:00",
+   "dernier_depot_utc": "2026-09-03 12:03:56+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 2106,
+   "premier_filed_xbrl": "2009-08-20 00:00:00"
+  },
+  {
+   "ticker": "AVGO",
+   "statut": "ok",
+   "sic": "3674",
+   "10-K": 8,
+   "10-Q": 26,
+   "8-K": 121,
+   "premier_depot_utc": "2018-03-23 21:01:03+00:00",
+   "dernier_depot_utc": "2026-09-09 21:56:42+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 854,
+   "premier_filed_xbrl": "2018-06-14 00:00:00"
+  },
+  {
+   "ticker": "ORCL",
+   "statut": "ok",
+   "sic": "7372",
+   "10-K": 21,
+   "10-Q": 62,
+   "8-K": 204,
+   "premier_depot_utc": "2006-02-10 01:00:23+00:00",
+   "dernier_depot_utc": "2026-09-14 14:01:59+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 1491,
+   "premier_filed_xbrl": "2009-09-21 00:00:00"
+  },
+  {
+   "ticker": "CRM",
+   "statut": "ok",
+   "sic": "7372",
+   "10-K": 22,
+   "10-Q": 67,
+   "8-K": 286,
+   "premier_depot_utc": "2004-08-19 20:33:06+00:00",
+   "dernier_depot_utc": "2026-09-17 01:02:48+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 2377,
+   "premier_filed_xbrl": "2009-08-25 00:00:00"
+  },
+  {
+   "ticker": "ADBE",
+   "statut": "ok",
+   "sic": "7372",
+   "10-K": 32,
+   "10-Q": 96,
+   "8-K": 233,
+   "premier_depot_utc": "1995-02-17 05:00:00+00:00",
+   "dernier_depot_utc": "2026-09-22 20:04:02+00:00",
+   "textes_depuis_text_since": "20/20",
+   "faits_xbrl": 2195,
+   "premier_filed_xbrl": "2009-06-26 00:00:00"
+  },
+  {
+   "ticker": "AMD",
+   "statut": "ok",
+   "sic": "3674",
+   "10-K": 29,
+   "10-Q": 98,
+   "8-K": 424,
+   "premier_depot_utc": "1994-01-27 05:00:00+00:00",
+   "dernier_depot_utc": "2026-09-28 20:16:47+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 1637,
+   "premier_filed_xbrl": "2010-08-04 00:00:00"
+  },
+  {
+   "ticker": "CSCO",
+   "statut": "ok",
+   "sic": "3576",
+   "10-K": 31,
+   "10-Q": 95,
+   "8-K": 407,
+   "premier_depot_utc": "1995-03-13 05:00:00+00:00",
+   "dernier_depot_utc": "2026-09-02 20:36:56+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 1969,
+   "premier_filed_xbrl": "2009-11-18 00:00:00"
+  },
+  {
+   "ticker": "INTC",
+   "statut": "ok",
+   "sic": "3674",
+   "10-K": 33,
+   "10-Q": 98,
+   "8-K": 445,
+   "premier_depot_utc": "1994-03-25 05:00:00+00:00",
+   "dernier_depot_utc": "2026-08-12 20:05:07+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 1485,
+   "premier_filed_xbrl": "2009-08-03 00:00:00"
+  },
+  {
+   "ticker": "QCOM",
+   "statut": "ok",
+   "sic": "3663",
+   "10-K": 28,
+   "10-Q": 92,
+   "8-K": 261,
+   "premier_depot_utc": "1996-05-13 04:00:00+00:00",
+   "dernier_depot_utc": "2026-09-08 13:00:20+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 2079,
+   "premier_filed_xbrl": "2009-07-22 00:00:00"
+  },
+  {
+   "ticker": "TXN",
+   "statut": "ok",
+   "sic": "3674",
+   "10-K": 28,
+   "10-Q": 99,
+   "8-K": 312,
+   "premier_depot_utc": "1994-01-28 05:00:00+00:00",
+   "dernier_depot_utc": "2026-09-17 20:11:46+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 1793,
+   "premier_filed_xbrl": "2009-07-29 00:00:00"
+  },
+  {
+   "ticker": "IBM",
+   "statut": "ok",
+   "sic": "3570",
+   "10-K": 29,
+   "10-Q": 98,
+   "8-K": 565,
+   "premier_depot_utc": "1994-03-28 10:00:00+00:00",
+   "dernier_depot_utc": "2026-10-02 00:18:19+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 1393,
+   "premier_filed_xbrl": "2009-07-28 00:00:00"
+  },
+  {
+   "ticker": "NOW",
+   "statut": "ok",
+   "sic": "7372",
+   "10-K": 14,
+   "10-Q": 43,
+   "8-K": 124,
+   "premier_depot_utc": "2012-08-01 20:15:00+00:00",
+   "dernier_depot_utc": "2026-07-22 23:07:00+00:00",
+   "textes_depuis_text_since": "19/19",
+   "faits_xbrl": 1461,
+   "premier_filed_xbrl": "2012-08-10 00:00:00"
+  }
+ ],
+ "pool": {
+  "taille": 64,
+  "avec_depot_avant_coupure": 62,
+  "avec_prix_janvier_2024": 62,
+  "utilisables": 62,
+  "donnees_manquantes": 2,
+  "revid": "1197645693"
+ },
+ "news": {
+  "total": 808,
+  "par_actif": [
+   {
+    "actif": "ZS",
+    "societe": "Zscaler, Inc.",
+    "articles": 110,
+    "premier": "2026-08-20 07:45:00+00:00",
+    "dernier": "2026-10-02 01:15:00+00:00",
+    "etat_gdelt": "sondé",
+    "semaines_avec_article": "7/7",
+    "part_semaines": 1.0
+   },
+   {
+    "actif": "AAPL",
+    "societe": "Apple Inc.",
+    "articles": 0,
+    "premier": null,
+    "dernier": null,
+    "etat_gdelt": "NON SONDÉ (erreur ou non lancé : pas un zéro article)",
+    "semaines_avec_article": "non sondé"
+   },
+   {
+    "actif": "MSFT",
+    "societe": "MICROSOFT CORP",
+    "articles": 0,
+    "premier": null,
+    "dernier": null,
+    "etat_gdelt": "NON SONDÉ (erreur ou non lancé : pas un zéro article)",
+    "semaines_avec_article": "non sondé"
+   },
+   {
+    "actif": "NVDA",
+    "societe": "NVIDIA CORP",
+    "articles": 0,
+    "premier": null,
+    "dernier": null,
+    "etat_gdelt": "NON SONDÉ (erreur ou non lancé : pas un zéro article)",
+    "semaines_avec_article": "non sondé"
+   },
+   {
+    "actif": "AVGO",
+    "societe": "Broadcom Inc.",
+    "articles": 0,
+    "premier": null,
+    "dernier": null,
+    "etat_gdelt": "NON SONDÉ (erreur ou non lancé : pas un zéro article)",
+    "semaines_avec_article": "non sondé"
+   },
+   {
+    "actif": "ORCL",
+    "societe": "ORACLE CORP",
+    "articles": 125,
+    "premier": "2026-08-14 00:15:00+00:00",
+    "dernier": "2026-10-02 10:45:00+00:00",
+    "etat_gdelt": "sondé",
+    "semaines_avec_article": "6/6",
+    "part_semaines": 1.0
+   },
+   {
+    "actif": "CRM",
+    "societe": "Salesforce, Inc.",
+    "articles": 120,
+    "premier": "2026-08-13 23:45:00+00:00",
+    "dernier": "2026-10-02 10:45:00+00:00",
+    "etat_gdelt": "sondé",
+    "semaines_avec_article": "6/6",
+    "part_semaines": 1.0
+   },
+   {
+    "actif": "ADBE",
+    "societe": "ADOBE INC.",
+    "articles": 126,
+    "premier": "2026-08-14 00:15:00+00:00",
+    "dernier": "2026-10-02 10:45:00+00:00",
+    "etat_gdelt": "sondé",
+    "semaines_avec_article": "7/7",
+    "part_semaines": 1.0
+   },
+   {
+    "actif": "AMD",
+    "societe": "ADVANCED MICRO DEVICES INC",
+    "articles": 0,
+    "premier": null,
+    "dernier": null,
+    "etat_gdelt": "NON SONDÉ (erreur ou non lancé : pas un zéro article)",
+    "semaines_avec_article": "non sondé"
+   },
+   {
+    "actif": "CSCO",
+    "societe": "CISCO SYSTEMS, INC.",
+    "articles": 0,
+    "premier": null,
+    "dernier": null,
+    "etat_gdelt": "NON SONDÉ (erreur ou non lancé : pas un zéro article)",
+    "semaines_avec_article": "non sondé"
+   },
+   {
+    "actif": "INTC",
+    "societe": "INTEL CORP",
+    "articles": 96,
+    "premier": "2026-10-01 21:00:00+00:00",
+    "dernier": "2026-10-02 10:00:00+00:00",
+    "etat_gdelt": "sondé",
+    "semaines_avec_article": "non sondé"
+   },
+   {
+    "actif": "QCOM",
+    "societe": "QUALCOMM INC/DE",
+    "articles": 0,
+    "premier": null,
+    "dernier": null,
+    "etat_gdelt": "sondé (zéro article)",
+    "semaines_avec_article": "non sondé"
+   },
+   {
+    "actif": "TXN",
+    "societe": "TEXAS INSTRUMENTS INC",
+    "articles": 100,
+    "premier": "2026-09-03 14:00:00+00:00",
+    "dernier": "2026-10-01 12:00:00+00:00",
+    "etat_gdelt": "sondé",
+    "semaines_avec_article": "non sondé"
+   },
+   {
+    "actif": "IBM",
+    "societe": "INTERNATIONAL BUSINESS MACHINES CORP",
+    "articles": 0,
+    "premier": null,
+    "dernier": null,
+    "etat_gdelt": "NON SONDÉ (erreur ou non lancé : pas un zéro article)",
+    "semaines_avec_article": "non sondé"
+   },
+   {
+    "actif": "NOW",
+    "societe": "ServiceNow, Inc.",
+    "articles": 71,
+    "premier": "2026-09-29 00:15:00+00:00",
+    "dernier": "2026-10-02 02:15:00+00:00",
+    "etat_gdelt": "sondé",
+    "semaines_avec_article": "non sondé"
+   }
+  ]
+ },
+ "esg": {
+  "global": {
+   "actifs": 28,
+   "avec_score": 0,
+   "part_avec_score": 0.0,
+   "part_avec_determination": 0.5714285714285714,
+   "avec_exclusion_detectee": 1
+  },
+  "matrice": [
+   {
+    "actif": "ZS",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "AAPL",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "MSFT",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "NVDA",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "AVGO",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "ORCL",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "CRM",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "ADBE",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "AMD",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "CSCO",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "INTC",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "QCOM",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "TXN",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "IBM",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "NOW",
+    "type": "stock",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "500.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "MEU.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "JPN.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "AEEM.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "MTD.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "EGOV.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "CRP.PA",
+    "type": "etf",
+    "tobacco": "suppose_par_regle",
+    "thermal_coal": "suppose_par_regle",
+    "controversial_weapons": "suppose_par_regle"
+   },
+   {
+    "actif": "AHYE.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "GOLD.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "COMO.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "C3M.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "CSH2.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   },
+   {
+    "actif": "CW8.PA",
+    "type": "etf",
+    "tobacco": "inconnu",
+    "thermal_coal": "inconnu",
+    "controversial_weapons": "inconnu"
+   }
+  ],
+  "totaux": {
+   "tobacco": {
+    "determine_par_donnee": 0,
+    "suppose_par_regle": 16,
+    "inconnu": 12
+   },
+   "thermal_coal": {
+    "determine_par_donnee": 0,
+    "suppose_par_regle": 16,
+    "inconnu": 12
+   },
+   "controversial_weapons": {
+    "determine_par_donnee": 0,
+    "suppose_par_regle": 1,
+    "inconnu": 27
+   },
+   "tous_criteres": {
+    "determine_par_donnee": 0,
+    "suppose_par_regle": 33,
+    "inconnu": 51
+   },
+   "actifs": 28
+  }
+ },
+ "quality": {
+  "synthese": [
+   {
+    "zone": "depuis 2013-01-01 (utile)",
+    "type": "currency",
+    "gravite": "warning",
+    "nombre": 1
+   },
+   {
+    "zone": "depuis 2013-01-01 (utile)",
+    "type": "distribution",
+    "gravite": "info",
+    "nombre": 5
+   },
+   {
+    "zone": "depuis 2013-01-01 (utile)",
+    "type": "outlier",
+    "gravite": "warning",
+    "nombre": 8
+   },
+   {
+    "zone": "depuis 2013-01-01 (utile)",
+    "type": "short_history",
+    "gravite": "info",
+    "nombre": 8
+   },
+   {
+    "zone": "depuis 2013-01-01 (utile)",
+    "type": "short_history",
+    "gravite": "warning",
+    "nombre": 1
+   },
+   {
+    "zone": "depuis 2013-01-01 (utile)",
+    "type": "split",
+    "gravite": "info",
+    "nombre": 61
+   },
+   {
+    "zone": "depuis 2013-01-01 (utile)",
+    "type": "split",
+    "gravite": "warning",
+    "nombre": 4
+   },
+   {
+    "zone": "depuis 2013-01-01 (utile)",
+    "type": "stale",
+    "gravite": "warning",
+    "nombre": 2
+   },
+   {
+    "zone": "avant 2013-01-01 (hors fenêtre utile)",
+    "type": "outlier",
+    "gravite": "warning",
+    "nombre": 26
+   },
+   {
+    "zone": "avant 2013-01-01 (hors fenêtre utile)",
+    "type": "stale",
+    "gravite": "warning",
+    "nombre": 3
+   },
+   {
+    "zone": "structurel (liste en config)",
+    "type": "stale",
+    "gravite": "warning",
+    "nombre": 68
+   }
+  ],
+  "total": 187
+ },
+ "status": {
+  "par_source": [
+   {
+    "source": "ecb",
+    "ok": 5
+   },
+   {
+    "source": "edgar",
+    "ok": 63,
+    "error": 2
+   },
+   {
+    "source": "edgar_text",
+    "ok": 15
+   },
+   {
+    "source": "esg",
+    "ok": 28
+   },
+   {
+    "source": "fred",
+    "ok": 12,
+    "unavailable": 1
+   },
+   {
+    "source": "fx",
+    "ok": 4
+   },
+   {
+    "source": "gdelt",
+    "ok": 8,
+    "error": 7
+   },
+   {
+    "source": "gdelt_week",
+    "error": 13
+   },
+   {
+    "source": "prices",
+    "ok": 84,
+    "error": 2
+   },
+   {
+    "source": "rss",
+    "ok": 3
+   },
+   {
+    "source": "xbrl",
+    "ok": 15
+   }
+  ],
+  "erreurs": [
+   {
+    "source": "prices",
+    "element": "ANSS",
+    "detail": "NoDataError: YFTzMissingError: $ANSS: possibly delisted; no timezone found"
+   },
+   {
+    "source": "prices",
+    "element": "JNPR",
+    "detail": "NoDataError: YFTzMissingError: $JNPR: possibly delisted; no timezone found"
+   },
+   {
+    "source": "fred",
+    "element": "BAMLEC0A0RMEY",
+    "detail": "série absente de FRED : {\"error_code\":400,\"error_message\":\"Bad Request.  The series does not exist.\"}"
+   },
+   {
+    "source": "edgar",
+    "element": "ANSS",
+    "detail": "KeyError: 'ticker ANSS absent de la liste EDGAR (société non déclarante ?)'"
+   },
+   {
+    "source": "edgar",
+    "element": "JNPR",
+    "detail": "KeyError: 'ticker JNPR absent de la liste EDGAR (société non déclarante ?)'"
+   },
+   {
+    "source": "gdelt",
+    "element": "AAPL",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?format=json&maxrecords=100&mode=artlist&query=\"Apple\"&sort=datedesc : échec après 5 essais (HTTP 42"
+   },
+   {
+    "source": "gdelt",
+    "element": "MSFT",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?format=json&maxrecords=100&mode=artlist&query=\"MICROSOFT\"&sort=datedesc : échec après 5 essais (HTT"
+   },
+   {
+    "source": "gdelt",
+    "element": "NVDA",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?format=json&maxrecords=100&mode=artlist&query=\"NVIDIA\"&sort=datedesc : échec après 5 essais (HTTP 4"
+   },
+   {
+    "source": "gdelt",
+    "element": "AVGO",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?format=json&maxrecords=100&mode=artlist&query=\"Broadcom\"&sort=datedesc : échec après 5 essais (HTTP"
+   },
+   {
+    "source": "gdelt",
+    "element": "AMD",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?format=json&maxrecords=100&mode=artlist&query=\"ADVANCED MICRO DEVICES\"&sort=datedesc : échec après "
+   },
+   {
+    "source": "gdelt",
+    "element": "CSCO",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?format=json&maxrecords=100&mode=artlist&query=\"CISCO SYSTEMS\"&sort=datedesc : échec après 5 essais "
+   },
+   {
+    "source": "gdelt",
+    "element": "IBM",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?format=json&maxrecords=100&mode=artlist&query=\"INTERNATIONAL BUSINESS MACHINES\"&sort=datedesc : éch"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "ZS:3",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260911000000&format=json&maxrecords=5&mode=artlist&query=\"Zscaler\"&sort=datedesc&star"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "ZS:6",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260821000000&format=json&maxrecords=5&mode=artlist&query=\"Zscaler\"&sort=datedesc&star"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "ZS:7",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260814000000&format=json&maxrecords=5&mode=artlist&query=\"Zscaler\"&sort=datedesc&star"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "ORCL:3",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260911000000&format=json&maxrecords=5&mode=artlist&query=\"ORACLE\"&sort=datedesc&start"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "ORCL:5",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260828000000&format=json&maxrecords=5&mode=artlist&query=\"ORACLE\"&sort=datedesc&start"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "CRM:0",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20261002000000&format=json&maxrecords=5&mode=artlist&query=\"Salesforce\"&sort=datedesc&s"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "CRM:1",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260925000000&format=json&maxrecords=5&mode=artlist&query=\"Salesforce\"&sort=datedesc&s"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "CRM:3",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260911000000&format=json&maxrecords=5&mode=artlist&query=\"Salesforce\"&sort=datedesc&s"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "CRM:4",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260904000000&format=json&maxrecords=5&mode=artlist&query=\"Salesforce\"&sort=datedesc&s"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "CRM:5",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260828000000&format=json&maxrecords=5&mode=artlist&query=\"Salesforce\"&sort=datedesc&s"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "ADBE:1",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260925000000&format=json&maxrecords=5&mode=artlist&query=\"ADOBE\"&sort=datedesc&startd"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "ADBE:6",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260821000000&format=json&maxrecords=5&mode=artlist&query=\"ADOBE\"&sort=datedesc&startd"
+   },
+   {
+    "source": "gdelt_week",
+    "element": "ADBE:7",
+    "detail": "HttpError: gdelt https://api.gdeltproject.org/api/v2/doc/doc?enddatetime=20260814000000&format=json&maxrecords=5&mode=artlist&query=\"ADOBE\"&sort=datedesc&startd"
+   }
+  ]
+ }
+}

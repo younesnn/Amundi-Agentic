@@ -6,8 +6,16 @@ readme = "README.md"
 requires-python = ">=3.11"
 # Les dépendances métier sont ajoutées phase par phase (voir DECISIONS.md).
 dependencies = [
+    "feedparser>=6.0.14",
+    "pandas>=3.0.6",
+    "pyarrow>=25.0.1",
     "pyyaml>=6.0.3",
+    "requests>=2.34.2",
+    "yfinance>=1.7.0",
 ]
+
+[project.scripts]
+amundi-agentic = "amundi_agentic.cli:main"
 
 [dependency-groups]
 dev = [
@@ -25,6 +33,7 @@ packages = ["src/amundi_agentic"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["tests/data"]
 addopts = "-ra --strict-markers --import-mode=importlib"
 markers = [
     "llm: test qui appelle un vrai LLM (exclu par défaut en CI)",
@@ -38,3 +47,9 @@ extend-exclude = ["prompts", "fiches", "graphify-out", "PROMPT.md", "docs"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "SIM", "N"]
+
+[tool.ruff.lint.per-file-ignores]
+# Docstrings et messages en français : lignes longues tolérées dans la couche de données (le
+# formateur reste actif pour le code).
+"src/amundi_agentic/data/**" = ["E501"]
+"tests/data/**" = ["E501"]

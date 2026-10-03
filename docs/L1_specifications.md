@@ -5,18 +5,19 @@
 | Champ | Valeur |
 | --- | --- |
 | Livrable | L1 (sert O1 à O5) |
-| Version | 1.1 (phase 1, après relecture `reviewer-tester` et `financial-critic`), 2026-10-02 |
-| Références | `PROMPT.md` (fait foi après le cahier des charges), `Fiche projet Amundi Agentic.pdf`, `papier BlackRock.pdf` (AlphaAgents, arXiv 2508.11152), `fiches/`, `DECISIONS.md` (D-001 à D-008), `QUESTIONS_AMUNDI.md` (Q-1 à Q-8) |
+| Version | 1.4 (décisions de Younes du 2026-10-03 : D-039 corrigée, D-045 validée, D-048 à D-050 ; v1.3 : revue de la phase 2, D-043 à D-047 ; v1.2 : phase 2 et D-024, D-028 à D-038 ; v1.1 : relectures de la phase 1), 2026-10-02 |
+| Références | `PROMPT.md` (fait foi après le cahier des charges), `Fiche projet Amundi Agentic.pdf`, `papier BlackRock.pdf` (AlphaAgents, arXiv 2508.11152), `fiches/`, `DECISIONS.md` (D-001 à D-050), `QUESTIONS_AMUNDI.md` (Q-1 à Q-26), `docs/couverture_donnees.md` (rapport de couverture de la phase 2, généré par script : source de tous les chiffres de données cités ici) |
 | Matrice de traçabilité | `docs/tracabilite.md` (mêmes identifiants que ce document) |
 
 **Conventions.**
 
 - `EX-Ox-nn` : exigence fonctionnelle rattachée à l'objectif Ox. `EX-NF-nn` : exigence non fonctionnelle ; la plupart sont rattachées à une contrainte C1 à C11 de la matrice, les autres figurent dans une table dédiée de la matrice.
 - `UC-n` : cas d'usage. `R-nn` : risque. `CT-nn` : contrainte de l'optimiseur.
-- « H » : hypothèse de conception. Elle est gelée par le pré-enregistrement (section 11.6) avant toute évaluation ; elle est à confirmer auprès d'Amundi quand une question Q-x est citée. Les questions Q-9 à Q-18 sont **proposées** au chef de projet (section 16) et ne figurent pas encore dans `QUESTIONS_AMUNDI.md`.
+- « H » : hypothèse de conception. Elle est gelée par le pré-enregistrement (section 11.6) avant toute évaluation ; elle est à confirmer auprès d'Amundi quand une question Q-x est citée. Les questions ouvertes sont dans `QUESTIONS_AMUNDI.md` (Q-1 à Q-26).
 - Chemins de composants relatifs à `src/amundi_agentic/`, sauf ceux qui commencent par un dossier racine (`config/`, `app/`, `agent_prompts/`, `runs/`).
 - Rendements, Q, Π, volatilités et poids sont manipulés **en décimal** dans le code et les schémas (0,02 = 2 %) ; les pourcentages de ce document sont des affichages.
 - Dates : `date` pour une date de décision t ; `datetime` avec fuseau horaire (stocké en UTC) pour un instant de publication. L'instant de coupure de t est t à 00:00, heure de Paris : une information est visible à t si et seulement si elle a été publiée **strictement avant** cet instant.
+- Prix (D-038) : une décision prise à t utilise les clôtures de séances **strictement antérieures à t** ; l'exécution se fait au cours de clôture de t, qui n'est pas visible au moment de la décision. Les sections 3.3, 10.1 et 11.3 appliquent cette règle unique.
 
 ---
 
@@ -50,7 +51,7 @@ Chaque exigence est reliée à au moins un composant et à au moins un test pré
 | ID | Exigence | Composants | Tests prévus (ce qu'ils vérifient) | Phase |
 | --- | --- | --- | --- | --- |
 | EX-O1-01 | Les agents de niveau allocation (Macro, Valuation/Momentum, Sentiment) produisent une vue par classe d'actifs au format `View`. L'agent Risque produit une `RiskAssessment` dont les alertes sont calculées par des seuils Python ; le LLM ne fait que les commenter. | `agents/macro.py`, `agents/valuation.py`, `agents/sentiment.py`, `agents/risk.py`, `tools/risk.py`, `schemas.py` | `test_agents_allocation_produisent_des_vues_valides` (LLM simulé : une vue valide par classe et par agent) ; `test_alertes_risque_calculees_par_seuils_python` (le LLM ne peut pas modifier une alerte) | 3 |
-| EX-O1-02 | Les agents de niveau titres (Fundamental, Sentiment, Valuation) produisent une vue par titre au format `View`. | `agents/fundamental.py`, `agents/sentiment.py`, `agents/valuation.py` | `test_agents_titres_produisent_des_vues_valides` | 3 |
+| EX-O1-02 | Les agents de niveau titres (Fundamental, Sentiment, Valuation) produisent une vue par titre au format `View`. La poche titres compte **15 titres au plus** (D-029) ; une liste plus longue est refusée par la configuration. | `agents/fundamental.py`, `agents/sentiment.py`, `agents/valuation.py`, `data/universe.py`, `config/universe.yaml` | `test_agents_titres_produisent_des_vues_valides` ; `test_poche_titres_limitee_a_quinze_titres` | 2, 3 |
 | EX-O1-03 | Chaque vue cite au moins une source (document, instant de publication, extrait) ; toute source publiée après la coupure de t est rejetée ; une `sortie_outil` est datée par la dernière donnée qu'elle utilise. | `schemas.py` (validateurs de `View` et `Source`) | `test_vue_sans_source_rejetee` ; `test_source_posterieure_a_t_rejetee` ; `test_vue_sans_argument_contre_rejetee` ; `test_sortie_outil_datee_par_sa_derniere_donnee` | 3 |
 | EX-O1-04 | Les chiffres (rendements, volatilités, ratios, indicateurs de régime) sont calculés par des outils Python ; tout chiffre cité par un agent doit exister dans les sorties d'outils de son contexte. | `tools/finance.py`, `tools/risk.py`, `tools/macro_regime.py`, `agents/base.py` (contrôle d'ancrage) | `test_rendement_et_volatilite_annualises_formules_du_papier` ; `test_valuation_appelle_ses_outils` (trace d'appels d'outils) ; `test_chiffre_absent_des_outils_signale` | 3 |
 | EX-O1-05 | Le rendement excédentaire d'une vue (décimal) est calculé par un outil à partir du niveau de décision (section 7.4), jamais écrit par le LLM. | `portfolio/views.py` | `test_niveau_vers_rendement_excedentaire_monotone` ; `test_champ_rendement_rempli_par_l_outil_pas_par_le_llm` | 3, 4 |
@@ -58,14 +59,15 @@ Chaque exigence est reliée à au moins un composant et à au moins un test pré
 | EX-O1-07 | Débat : collaboration puis *round robin*, au plus `R_max` tours, règle de consensus calculée en Python, statut `contestee` sinon (section 6). | `debate/orchestrator.py`, `debate/consensus.py` | `test_debat_termine_en_au_plus_rmax_tours` ; `test_consensus_unanime_arrete_le_debat` ; `test_vue_contestee_arbitree_par_coordinateur` ; `test_vue_contestee_niveau_borne_a_un` | 3 |
 | EX-O1-08 | Un avocat du diable tournant est désigné à chaque tour de débat. | `debate/devil.py` | `test_avocat_du_diable_tourne_entre_les_tours` ; `test_sortie_avocat_contient_une_objection_sourcee` | 3 |
 | EX-O1-09 | Décision à 5 niveaux (fortement négatif à fortement positif) pour chaque vue. | `schemas.py` (`Decision5`) | `test_decision_cinq_niveaux_valeurs_admises` | 3 |
-| EX-O1-10 | Les exclusions ESG sont appliquées avant toute recommandation : un actif exclu n'entre pas dans le débat et l'agent ESG émet un veto motivé. | `agents/esg.py`, `data/connectors/esg.py`, `config/esg.yaml` | `test_titre_exclu_jamais_debattu_ni_recommande` ; `test_veto_esg_motive_et_journalise` | 2, 3 |
+| EX-O1-10 | Les exclusions ESG sont appliquées avant toute recommandation : un actif exclu n'entre pas dans le débat et l'agent ESG émet un veto motivé. Les exclusions reposent sur le code SIC (titres) et la méthodologie de l'indice (ETF) ; aucun score ESG n'est utilisé (D-035). | `agents/esg.py`, `data/connectors/esg.py`, `config/esg.yaml` | `test_titre_exclu_jamais_debattu_ni_recommande` ; `test_veto_esg_motive_et_journalise` | 2, 3 |
 | EX-O1-11 | Le profil de risque est injecté dans le prompt de chaque agent (comme AlphaAgents). | `agents/base.py` | `test_profil_injecte_dans_le_prompt` | 3 |
 | EX-O1-12 | Une seule commande produit les vues et le rapport consolidé d'une date donnée. | `cli.py` | `test_cli_analyse_une_date_avec_llm_simule` (intégration) | 3 |
-| EX-O1-13 | Réplication d'AlphaAgents (section 9.3) : graine hashée avant le tirage, règle de remplacement fixée d'avance, résultats étiquetés « contaminés » (section 11.4). | `evaluation/replication.py`, `config/replication.yaml` | `test_configuration_replication_conforme_au_papier` ; `test_graine_hashee_avant_tirage` ; `test_regle_de_remplacement_deterministe` ; comparaison qualitative `[llm]` | 3 |
+| EX-O1-13 | Réplication d'AlphaAgents (section 9.3) : 15 titres (ZS hors pool, ajouté explicitement, plus 14 tirés dans le pool de 62 titres utilisables), graine hashée avant le tirage, règle de remplacement fixée d'avance, résultats étiquetés « contaminés » (section 11.4). | `evaluation/replication.py`, `config/replication.yaml` | `test_configuration_replication_conforme_au_papier` ; `test_graine_hashee_avant_tirage` ; `test_regle_de_remplacement_deterministe` ; comparaison qualitative `[llm]` | 3 |
 | EX-O1-14 | Agent Fundamental : RAG sur les sections des 10-K et 10-Q, limité aux dépôts acceptés par EDGAR avant la coupure de t. Faits XBRL : pour chaque fait et chaque période, valeur du dernier dépôt dont `filed` < t ; tout retraitement postérieur est ignoré. | `tools/rag.py`, `data/connectors/filings.py` | `test_rag_decoupe_par_section` ; `test_rag_ne_sert_que_les_depots_avant_t` ; `test_xbrl_valeur_connue_a_t_sans_retraitement_posterieur` ; évaluation fidélité et pertinence (Phoenix ou Ragas) `[llm]` | 2, 3 |
 | EX-O1-15 | Agent Sentiment : outil de résumé avec réflexion (résumer, critiquer, affiner). | `tools/summarize.py` | `test_resume_reflexion_produit_les_trois_etapes` (LLM simulé) | 3 |
 | EX-O1-16 | Les agents ne reçoivent que des données servies par l'accès point-in-time `as_of(t)`. | `data/pit.py`, `agents/base.py` | `test_agents_n_accedent_qu_a_la_vue_as_of` ; `test_aucune_donnee_posterieure_a_t` (prix, news, dépôts, macro) | 2, 3 |
-| EX-O1-17 | La couverture des news est mesurée par actif et par date (phase 2). Sous le seuil pré-enregistré, l'agent Sentiment est retiré du backtest (il reste actif en *live test*) et ce retrait est publié. | `data/quality.py`, `agents/sentiment.py` | `test_couverture_news_par_actif_et_date` ; `test_sentiment_desactive_si_couverture_insuffisante` | 2, 3 |
+| EX-O1-17 | L'agent Sentiment est **retiré du backtest, sans condition de seuil** (D-044) : RSS sans historique avant la première collecte, GDELT limité par des 429 persistants, et un seuil de couverture « au moins un article par semaine » serait trivial pour une grande capitalisation. L4 le dit : aucune évaluation chiffrée de son apport historique. `seendate` de GDELT est étiquetée « première observation », pas publication. Un instantané quotidien brut des flux RSS et GDELT est conservé dès maintenant (append-only), pour le live. | `data/connectors/news.py`, `agents/sentiment.py`, `data/store.py` | `test_sentiment_absent_du_backtest` ; `test_gdelt_seendate_etiquetee_premiere_observation` ; `test_instantane_quotidien_news_append_only` | 2, 3 |
+| EX-O1-18 | Source ESG **manuelle et historisée par ETF** (D-048, phase 3). Pour chaque ETF, une saisie à la main depuis la documentation du fonds (prospectus, DIC/KID, fiche produit, page de l'indice) : classification SFDR (article 6, 8 ou 9), indice suivi, caractère ESG, Paris-Aligned (PAB) ou Climate Transition (CTB) de l'indice. Chaque valeur porte sa source (URL ou référence), la date du document, la date d'effet et la date de saisie ; une valeur qui change crée une version datée (historisation append-only, comme D-043). **Une valeur sans document n'est pas saisie : elle reste `inconnu`, jamais déduite d'un nom ou d'une habitude.** Point-in-time : servie seulement à partir de sa date d'effet. Elle alimente la matrice ESG du rapport (état `determine_par_donnee` quand un document le prouve) et l'agent ESG. Le format de saisie (par exemple un fichier `esg_etf_sources.yaml` de `config/`, à déclarer dans `config/README.md`) est à décrire en phase 3. SFDR classe des produits, ce n'est pas un score ESG ; un article 8 n'implique pas l'exclusion des armes controversées ; CT-06 reste suspendue. | `data/connectors/esg.py`, `data/pit.py`, `agents/esg.py`, `config/esg.yaml` | `test_esg_etf_valeur_sans_document_reste_inconnue` ; `test_esg_etf_servie_a_partir_de_la_date_d_effet` ; `test_esg_etf_historisation_append_only` ; `test_esg_etf_alimente_matrice_et_agent_esg` ; `test_sfdr_n_est_pas_un_score_et_ct06_reste_suspendue` | 3 |
 
 ### O2 — Portefeuilles optimisés sous contraintes (L3)
 
@@ -75,14 +77,16 @@ Chaque exigence est reliée à au moins un composant et à au moins un test pré
 | EX-O2-02 | A priori Π = δ Σ w_benchmark du profil. | `portfolio/black_litterman.py` | `test_prior_equilibre_formule` | 4 |
 | EX-O2-03 | Ω tirée de la confiance de chaque vue (méthode d'Idzorek, forme fermée) ; plus la confiance est élevée, plus le poids de l'actif visé s'écarte du benchmark, que la contrainte de *tracking error* soit active ou non. | `portfolio/views.py`, `portfolio/black_litterman.py`, `portfolio/optimizer.py` | `test_omega_idzorek_forme_fermee` ; `test_vue_plus_confiante_deplace_davantage_les_poids` ; `test_monotonie_confiance_te_inactive` (écart strictement croissant) ; `test_monotonie_confiance_te_active` (écart croissant au sens large) | 4 |
 | EX-O2-04 | Sans vue, le portefeuille optimal est le benchmark du profil. | `portfolio/black_litterman.py`, `portfolio/optimizer.py` | `test_sans_vue_retour_au_benchmark` (par profil, avec w_prev = w_b ou coûts nuls, puisque la pénalité de coût et la rotation retiennent sinon l'ancien portefeuille) | 4 |
-| EX-O2-05 | Optimisation cvxpy sous la liste exhaustive de contraintes de la section 7.6 ; chaque contrainte est revérifiée après résolution et le résultat est stocké dans la proposition. | `portfolio/optimizer.py`, `portfolio/constraints.py` | Un test par contrainte : `test_contrainte_budget`, `test_contrainte_long_only`, `test_contrainte_bornes_par_actif`, `test_contrainte_bornes_par_classe`, `test_contrainte_exclusions_esg`, `test_contrainte_score_esg_minimal`, `test_contrainte_volatilite_plafond`, `test_contrainte_tracking_error`, `test_contrainte_rotation`, `test_contrainte_poche_titres` ; `test_verification_post_solution_signale_une_violation` | 4 |
+| EX-O2-05 | Optimisation cvxpy sous la liste exhaustive de contraintes de la section 7.6 ; chaque contrainte est revérifiée après résolution et le résultat est stocké dans la proposition. | `portfolio/optimizer.py`, `portfolio/constraints.py` | Un test par contrainte : `test_contrainte_budget`, `test_contrainte_long_only`, `test_contrainte_bornes_par_actif`, `test_contrainte_bornes_par_classe`, `test_contrainte_exclusions_esg`, `test_ct06_suspendue_et_documentee`, `test_contrainte_volatilite_plafond`, `test_contrainte_tracking_error`, `test_contrainte_rotation`, `test_contrainte_poche_titres` ; `test_verification_post_solution_signale_une_violation` | 4 |
 | EX-O2-06 | Profils prudent, équilibré, dynamique lus dans `config/profiles.yaml` (δ, volatilité plafond, *tracking error*, bornes, benchmark) ; le benchmark de chaque profil respecte ses propres contraintes. | `portfolio/profiles.py`, `config/profiles.yaml` | `test_profils_charges_depuis_la_config` ; `test_benchmark_admissible_pour_son_profil` | 4 |
 | EX-O2-07 | En cas d'infaisabilité, relâchement dans un ordre documenté ; les contraintes ESG ne sont jamais relâchées ; le relâchement est journalisé. | `portfolio/optimizer.py` | `test_infaisabilite_relachement_ordonne` ; `test_contraintes_esg_jamais_relachees` | 4 |
 | EX-O2-08 | Méthodes de comparaison équitables (section 7.8) : toutes projetées sur les mêmes contraintes CT-01 à CT-10, plus une variante au même niveau de risque ex ante ; Markowitz avec μ = Q si vue, Π sinon ; 1/N sur les classes d'actifs seulement. | `portfolio/baselines.py` | `test_equiponderation_des_vues_positives` ; `test_un_sur_n_sur_les_classes_seulement` ; `test_markowitz_q_si_vue_pi_sinon` ; `test_parite_de_risque_contributions_egales` ; `test_methodes_de_comparaison_sous_memes_contraintes` ; `test_variante_meme_risque_ex_ante` | 4 |
-| EX-O2-09 | La couverture des scores ESG (part du poids couverte) est mesurée et publiée avec chaque portefeuille. | `portfolio/constraints.py`, `explain/sheet.py` | `test_couverture_esg_calculee_et_publiee` | 4 |
-| EX-O2-10 | Tous les rendements sont en EUR. Actions, or et matières premières : un proxy USD est permis, converti au cours de référence BCE connu à t, avec la retenue à la source documentée. Obligations et monétaire : séries en EUR uniquement, sinon début du backtest retardé. Les dates de jonction sont publiées. | `data/connectors/fx.py`, `data/universe.py` | `test_conversion_eur_cours_bce_point_in_time` ; `test_pas_de_proxy_usd_pour_obligations_et_monetaire` ; `test_dates_de_jonction_publiees` | 2 |
+| EX-O2-09 | La couverture ESG est publiée avec chaque portefeuille sous forme de matrice actif × critère (armes controversées, tabac, charbon thermique, score ESG) à trois états : `determine_par_donnee`, `suppose_par_regle`, `inconnu` (D-035). Totaux du rapport sur 28 actifs : armes controversées 0/1/27, tabac 0/16/12, charbon thermique 0/16/12, score ESG 0/28 (`docs/couverture_donnees.md`, section 6). | `portfolio/constraints.py`, `explain/sheet.py`, `data/analysis.py` | `test_couverture_esg_calculee_et_publiee` ; `test_matrice_esg_trois_etats_et_totaux` ; `test_aucune_regle_sic_pour_les_armes_controversees` | 2, 4 |
+| EX-O2-10 | Tous les rendements sont en EUR. Actions, or et matières premières : un proxy USD est permis, converti au cours de référence BCE connu à t, avec la retenue à la source documentée. Obligations et monétaire : séries en EUR uniquement, **sans reconstruction depuis la courbe BCE** et sans indice ICE (D-034) : les séries de rendement total sont les ETF et le monétaire capitalisé EONIA puis €STR. Les dates de jonction sont publiées. | `data/connectors/fx.py`, `data/universe.py` | `test_conversion_eur_cours_bce_point_in_time` ; `test_pas_de_proxy_usd_pour_obligations_et_monetaire` ; `test_dates_de_jonction_publiees` ; `test_monetaire_capitalise_eonia_puis_estr` | 2 |
 | EX-O2-11 | La fréquence d'activation de CT-07, de CT-08, de CT-09, des bornes par classe et du plafond par titre est calculée sur chaque run et publiée. | `portfolio/constraints.py`, `evaluation/report.py` | `test_frequence_activation_des_contraintes_publiee` | 4, 7 |
 | EX-O2-12 | Le monétaire est l'actif résiduel : il n'entre ni dans les vues ni dans Σ (rendement excédentaire nul, variance nulle) ; toute volatilité σ_i utilisée pour une vue est bornée par un plancher. | `portfolio/views.py`, `portfolio/covariance.py`, `portfolio/optimizer.py` | `test_monetaire_hors_vues_et_hors_sigma` ; `test_plancher_de_volatilite_des_vues` | 4 |
+| EX-O2-13 | Règle de début du backtest (D-045, H, **validée par Younes le 2026-10-03**), fondée uniquement sur la disponibilité des données et **fixée avant tout run LLM, indépendamment des résultats** : début principal 2018-08-28, **avec la classe haut rendement conservée** ; sensibilité obligatoire 2014-03-27 (haut rendement exclu, poids renormalisés), toujours rapportée ; le meilleur des deux n'est jamais choisi après coup. Critère minimal : au moins 2 creux du benchmark d'au moins 15 % et au moins une phase de hausse des taux (tableau « Creux » de `docs/couverture_donnees.md`). Les dates sont calculées par script (260 semaines avant t pour chaque classe) et publiées avec la classe limitante. Toute période de performance construite sur des séries synthétiques porte l'étiquette « non investissable » (EX-O2-14, EX-O5-17). | `data/coverage.py`, `data/universe.py`, `config/universe.yaml` | `test_date_de_debut_backtest_par_classe_limitante` ; `test_sensibilite_2014_toujours_rapportee` ; `test_poids_renormalises_sans_haut_rendement` ; `test_critere_minimal_creux_et_hausse_des_taux` | 2, 4 |
+| EX-O2-14 | Séries raccordées (D-046, D-045). Six classes avec proxy sont **synthétiques avant l'ETF primaire** (actions États-Unis, Europe, Japon, émergents, or, matières premières). Règle de raccord à fixer en phase 4 : raccord sur rendements, chevauchement et erreur de suivi publiés. **Une période de performance est étiquetée « non investissable » dès qu'une classe détenue par le portefeuille ou par le benchmark y repose sur un segment synthétique** (proxy raccordé avant l'ETF primaire, proxy USD converti) ; les périodes sur ETF réels ne portent pas l'étiquette. La fenêtre de Σ des titres récents (ZS n'a 260 semaines qu'en 2023-03) est fixée en phase 4. Benchmark et portefeuille reposent sur les mêmes séries raccordées. Le cash de référence (€STR) est distinct de l'actif détenu (C3M.PA). | `data/universe.py`, `portfolio/covariance.py`, `portfolio/profiles.py` | `test_raccord_sur_rendements_erreur_de_suivi_publiee` ; `test_pnl_sur_proxy_etiquete_non_investissable` ; `test_benchmark_et_portefeuille_memes_series_raccordees` ; `test_fenetre_sigma_titre_recent` ; `test_cash_de_reference_distinct_de_l_actif_detenu` | 4 |
 
 ### O3 — Mise à jour et ajustement automatiques (L3)
 
@@ -96,7 +100,9 @@ Chaque exigence est reliée à au moins un composant et à au moins un test pré
 | EX-O3-06 | File de validation : le gérant valide, modifie ou rejette ; un poids modifié est revérifié contre toutes les contraintes. | `rebalancing/validation.py` | `test_file_validation_transitions_autorisees` ; `test_modification_reverifie_les_contraintes` ; `test_proposition_rejetee_ne_modifie_pas_le_portefeuille` | 5 |
 | EX-O3-07 | Une simulation d'au moins 3 ans produit l'historique des rééquilibrages avec leur cause. | `evaluation/backtest.py`, `rebalancing/` | `test_simulation_trois_ans_historique_avec_causes` (données synthétiques, vues simulées) | 5 |
 | EX-O3-08 | Le journal des décisions est en ajout seul (aucune réécriture). | `rebalancing/journal.py` | `test_journal_des_decisions_ajout_seul` | 5 |
-| EX-O3-09 | Convention d'exécution : décision avec les données disponibles à la coupure de t (clôtures jusqu'à t − 1), exécution au cours de clôture de t. | `rebalancing/proposal.py`, `evaluation/backtest.py` | `test_execution_a_la_cloture_de_t` ; `test_decision_n_utilise_pas_la_cloture_de_t` | 5 |
+| EX-O3-09 | Convention d'exécution (D-038) : décision avec les données de séances strictement antérieures à t (dernière clôture : t − 1 ouvré), exécution au cours de clôture de t, non visible à la décision. | `rebalancing/proposal.py`, `evaluation/backtest.py` | `test_execution_a_la_cloture_de_t` ; `test_decision_n_utilise_pas_la_cloture_de_t` | 5 |
+| EX-O3-10 | Cadence de décision (D-039, corrigée le 2026-10-03). **Allocation (ETF) : décisions mensuelles sur tout l'historique.** **Poche titres : trimestrielle sur l'historique long, mensuelle sur la période récente** ; la frontière est fixée au pré-enregistrement (H : au plus tard à la date de fin d'entraînement du modèle, pour que la période hors échantillon soit mensuelle pour les deux niveaux). Les déclencheurs hebdomadaires de dérive et de régime restent actifs entre deux dates (sans appel LLM) ; le déclencheur de changement de vue n'est évalué qu'aux dates de décision de chaque niveau. | `rebalancing/scheduler.py`, `rebalancing/triggers.py`, `evaluation/backtest.py`, `evaluation/budget.py` | `test_calendrier_allocation_mensuel_sur_tout_l_historique` ; `test_calendrier_poche_titres_trimestriel_puis_mensuel` ; `test_declencheur_vue_evalue_aux_dates_de_decision_de_chaque_niveau` ; `test_frontiere_trimestriel_mensuel_gelee_par_preregistration` | 5, 7 |
+| EX-O3-11 | La liquidité (valeur médiane échangée par jour et part de jours sans volume, depuis 2018-01-01) est publiée par ETF et rapprochée des coûts de 10.3 ; un plafond de participation au volume est fixé en phase 4 (Q-23). Elle mesure la ligne de cotation lue sur Yahoo, pas la liquidité réelle. | `data/analysis.py`, `rebalancing/costs.py` | `test_liquidite_valeurs_calculees_a_la_main` ; `test_cout_rapproche_de_la_liquidite` | 2, 5 |
 
 ### O4 — Transparence et explicabilité (L2, L5)
 
@@ -110,6 +116,7 @@ Chaque exigence est reliée à au moins un composant et à au moins un test pré
 | EX-O4-06 | Le gérant peut contester une vue (UC-3) ; la contestation et son effet sont tracés. | `debate/orchestrator.py`, `app/` | `test_contestation_enregistree_et_tracee` ; `test_surcharge_manuelle_de_vue_marquee_comme_telle` | 6 |
 | EX-O4-07 | Les chiffres des fiches sont insérés par gabarit depuis les données ; le LLM ne rédige que le texte. | `explain/sheet.py` | `test_chiffres_de_la_fiche_issus_des_donnees` | 6 |
 | EX-O4-08 | L'avertissement « prototype académique » figure dans l'interface et dans chaque rapport. | `app/`, `evaluation/report.py` | `test_interface_porte_l_avertissement` ; `test_rapports_portent_l_avertissement` | 6, 7 |
+| EX-O4-09 | Étiquette « non investissable » (D-045) dans l'interface : toute période de performance ou tout graphique construit sur des séries synthétiques l'affiche (bandeau, légende, infobulle) ; le tableau de bord ne présente jamais un chiffre de ces périodes sans elle, et les fiches d'explication la reprennent quand une vue ou un poids repose sur un segment synthétique. | `app/`, `explain/sheet.py` | `test_tableau_de_bord_etiquette_non_investissable` ; `test_fiche_signale_segment_synthetique` | 6 |
 
 ### O5 — Évaluation face à des benchmarks traditionnels (L4)
 
@@ -118,20 +125,24 @@ L'objet de L4 est défini en section 11.4 : L4 évalue la mécanique, le contrô
 | ID | Exigence | Composants | Tests prévus | Phase |
 | --- | --- | --- | --- | --- |
 | EX-O5-01 | Backtest *walk-forward* à décisions mensuelles sur plusieurs années (au moins une phase haussière et une baissière), coûts déduits. | `evaluation/backtest.py` | `test_walk_forward_sans_fuite` (à chaque pas, aucune donnée postérieure à t) ; `test_backtest_deduit_les_couts` | 7 |
-| EX-O5-02 | Métriques : rendement annualisé, volatilité, Sharpe, Sharpe glissant, Sortino, perte maximale, Calmar, *tracking error*, ratio d'information, rotation, score ESG moyen, coût LLM par décision. | `evaluation/metrics.py` | `test_metriques_valeurs_calculees_a_la_main` (une assertion par métrique, séries synthétiques) | 7 |
+| EX-O5-02 | Métriques : rendement annualisé, volatilité, Sharpe, Sharpe glissant, Sortino, perte maximale, Calmar, *tracking error*, ratio d'information, rotation, part du poids avec exclusion ESG déterminée (aucun score ESG moyen tant qu'aucune source de score n'existe, D-035), coût LLM par décision. | `evaluation/metrics.py` | `test_metriques_valeurs_calculees_a_la_main` (une assertion par métrique, séries synthétiques) | 7 |
 | EX-O5-03 | Pour chaque profil : portefeuille agentique contre benchmark et méthodes de comparaison. | `evaluation/backtest.py`, `portfolio/baselines.py` | `test_rapport_compare_toutes_les_methodes_par_profil` | 7 |
 | EX-O5-04 | Ablations : un agent seul, sans débat, sans agent Macro, sans Black-Litterman, sans contraintes ESG, confiance constante (c = 0,5), profil retiré du prompt, par fournisseur LLM. | `evaluation/ablations.py` | `test_configurations_d_ablation_generees` ; `test_ablation_sans_debat_saute_les_tours` ; `test_ablation_confiance_constante` | 7 |
 | EX-O5-05 | Robustesse : intervalles par *bootstrap* stationnaire par blocs, plusieurs dates de départ, plusieurs exécutions du LLM (dont paraphrases des prompts et température > 0), liste fermée des tests principaux avec correction de Holm. | `evaluation/robustness.py` | `test_bootstrap_par_blocs_stationnaire` ; `test_bootstrap_couvre_une_valeur_connue` (synthétique) ; `test_variance_des_decisions_sur_plusieurs_executions` ; `test_correction_de_holm` | 7 |
-| EX-O5-06 | Contrôle du *look-ahead bias* : date de fin d'entraînement relevée pour chaque `modele_servi` ; tout résultat antérieur est étiqueté « contaminé » ; anonymisation selon le protocole de la section 11.5. | `evaluation/lookahead.py`, `config/llm.yaml` | `test_fin_entrainement_relevee_pour_chaque_modele_servi` ; `test_resultats_anterieurs_a_la_fin_entrainement_etiquetes_contamines` ; `test_anonymisation_masque_noms_et_dates` ; `test_anonymisation_prix_rebases_a_cent` | 7 |
+| EX-O5-06 | Contrôle du *look-ahead bias* : date de fin d'entraînement relevée pour chaque `modele_servi` ; tout résultat antérieur est étiqueté « contaminé » ; anonymisation selon le protocole de la section 11.5 (même cadence des deux côtés de la frontière de contamination ; fuites implicites étendues). | `evaluation/lookahead.py`, `config/llm.yaml` | `test_fin_entrainement_relevee_pour_chaque_modele_servi` ; `test_resultats_anterieurs_a_la_fin_entrainement_etiquetes_contamines` ; `test_anonymisation_masque_noms_et_dates` ; `test_anonymisation_prix_rebases_a_cent` | 7 |
 | EX-O5-07 | *Live test* hebdomadaire : décisions horodatées et figées (hash) avant d'observer le résultat. | `evaluation/live.py` | `test_decision_live_figee_hash_immuable` ; `test_decision_live_posterieure_refusee` | 7 |
 | EX-O5-08 | Le rapport L4 est généré par script, déclare son objet (section 11.4), et chaque chiffre renvoie à un `run_id`. | `evaluation/report.py` | `test_rapport_l4_genere_et_chiffres_traces` ; `test_rapport_l4_declare_son_objet` | 7 |
 | EX-O5-09 | Qualité du raisonnement : évaluation RAG, part des affirmations sourcées, grille de revue humaine des débats. | `evaluation/reasoning.py` | `test_part_des_affirmations_sourcees` ; grille dans `docs/` | 7 |
 | EX-O5-10 | Coût LLM par décision agrégé depuis les enregistrements d'exécution. | `evaluation/metrics.py`, `llm/records.py` | `test_cout_llm_par_decision_agrege_les_executions` | 7 |
-| EX-O5-11 | L'effet minimal détectable sur le ratio d'information (analyse de puissance, section 11.4) est calculé et publié pour chaque période d'évaluation. | `evaluation/robustness.py` | `test_effet_minimal_detectable_formule` | 7 |
+| EX-O5-11 | L'effet minimal détectable sur le ratio d'information est calculé et publié pour chaque période d'évaluation : formule avec correction de Holm sur 9 tests, environ 3,6/√T (section 11.4), complétée par un bootstrap en blocs qui tient compte de la dépendance entre décisions. | `evaluation/robustness.py` | `test_effet_minimal_detectable_formule` ; `test_effet_minimal_detectable_holm` ; `test_effet_minimal_detectable_bootstrap_blocs` | 7 |
 | EX-O5-12 | Pré-enregistrement (section 11.6) : paramètres, graines et liste des tests principaux figés et hashés avant le premier run d'évaluation ; un run dont la configuration diffère est refusé. | `evaluation/preregistration.py`, `runs/` | `test_evaluation_refusee_sans_preregistrement` ; `test_parametres_differents_du_preregistrement_refuses` | 7 |
 | EX-O5-13 | Calibration de la confiance : score de Brier et diagramme de fiabilité des vues finales ; taux d'unanimité au tour 0 avant et après la date de fin d'entraînement (indicateur de fuite). | `evaluation/reasoning.py` | `test_score_de_brier_calcule` ; `test_taux_unanimite_tour_zero_par_periode` | 7 |
+| EX-O5-14 | Biais du survivant de la poche titres : le pool est daté de janvier 2024 (D-037). Pour un backtest démarrant avant, la poche titres est rapportée séparément et étiquetée « contaminé » avant 2024-02. En phase 7, le pool est reconstruit à chaque date (révisions Wikipédia) et le biais est mesuré (D-046). | `evaluation/replication.py`, `evaluation/report.py` | `test_poche_titres_backtest_ancien_etiquetee_biais_du_survivant` ; `test_pool_reconstruit_a_chaque_date` | 7 |
+| EX-O5-15 | Rejouabilité des données et des analyses (D-043). Le stockage garde des **instantanés bruts append-only** par date de collecte (`.cache/data/snapshots/<source>/<date>/`, jamais écrasés, suffixes `~2`, `~3` si le contenu diffère le même jour). `data_manifest()` produit le manifeste `data_manifest.json` : SHA-256 des jeux dérivés et des instantanés, plages de dates, versions des bibliothèques, hash de `config/data.yaml`, `config/universe.yaml` et `config/esg.yaml`, `manifest_sha256` hors `generated_at`. Le pré-enregistrement (11.6, D-027) lie ce hash. | `data/store.py`, `data/manifest.py`, `evaluation/preregistration.py` | `test_snapshot_append_only_idempotent_et_jamais_ecrase` ; `test_manifeste_deterministe_et_sensible_a_un_octet` ; `test_hash_sensible_a_un_octet` ; `test_retraitement_ne_detruit_pas_l_ancienne_valeur` ; `test_reconstruction_depuis_le_stockage_etiquetee` | 2, 7 |
+| EX-O5-16 | Évaluation en live de l'agent Sentiment (D-044) : portefeuille « avec » et « sans » Sentiment exécutés en parallèle (ombre) dès le premier jour ; corrélation de rang entre sentiment et rendement à 1 semaine, avec intervalle et mention de la puissance (moins de 400 observations après 6 mois). La différence live n'est pas présentée comme un gain. | `evaluation/live.py`, `agents/sentiment.py`, `data/connectors/news.py` | `test_portefeuille_avec_sans_sentiment_en_ombre` ; `test_correlation_de_rang_avec_intervalle_et_puissance` | 7 |
+| EX-O5-17 | Étiquette « non investissable » dans le reporting (D-045). Elle figure : (1) dans chaque tableau de métriques, sur la ligne de toute période construite sur des séries synthétiques (colonne `investissable`) ; (2) dans chaque graphique (zone ombrée et légende) ; (3) dans le texte de L4, à chaque chiffre cité d'une telle période ; (4) dans les fichiers de résultats des runs. Les périodes sur ETF réels ne la portent pas. Les chiffres « non investissables » ne servent pas aux tests principaux (11.4). | `evaluation/report.py`, `evaluation/metrics.py`, `data/universe.py` | `test_etiquette_non_investissable_sur_periodes_synthetiques` ; `test_periode_sur_etf_reels_sans_etiquette` ; `test_chiffres_non_investissables_exclus_des_tests_principaux` | 7 |
 
-**Bilan :** 59 exigences fonctionnelles (O1 : 17, O2 : 12, O3 : 9, O4 : 8, O5 : 13), toutes reliées à au moins un composant et un test prévu. Exigences non fonctionnelles : section 11.
+**Bilan :** 69 exigences fonctionnelles (O1 : 18, O2 : 14, O3 : 11, O4 : 9, O5 : 17), toutes reliées à au moins un composant et un test prévu. Exigences non fonctionnelles : section 11.
 
 ---
 
@@ -161,8 +172,8 @@ flowchart LR
         PX["Prix ETF et actions"]
         MAC_D["Macro FRED/ALFRED, BCE"]
         FIL["Dépôts EDGAR 10-K, 10-Q, 8-K, Form 4"]
-        NEWS["News RSS, GDELT"]
-        ESGD["Exclusions et scores ESG"]
+        NEWS["News : RSS (sans historique avant collecte), GDELT (seendate)"]
+        ESGD["Exclusions ESG (SIC, indice) ; aucun score gratuit"]
         ASOF["as_of(t)"]
         PX --> ASOF
         MAC_D --> ASOF
@@ -219,7 +230,7 @@ Les deux niveaux suivent le modèle AlphaAgents (spécialistes, coordinateur, d�
 | --- | --- | --- | --- | --- |
 | `schemas.py` | (fichier unique) | Modèles Pydantic partagés (section 5) | `pydantic` | tout autre module du paquet |
 | `llm/` | `client.py`, `cache.py`, `quotas.py`, `records.py`, `config.py` | `LLMClient` unique via LiteLLM (`complete`, `embed`) ; modes interactif et évaluation ; cache disque ; journal des quotas ; `ExecutionRecord` | `schemas`, `litellm` | — (seul module autorisé à importer `litellm` ou un SDK de fournisseur) |
-| `data/` | `connectors/{prices,macro,filings,news,esg,fx}.py`, `store.py`, `pit.py`, `quality.py`, `universe.py` | Connecteurs, stockage Parquet ou DuckDB, contrôle qualité et couverture, univers et jonctions, `as_of(t)` | `schemas` | `llm`, `agents`, `debate` |
+| `data/` | `models.py`, `settings.py`, `http.py`, `store.py`, `pit.py`, `quality.py`, `universe.py`, `pipeline.py`, `coverage.py`, `manifest.py`, `analysis.py`, `connectors/{prices,macro,filings,news,esg,fx}.py` | Couche de données (phase 2, D-030 à D-038) : modèles propres à la couche (`models.py`) et réglages lus dans `config/data.yaml` (`settings.py`) ; client HTTP avec cache disque ; stockage Parquet ; contrôle qualité ; univers et jonctions ; pipeline de téléchargement ; rapport de couverture (`docs/couverture_donnees.md`) ; manifeste des données et instantanés (`manifest.py`, D-043) ; analyses du rapport : liquidité, contrôle croisé proxy/primaire, matrice ESG, composition des séries (`analysis.py`) ; `as_of(t)` | `schemas` | `llm`, `agents`, `debate` |
 | `tools/` | `finance.py`, `risk.py`, `macro_regime.py`, `rag.py`, `summarize.py` | Calculs financiers, alertes de risque par seuils, RAG, résumé avec réflexion | `schemas`, `data`, `llm` (RAG, résumé, embeddings) | `agents`, `debate`, `portfolio` |
 | `agents/` | `base.py`, `prompts.py`, `macro.py`, `valuation.py`, `sentiment.py`, `risk.py`, `fundamental.py`, `esg.py`, `coordinator.py` | Agents de rôle | `schemas`, `llm`, `tools`, `data` | `portfolio`, `rebalancing` |
 | `debate/` | `orchestrator.py`, `consensus.py`, `devil.py`, `journal.py` | Collaboration, débat (graphe LangGraph), consensus, journaux | `schemas`, `agents`, `llm` | `portfolio` |
@@ -230,7 +241,9 @@ Les deux niveaux suivent le modèle AlphaAgents (spécialistes, coordinateur, d�
 | `cli.py` | (fichier unique) | Commandes `analyse`, `backtest`, `live`, `preregistrer` | tous | — |
 | `app/` | pages Streamlit (hors `src/`) | Interface | `amundi_agentic` (lecture des runs) | `litellm`, SDK fournisseurs |
 
-Règles vérifiées par `test_dependances_entre_modules` (analyse des imports par `ast`, déjà écrit dans `tests/test_specifications.py`) : aucun import de `litellm`, `openai`, `anthropic`, `google.genai`, `google.generativeai`, `groq`, `ollama` ni `langchain_<fournisseur>` hors de `llm/` ; `portfolio/` n'importe ni `llm/` ni `agents/`. Les juges de l'évaluation RAG (Ragas ou Phoenix) et les embeddings passent obligatoirement par `LLMClient`, donc par LiteLLM et la configuration gratuite (EX-NF-14).
+Règles vérifiées par `test_dependances_entre_modules` (analyse des imports par `ast`, déjà écrit dans `tests/test_specifications.py`) : aucun import de `litellm`, `openai`, `anthropic`, `google.genai`, `google.generativeai`, `groq`, `ollama` ni `langchain_<fournisseur>` hors de `llm/` ; `portfolio/` n'importe ni `llm/` ni `agents/`. `config/data.yaml` (limites d'usage par source, seuils qualité, séries FRED et BCE, flux RSS, concepts XBRL) est lu par `data/settings.py`. Les juges de l'évaluation RAG (Ragas ou Phoenix) et les embeddings passent obligatoirement par `LLMClient`, donc par LiteLLM et la configuration gratuite (EX-NF-14).
+
+**Hors périmètre applicatif (D-050).** graphify (graphe de connaissances du dépôt, mise à jour en mode code seulement, sans LLM) est un outil de dépôt : aucun module de `src/` ni de `app/` ne l'importe, et `graphify-out/` n'est modifié que par graphify.
 
 **Ajouts au découpage 5.2 :** `schemas.py` (modèles partagés) et `cli.py`. Sans `schemas.py`, `portfolio/` devrait importer `agents/` pour connaître `View`, ce qui créerait une dépendance du quantitatif vers le LLM.
 
@@ -249,13 +262,16 @@ class LLMClient:
 class PointInTimeStore:
     def as_of(self, t: date) -> DataView: ...       # coupure : t 00:00 Europe/Paris
 class DataView:                                    # tout est filtré sur « publié strictement avant la coupure »
-    def prices(self, tickers, start: date) -> pd.DataFrame: ...          # clôtures jusqu'à t-1
+    def prices(self, tickers, start: date) -> pd.DataFrame: ...          # séances strictement antérieures à t (D-038)
     def macro(self, series_ids, start: date) -> pd.DataFrame: ...       # millésimes ALFRED
-    def filings(self, ticker, forms: set[str]) -> list[Filing]: ...      # acceptation EDGAR, America/New_York -> UTC
+    def filings(self, ticker, forms: set[str]) -> list[Filing]: ...      # acceptation EDGAR lue comme UTC brut (`raw_as_utc`, D-031)
     def xbrl_facts(self, ticker, concepts) -> pd.DataFrame: ...          # dernier dépôt filed < t par période
     def news(self, query: NewsQuery) -> list[NewsItem]: ...              # instant de publication
     def esg(self, asset_id) -> EsgRecord | None: ...
     def fx_eur(self, currency, start: date) -> pd.Series: ...
+
+# data/manifest.py
+def data_manifest(settings: DataSettings) -> dict: ...   # SHA-256 des jeux dérivés et des instantanés, versions des bibliothèques, hash des trois configs ; `manifest_sha256` hors `generated_at` ; réutilisé par le pré-enregistrement (11.6)
 
 # agents/base.py
 class Agent(Protocol):
@@ -294,12 +310,12 @@ Le niveau de modèle se lit dans `config/llm.yaml` (`main` ou `light`) ; aucun n
 | --- | --- | --- | --- | --- | --- | --- |
 | Macro | Allocation | Oui | Séries FRED (millésimes ALFRED), BCE : croissance, inflation, taux directeurs, courbe 10 ans − 2 ans, écarts de crédit (séries à fixer en phase 2) | `tools/macro_regime.py` : régime croissance × inflation (4 quadrants), pente de courbe, variations sur 3 et 12 mois | `View` par classe | `main` |
 | Valuation / Momentum | Allocation | Oui | Prix et volumes des ETF (EUR) | `tools/finance.py` : rendement annualisé et volatilité (formules du papier), momentum 12-1 mois (Jegadeesh et Titman, 1993), rendement 3 mois, perte maximale 1 an, écart à la moyenne mobile 200 jours | `View` par classe | `main` |
-| Sentiment marché | Allocation | Oui (si couverture suffisante, EX-O1-17) | News macro et marché (RSS des banques centrales, GDELT) | `tools/summarize.py` (résumé avec réflexion, `light`) | `View` par classe | `main` (vote), `light` (résumés) |
+| Sentiment marché | Allocation | **Non en backtest** (D-044) ; en live, portefeuille « avec » et « sans » en ombre (EX-O5-16) | News macro et marché (RSS des banques centrales, sans historique avant leur collecte ; GDELT, fenêtres explicites jusqu'à 2019-11 au moins, D-036) | `tools/summarize.py` (résumé avec réflexion, `light`) | `View` par classe | `main` (vote), `light` (résumés) |
 | Risque | Allocation | Non (module la confiance) | Prix, corrélations, VIX (FRED) | `tools/risk.py` : volatilité réalisée 21 j, VaR historique 95 %, corrélations glissantes, régime de volatilité, **alertes par seuils** (H, `config/debate.yaml`) | `RiskAssessment` : alertes calculées par seuils, commentaire LLM | `main` (commentaire seul) |
 | Fundamental | Titres | Oui | 10-K, 10-Q (EDGAR, date d'acceptation), faits XBRL (`companyfacts`, champ `filed`) | `tools/rag.py` : RAG par section ; extraction d'indicateurs XBRL en Python (pas d'appels API générés par le LLM) | `View` par titre | `main` |
-| Sentiment titre | Titres | Oui (si couverture suffisante) | News par titre (GDELT), 8-K et Form 4 (EDGAR, opérations d'initiés) | `tools/summarize.py` | `View` par titre | `main` (vote), `light` (résumés) |
+| Sentiment titre | Titres | **Non en backtest** (D-044) ; en live, comme ci-dessus | News par titre (GDELT), 8-K et Form 4 (EDGAR, opérations d'initiés) | `tools/summarize.py` | `View` par titre | `main` (vote), `light` (résumés) |
 | Valuation titre | Titres | Oui | Prix et volumes | `tools/finance.py` (mêmes formules que le papier) | `View` par titre | `main` |
-| ESG et conformité | Transverse | Non (veto) | `config/esg.yaml` (exclusions), classification sectorielle (codes SIC EDGAR), listes d'exclusion publiques datées, scores ESG si disponibles ; pour un ETF, méthodologie de son indice (section 9.4) | Règles Python (filtres) ; `light` seulement pour motiver une controverse en texte | `EsgAssessment` : veto, motifs, score, couverture | règles + `light` |
+| ESG et conformité | Transverse | Non (veto) | `config/esg.yaml` (exclusions), classification sectorielle (codes SIC EDGAR, proxy et non mesure de chiffre d'affaires), listes d'exclusion publiques datées ; pour un ETF, la source manuelle et historisée de la section 9.4 (SFDR, indice, caractère ESG/PAB/CTB, D-048) ; aucun score ESG gratuit exploitable (D-035) | Règles Python (filtres) ; `light` seulement pour motiver une controverse en texte | `EsgAssessment` : veto, motifs, score, couverture | règles + `light` |
 | Coordinateur | Transverse | Non | Sorties des agents | Orchestration (graphe), arbitrage des vues contestées | Rapport consolidé + vues finales | `main` |
 
 ### Grandes lignes des prompts de rôle (fichiers `agent_prompts/<agent>_v1.md` en phase 3)
@@ -505,7 +521,7 @@ flowchart TD
 - **Ordre du *round robin*.** Ordre fixe par niveau (allocation : Macro, Valuation/Momentum, Sentiment ; titres : Fundamental, Sentiment, Valuation), chaque agent recevant les `AgentTurn` du tour précédent de tous les autres. L'agent Risque parle au tour 0 ; ses alertes sont recalculées en Python, sans voter.
 - **`R_max`** (H) : 2 tours de débat après la collaboration, valeur imposée par le prompt quand le budget est contraint ; paramètre de `config/debate.yaml`.
 - **Le consensus est calculé en Python** à partir des niveaux structurés, pas déclaré par le coordinateur (pas de « TERMINATE » produit par le LLM).
-- Si l'agent Sentiment est désactivé faute de couverture (EX-O1-17), K = 2 votants ; les règles ci-dessous s'appliquent telles quelles, la médiane de deux niveaux étant arrondie vers 0.
+- En backtest, l'agent Sentiment ne vote pas (D-044, EX-O1-17) : K = 2 votants ; les règles ci-dessous s'appliquent telles quelles, la médiane de deux niveaux étant arrondie vers 0. En live, K = 3 pour le portefeuille « avec » Sentiment et K = 2 pour le portefeuille « sans » (EX-O5-16).
 
 ### 6.2 Règle de consensus
 
@@ -563,7 +579,7 @@ Limite reconnue : avec w_b = 0 et la contrainte long-only, une vue négative sur
 | Paramètre | Choix (H, gelé avant l'évaluation) | Justification |
 | --- | --- | --- |
 | Rendements | Hebdomadaires, en EUR, annualisés × 52 | Les places (Tokyo, Paris, New York) ferment à des heures différentes : des rendements quotidiens sous-estimeraient les corrélations |
-| Fenêtre | 5 ans glissants (260 semaines), strictement avant t | Assez d'observations pour 25 à 60 actifs avec *shrinkage* |
+| Fenêtre | 5 ans glissants (260 semaines), strictement avant t | Assez d'observations pour environ 24 actifs (9 classes hors monétaire et au plus 15 titres) avec *shrinkage* |
 | Estimateur | Ledoit-Wolf, cible identité mise à l'échelle : O. Ledoit et M. Wolf, « A well-conditioned estimator for large-dimensional covariance matrices », *Journal of Multivariate Analysis*, 88(2), 2004, p. 365-411 | L'univers mélange actions, obligations, or et matières premières : une cible à corrélation constante unique (Ledoit et Wolf, « Honey, I shrunk the sample covariance matrix », *Journal of Portfolio Management*, 30(4), 2004) n'a pas de sens entre classes. Une cible par blocs (corrélation constante par classe) est l'alternative écartée : plus de paramètres, sans implémentation de référence |
 | Historiques inégaux | Un actif entre dans l'univers à t seulement s'il a 260 observations hebdomadaires en EUR avant t, jonctions documentées comprises (9.1) ; Σ est estimée sur la fenêtre commune, sans imputation | Évite une Σ estimée sur des fenêtres différentes, qui peut ne pas être définie positive |
 | Monétaire | Hors de Σ (actif résiduel, variance nulle) | 7.4 |
@@ -580,7 +596,7 @@ Limite reconnue : avec w_b = 0 et la contrainte long-only, une vue négative sur
 - **Pourquoi κ se calibre sur le budget de risque.** Pour une vue isolée de confiance c (forme fermée d'Idzorek, 7.5), sans contrainte, l'écart de poids induit vaut Δw_i = n·κ·c / (δ·σ̃_i), et la *tracking error* qu'il crée vaut n·κ·c / δ. Avec δ = SR*/σ_b (8.2), elle vaut n·κ·c·σ_b / SR*. Si N vues de niveau 1 et de confiance c_max étaient indépendantes, la *tracking error* totale serait d'environ √N·κ·c_max·σ_b / SR*.
 - **Règle retenue (H)** : κ(t) = TE_max · SR* / (c_max · σ_b(t) · √N), avec N = nombre d'actifs de niveau allocation pouvant porter une vue (9 dans l'univers de 9.1). Ainsi, N vues positives à confiance maximale saturent à peu près le budget TE_max du profil. La *tracking error* créée par une vue vaut n·c·TE_max / (c_max·√N) et ne dépend plus de σ_b(t).
 - Exemple de calcul (paramètres de conception et une volatilité de benchmark **hypothétique**, pas une mesure) : profil équilibré, TE_max = 0,03, SR* = 0,35, c_max = 0,8, σ_b = 0,10, N = 9 → κ ≈ 0,044 ; pour un actif à σ = 0,18, une vue « positive » place Q à environ 0,008 au-dessus de Π.
-- **Poche titres : κ_t distinct (H).** κ_t(t) = u_titre · δ(t) · σ_med(t) / (2 · c_max), où u_titre est le plafond par titre (8.3) et σ_med(t) la volatilité médiane des titres de la poche à t. Une vue « fortement positive » à confiance maximale sur un titre de volatilité médiane atteint alors juste le plafond. Les vues moins fortes, moins confiantes ou sur des titres plus volatils restent en dessous. Cela évite que tous les titres à vue positive butent sur le plafond, ce qui rendrait Black-Litterman équivalent à une équipondération. La part des titres au plafond est publiée (EX-O2-11). Si elle dépasse la moitié des titres retenus, le rapport l'indique comme une équivalence de fait avec l'équipondération.
+- **Poche titres : κ_t distinct (H, à recalibrer en phase 4).** κ_t(t) = u_titre · δ(t) · σ_med(t) / (2 · c_max), où u_titre est le plafond par titre (8.3) et σ_med(t) la volatilité médiane des titres de la poche à t. Une vue « fortement positive » à confiance maximale sur un titre de volatilité médiane atteint alors juste le plafond. Les vues moins fortes, moins confiantes ou sur des titres plus volatils restent en dessous. Cela évite que tous les titres à vue positive butent sur le plafond, ce qui rendrait Black-Litterman équivalent à une équipondération. Avec 15 titres au plus (D-029), le poids moyen par titre de la poche pleine vaut U_poche/15 (8.3), et le plafond u_titre doit rester supérieur à ce poids moyen sans dépasser U_poche/n pour n titres à vue forte : sinon le plafond de poche (CT-10) sature avant le plafond par titre et la poche devient une équipondération des titres à vue positive. κ_t suit u_titre par construction, donc sa valeur est recalculée dès que u_titre est recalibré. La part des titres au plafond, et la fréquence de saturation du plafond de poche, sont publiées (EX-O2-11). Si elle dépasse la moitié des titres retenus, le rapport l'indique comme une équivalence de fait avec l'équipondération.
 - Le champ `rendement_excedentaire_attendu` de la `View` reçoit Q_k, calculé par `portfolio/views.py`.
 
 ### 7.5 Ω (Idzorek) et τ
@@ -603,13 +619,13 @@ Liste **exhaustive** des contraintes :
 | CT-03 | Bornes par actif | l_i ≤ w_i ≤ u_i (H, 8.3) | prompt 3.5 |
 | CT-04 | Bornes par classe et par zone | L_c ≤ Σ_{i∈c} w_i ≤ U_c (H, 8.3) ; la poche titres compte dans la zone États-Unis et dans le total actions | prompt 3.5 |
 | CT-05 | Exclusions ESG et vetos | w_i = 0 pour tout actif exclu ou sous veto | prompt 3.5 |
-| CT-06 | Score ESG minimal | Σ_{i couverts} s_i w_i ≥ s_min · Σ_{i couverts} w_i (score normalisé, plus haut = meilleur), avec s_min = score du benchmark sur sa partie couverte (H, règle « meilleur que le benchmark ») | prompt 3.5 ; un seuil absolu pourrait rendre le benchmark inadmissible |
+| CT-06 | Score ESG minimal : **suspendue, non alimentée (D-035)** | Forme prévue, inactive : Σ_{i couverts} s_i w_i ≥ s_min · Σ_{i couverts} w_i (score normalisé), avec s_min = score du benchmark sur sa partie couverte (H). Aucun score gratuit n'est exploitable (0 % des 28 actifs, `docs/couverture_donnees.md`). Elle ne serait réactivée qu'avec une source de score, dans une nouvelle version pré-enregistrée (Q-12, Q-19) | prompt 3.5 ; la limite est affichée dans chaque rapport, pas masquée |
 | CT-07 | Volatilité plafond | wᵀ Σ_court w ≤ max(σ_cible, σ_b,court(t))² | prompt 3.5. Le max garantit seulement que le benchmark reste admissible (sinon EX-O2-04 serait impossible les années de forte volatilité). Il **ne garantit pas** que la volatilité reste sous σ_cible en période de crise : il garantit qu'elle ne dépasse ni σ_cible ni celle du benchmark. La fréquence où σ_b,court > σ_cible est publiée (EX-O2-11) |
 | CT-08 | *Tracking error* maximale | (w − w_b)ᵀ Σ (w − w_b) ≤ TE_max² | **ajout** (section 14) : borne l'effet de vues LLM bruitées ; sert aussi à calibrer κ (7.4) |
 | CT-09 | Rotation | ½ Σ_i \|w_i − w_prev,i\| ≤ T_max (hors première allocation) | prompt 3.5 |
 | CT-10 | Poche titres | Σ_{titres} w_i ≤ U_poche ; w_i ≤ u_titre pour chaque titre | univers 3.1 |
 
-Après résolution, `constraints.py` revérifie chaque contrainte (tolérance 1e-6), note si elle est active (marge < 1e-6) et l'écrit dans `RebalancingProposal.contraintes`. Ordre de relâchement en cas d'infaisabilité (EX-O2-07) : CT-09 (rotation), puis CT-08, puis CT-07. CT-01 à CT-06 et CT-10 ne sont jamais relâchées ; si l'infaisabilité persiste, aucune proposition n'est émise et le gérant est alerté. Post-traitement : ordres inférieurs à 0,0025 en poids (0,25 point) ignorés (H).
+Après résolution, `constraints.py` revérifie chaque contrainte (tolérance 1e-6), note si elle est active (marge < 1e-6) et l'écrit dans `RebalancingProposal.contraintes`. Ordre de relâchement en cas d'infaisabilité (EX-O2-07) : CT-09 (rotation), puis CT-08, puis CT-07. CT-01 à CT-05 et CT-10 ne sont jamais relâchées (CT-06 est suspendue) ; si l'infaisabilité persiste, aucune proposition n'est émise et le gérant est alerté. Post-traitement : ordres inférieurs à 0,0025 en poids (0,25 point) ignorés (H).
 
 ### 7.7 Attribution par vue (pour `explain/attribution.py`)
 
@@ -662,7 +678,7 @@ Toutes les valeurs ci-dessous sont des **hypothèses de conception (H)**, à con
 | --- | --- | --- | --- |
 | Actions (total, poche titres comprise) | [10, 45] | [40, 75] | [60, 95] |
 | dont chaque zone (US, Europe, Japon, émergents) ; la poche titres compte dans la zone US | [0, w_b + 15] | [0, w_b + 15] | [0, w_b + 15] |
-| dont poche titres (CT-10) | [0, 5], ≤ 1 par titre | [0, 10], ≤ 2 par titre | [0, 15], ≤ 3 par titre |
+| dont poche titres (CT-10), 15 titres au plus | [0, 5], ≤ 1 par titre (provisoire) | [0, 10], ≤ 2 par titre (provisoire) | [0, 15], ≤ 3 par titre (provisoire) |
 | Souverain euro | [20, 70] | [10, 45] | [0, 30] |
 | Crédit IG euro | [10, 50] | [5, 35] | [0, 25] |
 | Haut rendement | [0, 10] | [0, 15] | [0, 15] |
@@ -670,7 +686,7 @@ Toutes les valeurs ci-dessous sont des **hypothèses de conception (H)**, à con
 | Matières premières | [0, 5] | [0, 10] | [0, 10] |
 | Monétaire | [0, 30] | [0, 20] | [0, 15] |
 
-Justification : bandes d'environ 15 à 20 points autour du benchmark (H, ordre de grandeur supposé des mandats d'allocation tactique, à confirmer Q-11). Le benchmark est à l'intérieur de chaque bande (testé par `test_benchmark_admissible_pour_son_profil`). Plafond par titre : relevé par rapport à la version 1.0 (0,5, 1 et 1,5) et couplé à κ_t (7.4), pour que les titres ne butent pas tous sur le plafond.
+Justification : bandes d'environ 15 à 20 points autour du benchmark (H, ordre de grandeur supposé des mandats d'allocation tactique, à confirmer Q-11). Le benchmark est à l'intérieur de chaque bande (testé par `test_benchmark_admissible_pour_son_profil`). **Poche titres et plafonds par titre.** La poche titres représente 5 à 15 % du portefeuille (H, selon le profil). Avec 15 titres au plus (D-029), le poids moyen d'un titre dans une poche pleine vaut U_poche/15, soit environ 0,33 %, 0,67 % et 1 % pour U_poche = 5, 10 et 15 % (calcul, pas une mesure). Les plafonds de D-019 (1, 2 et 3 %) valent alors trois fois ce poids moyen, et U_poche/u_titre = 5 pour les trois profils : dès que plus de 5 titres ont une vue forte, le plafond de poche sature avant le plafond par titre. Ces plafonds sont **provisoires (H) et à recalibrer en phase 4**, avec κ_t (7.4), avant le pré-enregistrement ; la règle candidate est u_titre = k · U_poche / 15 avec k ≈ 2 (H), qui donnerait 0,67, 1,33 et 2 %. Aucune valeur n'est figée ici.
 
 ---
 
@@ -686,35 +702,59 @@ Devise de référence : EUR (H, Q-9). Le tableau provient d'un **relevé prélim
 | Actions Europe | MEU.PA | Amundi MSCI Europe UCITS ETF Acc | EUR | 2008-01-02 | Proxy USD : VGK (2005-03-10) | Date Yahoo suspecte (début de série par défaut ?) |
 | Actions Japon | JPN.PA | Amundi Japan TOPIX II UCITS ETF EUR Dist | EUR | 2008-01-02 | Proxy USD : EWJ (1996-03-18) | Part distribuante : utiliser les cours ajustés des dividendes ; date Yahoo suspecte |
 | Actions émergents | AEEM.PA | Amundi MSCI Emerging Markets Swap UCITS ETF EUR Acc | EUR | 2010-11-30 | Proxy USD : EEM (2003-04-14) | — |
-| Souverain zone euro | MTD.PA | Amundi Euro Government Bond 7-10Y UCITS ETF Acc | EUR | 2009-01-02 | **Séries EUR seulement** : rendement total reconstruit depuis les courbes de taux BCE, ou indice ICE BofA Euro sur FRED s'il est disponible | Alternative large : EGOV.PA (2016-11-11) ; méthode de reconstruction et duration à documenter |
-| Crédit IG euro | CRP.PA | Amundi EUR Corporate Bond Climate Paris Aligned UCITS ETF Acc | EUR | 2009-04-02 | **Séries EUR seulement** : indice ICE BofA Euro Corporate sur FRED s'il est disponible, sinon début retardé | Le nom actuel indique un indice « Paris Aligned » : vérifier les changements d'indice |
-| Haut rendement | AHYE.PA | Amundi EURO High Yield Bond ESG UCITS ETF DR | EUR | 2013-09-03 | **Séries EUR seulement** : indice ICE BofA Euro High Yield sur FRED s'il est disponible, sinon début retardé | Historique le plus court de l'univers |
-| Or | GOLD.PA | Amundi Physical Gold ETC C | USD selon Yahoo | 2019-05-23 | Proxy USD : GLD (2004-11-18) | Devise et type (`EQUITY`) incohérents dans Yahoo ; historique court |
+| Souverain zone euro | MTD.PA | Amundi Euro Government Bond 7-10Y UCITS ETF Acc | EUR | 2009-01-02 | **Aucun proxy USD, aucune reconstruction** (D-034) : l'ETF primaire seul ; 260 semaines atteintes le 2013-12-27 | Alternative : EGOV.PA (2016-11-11, 260 semaines le 2021-11-05) ; duration à documenter. Les courbes zéro-coupon BCE (depuis 2004-09-06) sont des taux, utilisés par l'agent Macro, pas comme rendement total |
+| Crédit IG euro | CRP.PA | Amundi EUR Corporate Bond Climate Paris Aligned UCITS ETF Acc | EUR | 2009-04-02 | **Aucun proxy USD, aucune série publique EUR** : l'ETF primaire seul ; 260 semaines atteintes le 2014-03-27 (la série FRED ICE Euro Corporate n'existe pas) | Le nom actuel indique un indice « Paris Aligned » : prospectus et dates de changement d'indice à relever (Q-21) |
+| Haut rendement | AHYE.PA | Amundi EURO High Yield Bond ESG UCITS ETF DR | EUR | 2013-09-03 | **Aucun proxy USD** : l'ETF primaire seul ; 260 semaines atteintes le 2018-08-28. L'indice ICE BofA Euro High Yield (FRED) n'existe que depuis 2023-10-02, sur une fenêtre glissante de 3 ans (licence ICE) : inutilisable pour un backtest | Classe qui fixe le début principal du backtest ; sensibilité sans cette classe toujours rapportée (D-045, Q-15, Q-19). Indice « ESG » : prospectus et dates de changement à relever (Q-21) |
+| Or | GOLD.PA | Amundi Physical Gold ETC C | USD selon Yahoo ; EUR dans la configuration | 2019-05-23 | Proxy USD : GLD (2004-11-18) ; 260 semaines atteintes le 2024-05-16 pour l'ETF seul, le 2009-11-12 avec le proxy | **Devise de cotation à confirmer au prospectus (Q-20)** ; type (`EQUITY`) incohérent dans Yahoo ; historique court |
 | Matières premières | COMO.PA | Amundi Bloomberg Equal-weight Commodity ex-Agriculture UCITS ETF Acc | EUR | 2008-01-01 | Proxy USD : DBC (2006-02-06) | Exclut l'agriculture ; date Yahoo suspecte |
-| Monétaire | C3M.PA | Amundi Euro Government Bond 0-6 M UCITS ETF Acc | EUR | 2009-06-22 | **Séries EUR seulement** : €STR capitalisé (BCE, depuis octobre 2019), EONIA capitalisé avant | Alternative : CSH2.PA (historique Yahoo depuis 2025-03-17 seulement) |
+| Monétaire | C3M.PA | Amundi Euro Government Bond 0-6 M UCITS ETF Acc | EUR | 2009-06-22 | **Aucun proxy USD** : monétaire capitalisé EONIA (BCE, clé `EON/D.EONIA_TO.RATE`, 1999-01-04 à 2021-12-31) puis €STR (depuis 2019-10-01) ; faisable avec 260 semaines depuis 2003-12-29 | Alternative : CSH2.PA (historique Yahoo depuis 2025-03-17 seulement, inutilisable) ; règle de jonction EONIA/€STR (chevauchement 2019-10-01 à 2021-12-31) à documenter en phase 4 |
 | Contrôle « actions monde » | CW8.PA | Amundi MSCI World Swap UCITS ETF EUR Acc | EUR | 2009-06-16 | Proxy USD : URTH (2012-01-12), ACWI (2008-03-28) | Benchmark de contrôle (8.1), hors univers optimisé |
 
 Règles (H) :
 
 - **Actions, or, matières premières :** ETF Amundi en EUR quand ses 260 semaines d'historique précèdent t ; sinon proxy USD converti au cours de référence BCE. La retenue à la source et le coût de change (10.3) sont documentés.
-- **Obligations et monétaire :** aucun proxy USD. Un proxy USD mélangerait un autre marché de taux et le risque de change, qui domineraient le risque obligataire. Sources EUR candidates, toutes à vérifier en phase 2 (disponibilité, licence ICE sur FRED, profondeur) : €STR et EONIA (BCE), courbes de taux de la zone euro (BCE), indices ICE BofA Euro (FRED). À défaut de série EUR acceptable, le backtest commence plus tard.
+- **Obligations et monétaire :** aucun proxy USD. Un proxy USD mélangerait un autre marché de taux et le risque de change, qui domineraient le risque obligataire. Phase 2 (D-034) : les séries de rendement total sont les ETF eux-mêmes et le monétaire capitalisé EONIA puis €STR. Les indices ICE BofA Euro ne sont pas disponibles en rendement total long sur FRED (seul l'Euro High Yield existe, depuis 2023-10-02, fenêtre glissante de 3 ans), et reconstruire un rendement total depuis la courbe BCE est écarté : on ne l'invente pas.
 - **Dates de jonction :** chaque jonction (proxy ou série reconstruite → ETF) est publiée avec sa date et son écart de suivi sur la période de recouvrement (EX-O2-10).
 - Tickers introuvables chez Yahoo lors du relevé : MTX.PA, HYE.PA, CRB.PA, AMEO.PA, LCUW.DE.
 
+**Date de début du backtest** (260 semaines d'historique avant t, mesuré par script ; `docs/couverture_donnees.md`, D-034) :
+
+| Variante | Début | Classe limitante | Conséquence |
+| --- | --- | --- | --- |
+| Avec le haut rendement, proxys USD permis pour actions, or, matières premières | 2018-08-28 | Haut rendement (AHYE.PA) | Période contaminée plus courte |
+| Sans la classe haut rendement | 2014-03-27 | Crédit IG (CRP.PA) ; puis souverain, 2013-12-27 | Environ 4,4 ans de plus que la variante précédente |
+| Sans aucun proxy (ETF primaires seuls) | 2024-05-16 | Or (GOLD.PA) | Moins de 3 ans de données : incompatible avec la simulation d'au moins 3 ans (EX-O3-07) |
+
+**Règle de début (D-045, H, validée par Younes le 2026-10-03, EX-O2-13).** Elle ne dépend que de la disponibilité des données et elle est fixée **avant tout run LLM**, donc sans lien avec les résultats :
+
+- début principal : **2018-08-28**, **avec la classe haut rendement, conservée** ;
+- sensibilité obligatoire : **2014-03-27**, haut rendement exclu et poids renormalisés, toujours rapportée ; le meilleur des deux n'est jamais choisi après coup ;
+- critère minimal : au moins 2 creux du benchmark d'au moins 15 % et au moins une phase de hausse des taux. Le tableau « Creux » de `docs/couverture_donnees.md` (500.PA en euros, seuil de 15 % : H) donne, depuis 2018-08-28, quatre creux (2018-T4, 2020, 2022 avec une hausse du DGS10 de 162 points de base, 2025) ; depuis 2014-03-27 il en ajoute deux (2015 et 2015-2016), dont un seul avec hausse des taux, faible (+10 points de base). Le critère est donc rempli par le début principal.
+
+Conséquence sur la preuve (11.4) : le début du backtest n'allonge pas la période hors échantillon, qui ne dépend que de la date de fin d'entraînement des modèles ; il allonge la période contaminée, donc le nombre de régimes de marché et de dates pour contrôler la mécanique.
+
+**Étiquette « non investissable » (D-045).** Toute période de performance construite sur des séries synthétiques (proxys raccordés avant l'ETF primaire, par exemple l'or avant 2019-05-23, ou toute classe avec proxy USD converti) porte l'étiquette « non investissable » dans les tableaux, graphiques et textes de L4 et dans l'interface (EX-O2-14, EX-O4-09, EX-O5-17). Les périodes sur séries d'ETF réels ne la portent pas. Les titres de la poche sont des instruments réels cotés en dollars : ils ne sont pas un proxy ; leur conversion en euros est documentée mais ne déclenche pas l'étiquette (interprétation à confirmer).
+
+**Séries raccordées (D-046).** Le rapport de couverture (`docs/couverture_donnees.md`, « Composition de chaque série de classe par date ») montre que six classes sont **synthétiques avant l'ETF primaire** : actions États-Unis, Europe, Japon, émergents, or (GLD converti en euros avant le 2019-05-23) et matières premières. Aucun résultat sur ces périodes n'est un P&L investissable. Sont à fixer en phase 4 (EX-O2-14, Q-24) : la règle de raccord (sur rendements, chevauchement et erreur de suivi publiés, P&L étiqueté « non investissable »), la fenêtre de Σ des titres récents (ZS n'a 260 semaines qu'en 2023-03), l'usage des **mêmes séries raccordées** pour le benchmark et le portefeuille, et un cash de référence (€STR) distinct de l'actif détenu (C3M.PA).
+
+**Capitalisation ou distribution.** `config/universe.yaml` porte pour chaque ETF une colonne `distribution` (`acc`, `dist` ou `a_verifier`) : « dist » seulement si des dividendes sont enregistrés, « acc » d'après le nom Yahoo et contredit par une erreur qualité si un dividende apparaît, sinon `a_verifier` (aucune valeur inventée). Le rendement total d'un ETF distribuant utilise les cours ajustés (Q-22).
+
+**Liquidité.** Le rapport de couverture publie, depuis 2018-01-01, la valeur médiane échangée par jour et la part de jours sans volume de chaque ETF (EX-O3-11). Elle sert à relire les coûts de 10.3.
+
 ### 9.2 Poche actions individuelles
 
-- 15 à 50 actions **américaines** (H) : seules les sociétés qui déposent à la SEC ont des 10-K et 10-Q gratuits et datés (EDGAR), nécessaires à l'agent Fundamental et au point-in-time. Étendre aux actions européennes demanderait une source gratuite de rapports datés (Q-1, Q-16).
-- Extension au-delà de la réplication : grandes capitalisations américaines de plusieurs secteurs, à partir d'une liste de composants datée (phase 2).
+- **Environ 15 actions américaines au plus** (D-029, validé par Younes ; la borne haute « 50 » de la v1.1 est abandonnée) (H) : seules les sociétés qui déposent à la SEC ont des 10-K et 10-Q gratuits et datés (EDGAR), nécessaires à l'agent Fundamental et au point-in-time. Étendre aux actions européennes demanderait une source gratuite de rapports datés (Q-1, Q-16). La poche représente 5 à 15 % du portefeuille (8.3).
+- Hors réplication, la poche peut porter sur d'autres secteurs, dans la même limite de 15 titres, à partir d'une liste de composants datée. Le connecteur accepte n'importe quelle liste de tickers ; la liste de `config/universe.yaml` est une démonstration, pas le tirage de réplication (D-037).
 - Exclusions ESG appliquées avant tout débat (EX-O1-10).
-- Dans la poche titres, les vues sont trimestrielles sur l'historique long et mensuelles sur la période récente (prompt, section 2 ; plan pré-enregistré, 11.2).
+- Cadence des vues (D-039, corrigée) : allocation mensuelle sur tout l'historique ; poche titres trimestrielle sur l'historique long et mensuelle sur la période récente (10.1 et 11.2).
 
 ### 9.3 Les 15 titres de la réplication AlphaAgents
 
 **Le papier ne nomme pas les 15 titres.** Vérification faite le 2026-10-02 sur le texte extrait du PDF et sur les figures 6 et 8, dont les légendes ne portent pas de tickers. Le papier indique seulement « we randomly selected 15 stocks in technology sector ». Le seul nom cité est Zscaler (légende de la figure 3, « Multi-agent Debate Example on Zscaler » ; « Company Z » dans le texte). Proposition (H) :
 
-1. **Pool :** valeurs américaines du secteur technologie présentes dans une liste de composants **datée de janvier 2024** (par exemple une révision datée de la liste du S&P 500 ou du Nasdaq-100, à vérifier en phase 2), pour éviter le biais du survivant. L'appartenance de Zscaler (ZS) à ce pool est à vérifier. S'il n'y figure pas, il est ajouté hors pool et le rapport le signale.
+1. **Pool (D-037) :** secteur « Information Technology » du S&P 500, révision Wikipédia 1197645693 du 2024-01-21 : 64 titres, dont **62 utilisables** (dépôt EDGAR accepté avant 2024-02-01 et prix en janvier 2024). ANSS et JNPR, absents de Yahoo et d'EDGAR (sociétés rachetées), sont exclus. **ZS n'est pas dans le pool** : il est ajouté hors pool, explicitement, et le rapport le signale. Limite : un pool daté de 2024 sélectionne les titres avec la connaissance de 2024 ; pour un backtest démarrant en 2018, cela ajoute un biais du survivant plus fort que les deux seuls titres radiés (EX-O5-14, R-13).
 2. **Graine :** choisie, puis son SHA-256 est consigné (pré-enregistrement) **avant** le tirage ; la graine elle-même est révélée après.
-3. **Tirage :** permutation du pool par la graine ; ZS est ajouté d'office, puis les 14 premiers titres admissibles de la permutation sont retenus.
+3. **Tirage :** permutation du pool par la graine ; ZS est ajouté d'office, puis les 14 premiers titres admissibles de la permutation sont retenus, soit 15 titres au total comme dans le papier.
 4. **Règle de remplacement fixée d'avance :** un titre est inadmissible s'il lui manque un 10-K ou un 10-Q accepté avant le 2024-02-01, ou des prix sur janvier 2024. On passe alors au suivant dans la permutation.
 5. **Protocole du papier :** données de janvier 2024, décision au 2024-02-01, suivi sur 4 mois, équipondération des titres retenus, profils *risk-averse* et *risk-neutral*, taux sans risque Trésor 1 mois (FRED `DGS1MO`).
 
@@ -722,13 +762,17 @@ La comparaison avec le papier ne peut être que **qualitative**, puisque les tit
 
 ### 9.4 ESG des ETF
 
+**Constat de la phase 2 (D-035).** Aucun score ESG gratuit n'est exploitable (l'endpoint `sustainability` de yfinance renvoie 404). Le rapport de couverture affiche une matrice actif × critère à trois états (`determine_par_donnee`, `suppose_par_regle`, `inconnu`), totaux sur 28 actifs : armes controversées 0/1/27, tabac 0/16/12, charbon thermique 0/16/12, score ESG 0/28. Les 16 « supposés par règle » sont les 15 titres (code SIC courant, proxy) et 1 ETF (CRP.PA, indice « Paris Aligned » déduit du nom Yahoo, non vérifié au prospectus). Les armes controversées ne sont pas détectables par SIC. **L'ESG du prototype repose donc sur des exclusions supposées, jamais sur un score ni sur une donnée** ; CT-06 est suspendue (7.6). « Sans exclusion détectée » n'est pas une preuve d'absence d'exposition (Q-26).
+
+**Source ESG manuelle et historisée par ETF (D-048, EX-O1-18, phase 3).** Elle remplace, pour les ETF, la déduction depuis le nom Yahoo : seule une valeur appuyée sur un document (prospectus, DIC/KID, fiche produit, page de l'indice) est saisie ; classification SFDR (article 6, 8 ou 9), indice suivi, caractère ESG, PAB ou CTB, avec source, date du document, date d'effet et date de saisie, historisation append-only (D-043) ; sinon `inconnu`. Elle fait passer certaines cellules de la matrice de `suppose_par_regle` ou `inconnu` à `determine_par_donnee`. **Limites :** SFDR classe des produits, ce n'est pas un score ESG ; un article 8 n'implique pas l'exclusion des armes controversées ; CT-06 reste suspendue tant qu'aucun score n'existe. Une contrainte d'allocation sur la part d'ETF article 8 ou 9 sera étudiée en phase 4 (non décidée). Q-14 et Q-26 restent ouvertes.
+
 Les sources gratuites ne permettent pas de regarder à travers un ETF titre par titre. Règle (H, Q-14) :
 
-- un ETF n'est soumis qu'à la méthodologie ESG publiée de son indice (exclusions appliquées par l'indice, label) ;
+- un ETF n'est soumis qu'à la méthodologie ESG publiée de son indice (exclusions appliquées par l'indice, label), telle qu'établie par la source manuelle ci-dessus ;
 - quand un ETF Amundi de même exposition existe en variante ESG ou « Paris Aligned », il est préféré, à historique suffisant ;
 - les exclusions normatives (CT-05) s'appliquent pleinement à la poche titres.
 
-Limite documentée : la contrainte ESG du niveau allocation repose sur les méthodologies d'indices, pas sur une analyse des détentions.
+Limite documentée : l'ESG du niveau allocation repose sur les méthodologies d'indices, pas sur une analyse des détentions ; la limite figure dans chaque rapport (R-04).
 
 ---
 
@@ -738,14 +782,16 @@ Limite documentée : la contrainte ESG du niveau allocation repose sur les méth
 
 | Déclencheur | Fréquence de contrôle | Seuil proposé (H) | Justification |
 | --- | --- | --- | --- |
-| Calendrier | Premier jour ouvré du mois | — | Prompt 3.6 ; Q-5 |
+| Calendrier | **Allocation (ETF) : premier jour ouvré du mois, sur tout l'historique.** **Poche titres : premier jour ouvré du trimestre (janvier, avril, juillet, octobre) sur l'historique long, du mois ensuite** (D-039) ; la frontière est fixée au pré-enregistrement (H : au plus tard à la date de fin d'entraînement du modèle, pour que la période hors échantillon soit mensuelle pour les deux niveaux) | — | Prompt 3.6 et section 2 ; Q-5 |
 | Dérive des poids | Hebdomadaire | Règle « 5/25 » : écart absolu > 5 points, ou écart relatif > 25 % du poids cible, ce second critère ne s'appliquant qu'aux actifs dont le poids cible est ≥ 4 % | Heuristique de praticiens attribuée à L. Swedroe (H, référence exacte à vérifier) ; sans poids minimal, un poids cible de 1 % se déclencherait dès 0,25 point d'écart |
-| Changement de vue | À chaque production de vues (mensuelle ; hebdomadaire en *live test*) | Niveau final qui change d'au moins 2 crans, ou changement de signe avec c ≥ 0,5 | Ne réagir qu'aux révisions significatives |
+| Changement de vue | À chaque production de vues, aux dates de décision de chaque niveau (allocation : mensuelle ; titres : trimestrielle sur l'historique long, mensuelle ensuite ; hebdomadaire en *live test*) | Niveau final qui change d'au moins 2 crans, ou changement de signe avec c ≥ 0,5 | Ne réagir qu'aux révisions significatives |
 | Régime de volatilité | Hebdomadaire | Régime « haut » quand la volatilité réalisée sur 21 jours de bourse du benchmark dépasse le 80ᵉ centile de sa propre distribution sur les 3 années précédentes (156 semaines, avant t). Retour au régime « normal » quand elle repasse sous le 50ᵉ centile. Chaque changement de régime déclenche une revue | Calcul Python (`tools/risk.py`) ; l'écart entre les deux seuils évite les allers-retours |
 
 Une revue sans autre déclencheur peut conclure « pas de transaction » si le gain d'utilité attendu (objectif de 7.6) est inférieur au coût estimé.
 
-**Convention d'exécution (EX-O3-09) :** décision prise avec les données disponibles à la coupure de t (clôtures jusqu'à t − 1), exécution au cours de clôture de t. Une variante « ouverture de t + 1 » est rapportée en sensibilité.
+**Convention d'exécution (EX-O3-09, D-038) :** décision prise avec les données de séances strictement antérieures à t (dernière clôture : t − 1 ouvré), exécution au cours de clôture de t, qui n'est pas visible au moment de la décision. Une variante « ouverture de t + 1 » est rapportée en sensibilité.
+
+**Conséquences de la cadence (EX-O3-10, D-039).** (1) Allocation : décisions mensuelles partout, donc aucune conséquence sur le déclencheur « changement de vue » ni sur l'horizon de 3 mois des vues d'allocation. (2) Poche titres sur l'historique long : les vues de titres, donc le déclencheur « changement de vue » pour cette poche, ne se mettent à jour qu'une fois par trimestre ; entre deux dates, seuls les déclencheurs de dérive et de régime de volatilité (calculs Python, sans LLM) peuvent réoptimiser avec les dernières vues de titres, ce qui est cohérent avec un horizon de vue de 3 mois (`horizon_mois`). (3) T_max s'applique à l'allocation à chaque date mensuelle, et à la poche titres à chaque date de décision de la poche. (4) Le nombre de dates de décision de la poche est divisé par 3 sur l'historique long, ce qui réduit les échantillons de l'anonymisation du niveau titres, de la calibration de la confiance des vues de titres et des ablations de la poche (11.4) ; le niveau allocation n'est pas touché.
 
 ### 10.2 Volume de vues
 
@@ -766,7 +812,9 @@ En backtest, les vues ne sont recalculées qu'aux dates de revue (budget d'appel
 | Actions individuelles américaines | 10 | Grandes capitalisations |
 | Coût de change (proxys USD et titres américains) | 2, en plus | Conversion EUR/USD |
 
-À confirmer (Q-10). Robustesse en phase 7 : coûts × 2 ; scénario de stress avec coûts × 3 pendant les périodes de régime de volatilité « haut ». Les frais de gestion des ETF sont déjà dans les cours (valeurs nettes) : ils ne sont pas déduits une seconde fois. La retenue à la source sur les dividendes des proxys américains est documentée, mais pas corrigée (limite).
+**Liquidité.** Les coûts ci-dessus (H) sont à rapprocher des mesures de liquidité du rapport de couverture (EX-O3-11) : valeur médiane échangée par jour et part de jours sans volume de la ligne de cotation Yahoo ; le `financial-critic` signale AHYE.PA et C3M.PA comme peu liquides (D-046, constat non rejoué). Un plafond de participation au volume est à fixer en phase 4 (Q-23).
+
+À confirmer (Q-10, Q-23). Robustesse en phase 7 : coûts × 2 ; scénario de stress avec coûts × 3 pendant les périodes de régime de volatilité « haut ». Les frais de gestion des ETF sont déjà dans les cours (valeurs nettes) : ils ne sont pas déduits une seconde fois. La retenue à la source sur les dividendes des proxys américains est documentée, mais pas corrigée (limite).
 
 ### 10.4 Limite de rotation et file de validation
 
@@ -792,9 +840,9 @@ En backtest, les vues ne sont recalculées qu'aux dates de revue (budget d'appel
 | EX-NF-08 | Données envoyées aux LLM | Uniquement des données publiques (prix, news, dépôts SEC, séries macro) ; aucune donnée client ni position réelle ; usage pour l'entraînement des niveaux gratuits relevé en phase 3 | `agents/base.py` | `test_contexte_agent_ne_contient_que_des_sources_publiques` | C2, L6 |
 | EX-NF-09 | Injection de prompt via les documents | Texte externe encapsulé entre délimiteurs (délimiteurs internes neutralisés), jamais placé dans le message système ; sorties validées par schéma ; aucun outil appelé hors de la liste autorisée de l'agent | `agents/base.py`, `llm/client.py` | `test_texte_externe_delimite_et_hors_message_systeme` ; `test_appel_d_outil_hors_liste_rejete` | C1 |
 | EX-NF-10 | Reproductibilité | Graine, versions du modèle servi et du prompt, commit, `uv.lock` enregistrés ; rejouer depuis le cache donne une sortie identique ; température 0 hors expériences de robustesse | `llm/records.py`, `evaluation/backtest.py` | `test_execution_enregistre_modele_servi_prompt_et_graine` ; `test_rejeu_depuis_le_cache_identique` | C7 |
-| EX-NF-11 | Point-in-time | Aucune donnée publiée à la coupure de t ou après n'est servie à t ; dates EDGAR (America/New_York) converties en UTC | `data/pit.py` | `test_aucune_donnee_posterieure_a_t` ; `test_fuseau_edgar_converti` | C4 |
+| EX-NF-11 | Point-in-time | Aucune donnée publiée à la coupure de t ou après n'est servie à t ; acceptation EDGAR lue comme UTC brut (règle prudente, D-031) | `data/pit.py` | `test_aucune_donnee_posterieure_a_t` ; `test_acceptation_edgar_lue_comme_utc_brut` | C4 |
 | EX-NF-12 | Tests sans clé ni réseau | La CI passe sans `.env` | `tests/` | CI (existant) | C8 |
-| EX-NF-13 | Mode évaluation : un seul modèle par run, **aucun relais**, mise en pause sur 429 (attente, puis reprise le jour suivant depuis le cache) ; le run s'arrête si `modele_servi` change ; identifiant de version figée exigé quand le fournisseur en propose un | `modele_servi` constant sur tout le run | `llm/client.py`, `evaluation/backtest.py` | `test_mode_evaluation_sans_relais_pause_sur_429` ; `test_modele_servi_constant_sur_un_run` | C2, C7, C11 |
+| EX-NF-13 | Mode évaluation (D-024) : un seul modèle par run, **aucun relais**, modèles à version figée déclarés dans `config/llm.yaml`, section `evaluation` (niveaux `main` et `light`, `fallback_enabled: false`) ; mise en pause sur 429 (attente, puis reprise le jour suivant depuis le cache) ; **les erreurs 503 intermittentes du service gratuit** sont réessayées puis mises en pause, sans changer de modèle ; le run s'arrête si `modele_servi` change | `modele_servi` constant sur tout le run | `llm/client.py`, `llm/config.py`, `evaluation/backtest.py` | `test_mode_evaluation_sans_relais_pause_sur_429` ; `test_mode_evaluation_erreur_503_reessayee_puis_pause` ; `test_modele_servi_constant_sur_un_run` ; `test_config_evaluation_sans_relais_et_versions_figees` | C2, C7, C11 |
 | EX-NF-14 | Embeddings (`LLMClient.embed`) et juges de l'évaluation RAG (Ragas ou Phoenix) passent par `LLMClient`, donc par LiteLLM et la configuration gratuite | Aucun appel direct à un fournisseur | `llm/client.py`, `evaluation/reasoning.py` | `test_juges_rag_passent_par_llmclient` ; `test_embed_passe_par_litellm` | C1, C2 |
 
 ### 11.2 Budget d'appels
@@ -803,74 +851,112 @@ Notations (toutes paramétrables) :
 
 | Symbole | Signification |
 | --- | --- |
-| D | Dates de décision |
+| D_a | Dates de décision d'allocation : **mensuelles sur tout l'historique** (D-039) |
+| D_t,long, D_t,rec | Dates de décision de la poche titres : trimestrielles sur l'historique long, mensuelles sur la période récente ; frontière fixée au pré-enregistrement |
 | N_p | Profils traités séparément |
 | R | Tours de débat utilisés (≤ R_max) |
-| A_a | Agents du niveau allocation : 3 votants + l'agent Risque (A_a = 4) |
+| A_a | Agents du niveau allocation qui parlent : Macro, Valuation/Momentum, Risque (A_a = 3 en backtest, sans Sentiment, D-044 ; 4 en live) |
 | B | Lots d'allocation (1 si chaque agent traite toutes les classes en un appel) |
 | K_a, K_t | Appels du coordinateur par débat (rapport + arbitrage éventuel, ≤ 2) |
-| S | Nombre de titres |
-| A_t | Agents de niveau titres (A_t = 3) |
+| S | Nombre de titres de la poche, **S ≤ 15** (D-029) |
+| A_t | Agents de niveau titres : Fundamental, Valuation (A_t = 2 en backtest ; 3 en live) |
 | q | Questions RAG par titre et par nouveau dépôt |
-| m | Appels de résumé par lot de news |
-| L_a, L_t | Lots de news (allocation, par titre) |
+| φ_dépôt | Part des dates de la poche où un nouveau dépôt existe |
+| m, L_a, L_t | Appels de résumé par lot de news, lots de news (live seulement) |
+| E | Réexécutions (robustesse, ablations) |
 
 ```
-Appels main par date et par profil :
-  N_main = B · (A_a · (1 + R) + K_a)  +  S_d · (A_t · (1 + R) + K_t)  +  S_d · q · φ_dépôt
-  (S_d = S aux dates où la poche titres est revue, 0 sinon)
-Appels light par date et par profil :
-  N_light = m · (L_a + S_d · L_t)
+Appels main par date d'allocation et par profil :
+  N_alloc = B · (A_a · (1 + R) + K_a)
+Appels main par date de la poche titres et par profil :
+  N_titres(S) = S · (A_t · (1 + R) + K_t + q · φ_dépôt)
+Appels light : N_light = 0 en backtest (aucun résumé de news) ; m · (L_a + S · L_t) en live
+Total par profil :
+  N_profil = D_a · N_alloc + (D_t,long + D_t,rec) · N_titres
 Total :
-  N_total = N_p · Σ_dates (N_main + N_light) · (1 + E)      # E : réexécutions (robustesse, ablations)
+  N_total = N_p · N_profil · (1 + E)
 Jours nécessaires :
   mode évaluation  : J_main = ⌈ N_total,main / Q_jour(main) ⌉          # aucun relais (EX-NF-13)
   mode interactif  : J_main = ⌈ N_total,main / (Q_jour(main) + Q_jour(fallback)) ⌉
   J_light = ⌈ N_total,light / Q_jour(light) ⌉
 ```
 
-φ_dépôt ∈ [0, 1] est la part des dates où un nouveau dépôt existe : les réponses RAG portent sur un dépôt, pas sur une date, et sont réutilisées par le cache entre dates (EX-NF-04). Les quotas Q_jour (requêtes par jour, par minute et jetons par minute) restent des **paramètres** de `config/llm.yaml` ; ils seront relevés à l'inscription en phase 3 (D-004).
+φ_dépôt ∈ [0, 1] : les réponses RAG portent sur un dépôt, pas sur une date, et sont réutilisées par le cache entre dates (EX-NF-04). Les quotas Q_jour (requêtes par jour, par minute et jetons par minute) restent des **paramètres** de `config/llm.yaml` ; ils seront relevés en phase 3 (D-004). En mode évaluation, le quota applicable est celui des modèles de la section `evaluation` de `config/llm.yaml`.
 
-Exemple de calcul avec des paramètres de conception (pas une mesure) : R = 2, B = 1, A_a = 4, K_a = K_t = 2, S = 15, A_t = 3, q = 4, φ = 1 → N_main = 14 + 15 × 11 + 60 = 239 appels par date de revue complète et par profil, dont 225 pour la poche titres.
+**Budget recalculé (calcul, pas une mesure).** Paramètres : R = 2, B = 1, A_a = 3, K_a = K_t = 2, A_t = 2, S = 15, q = 4, sans Sentiment en backtest ; φ_dépôt = 1 (cas défavorable) ou 0 (borne basse).
 
-**Plan réduit, pré-enregistré** (11.6) si le budget ne tient pas, leviers appliqués dans cet ordre :
+| Quantité | Formule | φ = 1 | φ = 0 |
+| --- | --- | --- | --- |
+| (a) N_alloc, par date d'allocation | 1·(3·3 + 2) | 11 | 11 |
+| N_titres, par date de la poche | 15·(2·3 + 2 + 4φ) | 180 | 120 |
+| Allocation, par an d'historique (12 dates) | 12 × 11 | 132 | 132 |
+| (b) Poche, par an d'historique long (4 dates) | 4 × N_titres | 720 | 480 |
+| (b) Poche, par an de période récente (12 dates) | 12 × N_titres | 2 160 | 1 440 |
+| (c) Total par profil et par an, historique long | (a) + (b) long | 852 | 612 |
+| (c) Total par profil et par an, période récente | (a) + (b) récent | 2 292 | 1 572 |
+| (c) Idem pour N_p = 3 profils, historique long | 3 × | 2 556 | 1 836 |
+| (c) Idem pour N_p = 3 profils, période récente | 3 × | 6 876 | 4 716 |
 
-1. poche titres revue chaque trimestre sur l'historique long, chaque mois sur la période récente (permis par le prompt) ;
-2. un appel par classe plutôt que par actif (déjà retenu au niveau allocation) ;
-3. R_max = 2 ;
-4. exécution nocturne sur plusieurs jours ;
-5. en dernier recours seulement, vues partagées entre profils (N_p = 1, profil équilibré dans le prompt ; profils différenciés par δ, benchmark et contraintes). Ce dernier levier est un **écart** au prompt et à AlphaAgents. Le papier montre en effet que le profil dans le prompt change nettement les décisions entre *risk-averse* et *risk-neutral* ; seuls les profils voisins (*risk-seeking* et *risk-neutral*) y donnent des réponses presque identiques. Si ce levier est utilisé, l'ablation « profil retiré du prompt » (EX-O5-04) mesure ce qu'on perd sur un échantillon de dates.
+**Exemple sur l'ensemble de l'historique (calcul avec une frontière hypothétique, H).** Le backtest principal couvre environ 8,1 ans (de 2018-08-28 à la fin des données ; durée reprise de D-046). Avec une frontière placée 1,5 an avant la fin (valeur d'exemple : la vraie dépend de la date de fin d'entraînement, à relever) : 6,6 × 852 + 1,5 × 2 292 ≈ 9 060 appels main par profil (φ = 1), soit environ 27 180 pour trois profils, **avant** ablations et réexécutions (facteur 1 + E). La sensibilité 2014-03-27 (EX-O2-13) ajoute des années de même coût annuel.
+
+**Comparaison aux quotas, honnêtement.** Les quotas ne sont pas relevés : on ne peut pas dire si ce total tient. Le calcul des jours est J = ⌈N/Q⌉ ; avec des valeurs d'illustration de Q_jour (**pas des quotas**) de 100, 500 et 1 000 appels par jour, 27 180 appels demandent environ 272, 55 et 28 jours ; avec (1 + E) > 1, davantage. L'ordre de grandeur est élevé pour un niveau gratuit : il faudra étaler les runs sur de nombreux jours (exécution nocturne) ou appliquer les leviers ci-dessous.
+
+**Leviers du prompt restants** (appliqués dans l'ordre du plan réduit) : un appel par classe d'actifs plutôt que par actif (déjà retenu : B = 1) ; au plus 2 tours de débat (déjà R = 2) ; R = 1 donnerait N_alloc = 8 et N_titres = 150 (φ = 1), soit 96 + 4 × 150 = 696 par profil et par an d'historique long (calcul) ; trimestriel sur l'historique long pour la poche (déjà retenu) ; cache (φ_dépôt) et exécution nocturne. Hors prompt, donc à justifier comme écarts : vues partagées entre profils (N_p = 1, division par 3) et regroupement de plusieurs titres par appel.
+
+**Précision sur D-029 et D-039.** Le chiffre de 239 appels par date de la v1.1 incluait l'agent Sentiment et supposait déjà S = 15 : D-029 n'apporte de réduction que par rapport à la borne haute de 50 titres (calcul : 14 + 15·S donne 764 pour S = 50 contre 239). Sans Sentiment, une date de poche coûte 180 appels (φ = 1) et une date d'allocation 11 : la poche pèse environ 94 % d'une date où elle est revue (180/191, calcul), ce qui motive la cadence trimestrielle de la poche et la cadence mensuelle conservée pour l'allocation (D-039 corrigée).
+
+**Plan réduit, pré-enregistré** (11.6, D-029), leviers appliqués dans cet ordre :
+
+1. poche titres limitée à 15 titres au plus ;
+2. allocation **mensuelle sur tout l'historique** ; poche titres **trimestrielle sur l'historique long, mensuelle sur la période récente** (prompt, section 2 ; D-039) ; la frontière est fixée avant l'évaluation (10.1) ;
+3. un appel par classe plutôt que par actif (déjà retenu au niveau allocation) ;
+4. R_max = 2 ;
+5. exécution nocturne sur plusieurs jours ;
+6. en dernier recours seulement, vues partagées entre profils (N_p = 1, profil équilibré dans le prompt ; profils différenciés par δ, benchmark et contraintes). Ce dernier levier est un **écart** au prompt et à AlphaAgents. Le papier montre en effet que le profil dans le prompt change nettement les décisions entre *risk-averse* et *risk-neutral* ; seuls les profils voisins (*risk-seeking* et *risk-neutral*) y donnent des réponses presque identiques. Si ce levier est utilisé, l'ablation « profil retiré du prompt » (EX-O5-04) mesure ce qu'on perd sur un échantillon de dates.
+
+**Conséquence sur la puissance statistique.** Moins de dates de décision de la poche titres sur l'historique long signifie moins d'observations de vues de titres pour la calibration (Brier, EX-O5-13), l'anonymisation (11.5) et les ablations. L'effet minimal détectable sur le ratio d'information (11.4) dépend de la durée T et non du nombre de dates, mais les tests sur les vues dépendent du nombre de dates : il est publié avec chaque période (EX-O5-11).
 
 ### 11.3 Point-in-time : règles par source
 
 | Source | Disponibilité retenue (coupure : t 00:00 Europe/Paris) | Remarque |
 | --- | --- | --- |
-| Prix | Clôture du dernier jour ouvré **avant** t | Exécution à la clôture de t (EX-O3-09) |
-| Macro FRED | Millésime ALFRED en vigueur avant la coupure (`realtime_start` < t) | Les séries sont révisées ; sans millésime, décalage prudent (H) |
-| Macro BCE | Date de publication si disponible, sinon fin de période + délai de publication (H, à fixer par série en phase 2) | — |
-| Dépôts SEC | Instant d'acceptation EDGAR (heure de New York, converti en UTC) avant la coupure | Les fondamentaux yfinance ne sont pas datés : non utilisés en backtest |
+| Prix | Clôture d'une séance **strictement antérieure** à t ; splits et dividendes pris en compte seulement s'ils sont connus à t (D-031, D-038) | Exécution à la clôture de t, non visible à la décision (EX-O3-09). **Limite (D-043) :** le jeu dérivé sert le dernier téléchargement ; les versions antérieures sont dans les instantanés append-only (EX-O5-15), mais seules celles collectées depuis leur mise en place sont rejouables |
+| Macro FRED | Séries révisées (CPI, chômage, PIB) : millésime ALFRED en vigueur avant la coupure (`realtime_start` < t). Séries de marché sans millésimes (taux, VIX…) : disponibilité = date + 1 jour **ouvré** (H) | Le premier millésime ALFRED peut être postérieur au début de la série : avant lui, `realtime_start` est un rétro-remplissage (`docs/couverture_donnees.md`) |
+| Macro BCE | Fin de période + délai de publication déclaré dans `config/data.yaml` (H) | Pas de millésimes à la BCE ; le délai n'est pas une mesure |
+| Dépôts SEC | Instant d'acceptation EDGAR lu comme **UTC brut** (`raw_as_utc`) avant la coupure (D-031) | Règle prudente : `acceptanceDateTime` est suffixé « Z » mais n'est pas toujours un UTC ; un dépôt peut être servi quelques heures trop tard, jamais trop tôt. Les fondamentaux yfinance ne sont pas datés : non utilisés en backtest |
 | Faits XBRL | Pour chaque fait et période : valeur du dernier dépôt dont `filed` < t ; les retraitements postérieurs sont ignorés | EX-O1-14 |
-| News | Instant de publication avant la coupure | Couverture par actif et par date mesurée en phase 2 (EX-O1-17) |
-| Scores ESG | En général non historisés dans les sources gratuites | Si non datés : utilisés uniquement en *live test*, ou en backtest avec la mention « non point-in-time » et une analyse de sensibilité (R-04) |
+| News | RSS : date de publication (aucun historique avant la première collecte, 2026-08-13). GDELT : `seendate` (première observation, **pas** la publication), fenêtres explicites jusqu'à 2019-11 au moins, 2016-11 refusé (D-036) | Agent Sentiment hors backtest (D-044, EX-O1-17) : aucun seuil de couverture ; instantané quotidien brut RSS et GDELT conservé pour le live ; débit GDELT très limité (429) |
+| Scores ESG | Aucun score gratuit exploitable (0 % des 28 actifs, D-035) ; instantané daté par collecte, servi en mode strict seulement après sa date | Les exclusions (SIC, indice) restent l'unique base ESG (R-04) |
 | Listes d'exclusion | Date d'ajout à la liste si elle est publiée | — |
 | Cours de change | Cours de référence BCE du jour ouvré avant t | — |
 | Sorties d'outils | Datées par la dernière donnée utilisée | EX-O1-03 |
+
+### 11.3 bis Instantanés et manifeste des données (D-043)
+
+| Élément | Ce qui existe | Limite |
+| --- | --- | --- |
+| Instantanés bruts | `.cache/data/snapshots/<source>/<AAAA-MM-JJ>/<jeu>.parquet`, écrits par `ParquetStore.snapshot`, jamais écrasés ; contenu identique le même jour : aucune écriture ; contenu différent : `<jeu>~2.parquet`, `~3`... ; fichier `_origin.json` (origine : `collecte` ou `reconstruit_depuis_le_stockage`) | Les instantanés initiaux sont « reconstruits depuis le stockage le 2026-10-02 » : les versions antérieures des prix Yahoo ne sont pas rejouables ; seul un `fetch` régulier alimente l'historique des retraitements |
+| Manifeste | `data_manifest()` / `write_manifest()` : `data_manifest.json` avec SHA-256 de chaque jeu (dérivé et instantané), nombre de lignes, plage de dates, versions de Python, pandas, pyarrow, yfinance, requests et feedparser, hash de `data.yaml`, `universe.yaml` et `esg.yaml`, `manifest_sha256` | `generated_at` est hors hash ; les autres fichiers de configuration ne sont pas couverts |
+| Usage | Le pré-enregistrement (11.6) lie `manifest_sha256` ; un run en mode évaluation dont le manifeste diffère est refusé | Le live test dépend de l'instantané quotidien (D-043) |
 
 ### 11.4 Objet de l'évaluation (L4) et limites de preuve
 
 **Ce que L4 évalue :** la mécanique de bout en bout (vues → poids → rééquilibrages), le respect des contraintes et le contrôle du risque (volatilité, *tracking error*, perte maximale), les coûts (transaction, rotation, coût LLM), l'explicabilité et la qualité du raisonnement. **Ce que L4 ne cherche pas à prouver : un alpha.** Le rapport l'écrit en tête (EX-O5-08).
 
-**Contamination.** Pour chaque `modele_servi`, la date de fin d'entraînement est relevée (documentation du fournisseur). Si elle n'est pas publiée, on retient la date de mise à disposition du modèle, qui en est une borne supérieure prudente. Tout résultat antérieur à cette date, y compris la réplication de février 2024, est étiqueté « contaminé » : il sert à vérifier la mécanique, jamais à conclure sur la performance. Seuls la période postérieure et le *live test* sont hors échantillon.
+**Contamination.** Pour chaque `modele_servi`, la date de fin d'entraînement est relevée (documentation du fournisseur). Si elle n'est pas publiée, on retient la date de mise à disposition du modèle, qui en est une borne supérieure prudente. Pour les versions figées de la section `evaluation` de `config/llm.yaml` (EX-NF-13), cette date **reste à relever** avant le pré-enregistrement. Tout résultat antérieur à cette date, y compris la réplication de février 2024, est étiqueté « contaminé » : il sert à vérifier la mécanique, jamais à conclure sur la performance. Seuls la période postérieure et le *live test* sont hors échantillon.
 
-**Effet minimal détectable (EX-O5-11).** Le t-statistique d'un ratio d'information annualisé IR mesuré sur T années vaut environ IR·√T. Pour un test bilatéral à 5 % avec une puissance de 80 % :
+**Scénarios de contamination (méthode, pas de valeurs).** La date de fin d'entraînement d des versions de la section `evaluation` de `config/llm.yaml` est **relevée avant le pré-enregistrement** (bloquant, D-046). Pour chaque d, et avec D0 le début du backtest et D1 la dernière date de données du rapport (`docs/couverture_donnees.md`), le script publie : durée contaminée = d − D0 ; durée hors échantillon T = D1 − d ; part contaminée = (d − D0)/(D1 − D0) ; IR_min(T) de la formule ci-dessous ; nombre de dates de décision de part et d'autre de d avec la cadence retenue (EX-O3-10). D-046 reprend deux scénarios du critique (de 6,4 à 6,9 ans de période contaminée entre les dates de fin d'entraînement 2025-01 et 2025-06, sur 8,1 ans depuis 2018-08) ; ils ne sont pas recalculés ici. La période hors échantillon peut ne contenir **aucune phase baissière** si d est postérieure à 2025-04 : D-045 compte un creux d'au moins 15 % en 2025 (mesure du critique) ; les conclusions sur le comportement en baisse reposent alors sur la période contaminée (mécanique seulement) et sur le live.
+
+**Effet minimal détectable (EX-O5-11).** Le t-statistique d'un ratio d'information annualisé IR mesuré sur T années vaut environ IR·√T. Pour 9 tests principaux avec correction de Holm, le premier pas de Holm teste à α/9 (bilatéral, α = 5 %) ; avec une puissance de 80 % :
 
 ```
-IR_min ≈ (z_0,975 + z_0,80) / √T ≈ 2,8 / √T
+IR_min ≈ (z_(1 − α/18) + z_0,80) / √T ≈ (2,77 + 0,84) / √T ≈ 3,6 / √T      # avec Holm sur 9 tests
+IR_min ≈ (z_0,975 + z_0,80) / √T ≈ 2,8 / √T                                 # sans correction, pour mémoire
 ```
 
-Exemples de calcul (pas des résultats) : T = 1,5 an hors échantillon → IR_min ≈ 2,3 ; T = 10 ans (période contaminée) → IR_min ≈ 0,9. Des ratios d'information de cet ordre sont rarement observés en gestion active : la durée hors échantillon du projet ne peut pas établir statistiquement un alpha. C'est la raison de l'objet de L4 décrit plus haut. La valeur de T réellement disponible est calculée et publiée par période.
+Calcul (pas un résultat) : le rapport 3,61/2,80 vaut environ 1,29, soit environ 30 % de plus que sans correction. Exemples : T = 1,5 an hors échantillon → IR_min ≈ 2,95 (environ 3,0) avec Holm, contre 2,29 sans ; T = 10 ans (période contaminée) → IR_min ≈ 1,14 avec Holm, contre 0,89. La dépendance entre décisions d'un même trimestre et l'autocorrélation des rendements réduisent la taille effective de T : IR_min est donc aussi estimé par le *bootstrap* stationnaire par blocs (11.4, Inférence) et publié à côté de la formule. Des ratios d'information de cet ordre sont rarement observés en gestion active : la durée hors échantillon du projet ne peut pas établir statistiquement un alpha. C'est la raison de l'objet de L4 décrit plus haut. La valeur de T réellement disponible est calculée et publiée par période (scénarios ci-dessus). Le début du backtest (9.1) ne l'allonge pas.
 
-**Tests principaux, liste fermée (H, à geler) :** (1) ratio d'information du portefeuille agentique contre le benchmark, par profil, sur la période hors échantillon ; (2) écart de perte maximale contre le benchmark, par profil ; (3) écart de ratio d'information contre l'ablation « sans Black-Litterman ». Cela fait 9 tests, avec une correction de Holm. Tous les autres chiffres sont descriptifs.
+**Tests principaux, liste fermée (H, à geler) :** (1) ratio d'information du portefeuille agentique contre le benchmark, par profil, sur la période hors échantillon ; (2) écart de perte maximale contre le benchmark, par profil ; (3) écart de ratio d'information contre l'ablation « sans Black-Litterman ». Cela fait 9 tests, avec une correction de Holm (IR_min en conséquence, ci-dessus). Tous les autres chiffres sont descriptifs.
 
 **Inférence.** *Bootstrap* stationnaire par blocs (D. Politis et J. Romano, « The Stationary Bootstrap », *Journal of the American Statistical Association*, 89(428), 1994), longueur moyenne des blocs de 3 mois (H). Plusieurs dates de départ. Variance des décisions mesurée par N_r exécutions sans cache (H : N_r = 5) : à température 0, à température 0,7, et avec 2 paraphrases de chaque prompt de rôle, sur un échantillon de dates fixé d'avance.
 
@@ -883,7 +969,9 @@ Exemples de calcul (pas des résultats) : T = 1,5 an hors échantillon → IR_mi
 | (b) Indicateur 1 | Taux d'accord entre décision anonymisée et décision normale (même niveau ; même signe) |
 | (b) Indicateur 2 | Écart de taux de réussite (normal − anonymisé), la réussite étant le bon signe du rendement excédentaire réalisé sur l'horizon de la vue |
 | (b) Lecture | Indicateurs mesurés **avant et après** la date de fin d'entraînement. Un effet de mémoire est suspecté si l'écart de réussite est plus grand avant qu'après (différence de différences), avec un intervalle par *bootstrap* |
+| (b bis) Cadence | Les deux côtés de la frontière de contamination utilisent **la même cadence de décision** (EX-O3-10, D-039), sinon la différence de différences serait confondue avec la cadence et avec le régime de marché. Niveau allocation : mensuel sur tout l'historique, donc aucune confusion. Niveau titres : la poche est trimestrielle avant la frontière de cadence et mensuelle après ; les deux côtés de la frontière de contamination sont ramenés aux dates trimestrielles communes (sous-échantillon des dates mensuelles de la période récente) |
 | (c) Sondage direct | Sans aucune donnée, on demande au modèle le rendement du mois suivant t pour des couples (actif, mois), et le niveau de clôture d'indices à des dates données. On compare l'exactitude avant et après la date de fin d'entraînement |
+| (c bis) Fuites implicites | Au-delà des noms et des dates, l'anonymisation couvre les noms cités dans les requêtes (GDELT), les indices de référence cités et tout libellé permettant d'identifier l'actif ; le code SIC courant et l'indice courant d'un ETF sont des informations d'aujourd'hui, étiquetées comme telles (D-046) |
 | (d) Échantillon et budget | Fixés dans le pré-enregistrement : N_a actifs × N_d dates tirés avec une graine, moitié avant et moitié après la date de fin d'entraînement ; budget = 2 · N_a · N_d appels (normal + anonymisé, la version normale étant réutilisée par le cache si elle existe) + N_s questions de sondage. Valeurs de départ (H) : N_a = 9 classes, N_d = 24 dates, N_s = 100 |
 
 ### 11.6 Pré-enregistrement (EX-O5-12)
@@ -892,7 +980,11 @@ Exemples de calcul (pas des résultats) : T = 1,5 an hors échantillon → IR_mi
   - tous les paramètres des sections 6 à 11 (κ, SR*, c_max, facteurs de confiance, σ_cible, TE_max, T_max, bornes, seuils, coûts, fenêtres) ;
   - les graines, y compris celle du tirage de 9.3 ;
   - les prompts et leurs paraphrases (hash) ;
-  - la liste des tests principaux et le plan réduit (11.2) ;
+  - la liste des tests principaux et le plan réduit (11.2), dont la frontière trimestriel/mensuel de la poche titres, la cadence mensuelle de l'allocation et la taille de la poche titres ;
+  - la date de début du backtest (9.1) ;
+  - les identifiants de modèle de la section `evaluation` de `config/llm.yaml` et leur date de fin d'entraînement, **relevée avant** le pré-enregistrement (11.4) ;
+  - la règle de début du backtest, le haut rendement conservé et la sensibilité 2014-03-27 (EX-O2-13), et la règle d'étiquetage « non investissable » (EX-O2-14, EX-O5-17) ;
+  - `manifest_sha256` du manifeste des données (11.3 bis, EX-O5-15) ;
   - l'échantillon d'anonymisation.
   Le hash est consigné dans `DECISIONS.md` et commité.
 - Un run en mode évaluation dont la configuration ne correspond pas au hash est refusé (`test_parametres_differents_du_preregistrement_refuses`).
@@ -908,8 +1000,8 @@ Exemples de calcul (pas des résultats) : T = 1,5 an hors échantillon → IR_mi
 | --- | --- | --- | --- | --- |
 | R-01 | *Look-ahead bias* des données | Performance surestimée | `as_of(t)` ; règles 11.3 ; test de fuite à chaque pas du *walk-forward* | EX-NF-11, EX-O5-01 |
 | R-02 | *Look-ahead bias* du LLM (mémoire de l'entraînement) | Le modèle « connaît » l'avenir de la période testée | Fin d'entraînement relevée par `modele_servi` ; étiquette « contaminé » et aucune conclusion de performance avant cette date ; anonymisation (11.5) ; *live test* | EX-O5-06, EX-O5-07, EX-O5-13 |
-| R-03 | Quotas des niveaux gratuits | Backtest impossible ou interrompu | Formule 11.2 ; cache ; pause et reprise en mode évaluation ; plan réduit pré-enregistré ; exécution nocturne | EX-NF-02 à EX-NF-04, EX-NF-13 |
-| R-04 | Couverture ESG partielle, scores non datés, ETF non transparents | Contrainte CT-06 peu informative ou biaisée | Couverture publiée ; CT-06 sur la partie couverte ; exclusions par règles sectorielles datées ; méthodologie d'indice pour les ETF (9.4) | EX-O2-09, EX-O1-10 |
+| R-03 | Quotas et instabilité des niveaux gratuits (429, 503 intermittents) | Backtest impossible ou interrompu | Formule 11.2 ; cache ; réessais puis pause et reprise en mode évaluation ; plan réduit pré-enregistré ; exécution nocturne | EX-NF-02 à EX-NF-04, EX-NF-13 |
+| R-04 | Aucun score ESG gratuit exploitable (0 % des 28 actifs), exclusions seulement supposées par règle (matrice du rapport : armes controversées 0/1/27, tabac 0/16/12, charbon thermique 0/16/12, score 0/28), ETF non transparents | CT-06 non alimentée (suspendue) ; l'ESG ne porte que sur des exclusions approximatives (SIC) ; « sans exclusion détectée » n'est pas une preuve | Couverture publiée avec chaque portefeuille ; limite écrite dans chaque rapport ; exclusions par SIC ; pour les ETF, source manuelle et historisée par document (D-048, EX-O1-18), SFDR n'étant pas un score ; Q-12, Q-14, Q-19, Q-26 | EX-O2-09, EX-O1-10, EX-O1-18 |
 | R-05 | Alias `*-latest` qui changent de version | Résultats non reproductibles, ruptures dans le backtest | `modele_servi` enregistré ; un seul modèle par run en mode évaluation, arrêt si la version change ; version figée exigée quand elle existe | EX-NF-10, EX-NF-13 |
 | R-06 | Pensée de groupe (consensus forcé) | Fausse certitude, Ω trop petite | Avocat du diable tournant ; consensus calculé et non déclaré ; c_max < 1 ; taux d'unanimité au tour 0 suivi | EX-O1-08, EX-O5-13 |
 | R-07 | Non-déterminisme du LLM (même à température 0) | Décisions instables | Cache ; exécutions répétées, paraphrases et température > 0 en phase 7 ; ablation par fournisseur | EX-O5-05 |
@@ -917,11 +1009,14 @@ Exemples de calcul (pas des résultats) : T = 1,5 an hors échantillon → IR_mi
 | R-09 | Injection de prompt via news ou dépôts | Vue manipulée | Délimiteurs ; sorties par schéma ; liste d'outils fermée | EX-NF-09 |
 | R-10 | Instabilité de Black-Litterman, saturation des contraintes ou infaisabilité | Poids extrêmes, contraintes toujours actives, absence de solution | κ calibré sur le budget de risque ; plancher de σ ; monétaire résiduel ; CT-08 ; fréquences d'activation publiées ; ordre de relâchement | EX-O2-07, EX-O2-11, EX-O2-12 |
 | R-11 | Historique court ou changement d'indice d'un ETF | Σ biaisée, rupture de série | Pas de proxy USD pour les taux ; jonctions publiées ; contrôle qualité en phase 2 | EX-O2-01, EX-O2-10 |
-| R-12 | Couverture de news insuffisante (déjà constatée par AlphaAgents) | Agent Sentiment peu informatif | 8-K et Form 4 en complément ; couverture mesurée ; retrait du backtest sous le seuil | EX-O1-17 |
-| R-13 | Biais du survivant dans la poche titres | Performance surestimée | Liste de composants datée ; graine hashée avant le tirage (9.3) | EX-O1-13 |
+| R-12 | Agent Sentiment sans historique exploitable : RSS sans historique avant la collecte, GDELT limité (429), `seendate` ≠ publication | Aucune évaluation historique de son apport | Retiré du backtest sans seuil (D-044) ; évaluation en live par portefeuilles avec/sans en ombre, corrélation de rang à 1 semaine avec intervalle et puissance ; instantané quotidien brut ; L4 le dit | EX-O1-17, EX-O5-16 |
+| R-13 | Biais du survivant dans la poche titres : pool daté de janvier 2024 utilisé pour un backtest démarrant avant | Performance surestimée, plus que par les deux seuls titres radiés (ANSS, JNPR) | Pool daté ; graine hashée avant le tirage (9.3) ; contrôle en phase 7 (EX-O5-14) | EX-O1-13 |
 | R-14 | Conditions d'utilisation des niveaux gratuits (usage des données pour l'entraînement) | Incompatibilité avec un usage professionnel | Données publiques uniquement en prototype ; hébergement interne visé en production (L6) | EX-NF-08 |
 | R-15 | Réglage *a posteriori* (*data snooping*) | Résultats trop optimistes | Pré-enregistrement hashé ; liste fermée des tests principaux et correction de Holm ; toutes les sensibilités rapportées | EX-O5-05, EX-O5-12 |
 | R-16 | Puissance statistique insuffisante | Conclusions infondées | Effet minimal détectable publié ; objet de L4 limité à la mécanique (11.4) | EX-O5-11 |
+| R-17 | Prix Yahoo corrigés rétroactivement (yfinance non officielle, sans SLA) | Séries modifiées entre deux exécutions, fuite de futur diffuse | Instantanés bruts append-only par date de collecte, jamais écrasés, suffixes `~2`, `~3` ; manifeste `data_manifest.json` (SHA-256 des jeux, versions, hash des trois configs) lié au pré-enregistrement ; un retraitement reste retrouvable dans l'instantané de la veille (test). **Limite :** les instantanés initiaux sont reconstruits depuis le stockage le 2026-10-02 ; les versions antérieures des prix ne sont pas rejouables ; seul un `fetch` régulier alimente l'historique des retraitements | EX-O5-15 |
+| R-18 | Fuites implicites : code SIC courant, noms courants dans les requêtes GDELT, indice courant d'un ETF | L'agent ou le filtre ESG « sait » ce qui n'était pas connu à t | Étiquetage comme informations d'aujourd'hui ; anonymisation étendue (11.5) ; contrôle en phases 3 et 7 (D-046) | EX-O5-06 |
+| R-19 | Séries synthétiques avant l'ETF primaire (six classes) et fenêtre de Σ des titres récents | Résultats sur des P&L non investissables ; Σ mal estimée | Règle de raccord et fenêtre fixées en phase 4 ; étiquette « non investissable » ; mêmes séries pour benchmark et portefeuille | EX-O2-14 |
 
 ---
 
@@ -978,12 +1073,12 @@ La dépendance n'est ajoutée qu'en phase 3 (D-006).
 | 11 | Débat jusqu'au consensus, terminé par le coordinateur (« TERMINATE ») | `R_max` tours, consensus calculé en Python, statut « contestée » à confiance réduite | Prompt 3.3 ; boucle bornée, décision vérifiable |
 | 12 | Pas de mécanisme contre la pensée de groupe | Avocat du diable tournant | Prompt 3.3 ; limite relevée dans la fiche AlphaAgents |
 | 13 | Rapports en texte libre | Sorties structurées (Pydantic), sources obligatoires et datées | Prompt section 2 (sorties validées, agents ancrés dans les outils) |
-| 14 | Aucun ESG | Agent ESG avec veto + contraintes CT-05, CT-06 | Exigence d'Amundi |
+| 14 | Aucun ESG | Agent ESG avec veto + exclusions CT-05 ; CT-06 (score minimal) suspendue faute de source gratuite | Exigence d'Amundi ; aucun score ESG gratuit exploitable (D-035), limite affichée |
 | 15 | Une sélection, 4 mois, 15 titres, sans coûts | Walk-forward pluriannuel, coûts, robustesse, ablations, *live test*, pré-enregistrement | O5 ; limites statistiques du papier |
 | 16 | Pas de rééquilibrage | Calendrier mensuel + déclencheurs + file de validation | O3 |
 | 17 | Explicabilité par les journaux de débat | Journaux + fiche « pourquoi ce poids » + attribution par vue + version client | O4 |
 | 18 | Contrôle du *look-ahead bias* absent | Point-in-time testé, étiquette « contaminé » avant la fin d'entraînement, protocole d'anonymisation | Limite majeure du papier (modèle possiblement entraîné après 2024) |
-| 19 | 15 titres tech tirés au hasard, non nommés | Tirage avec graine hashée d'avance dans une liste datée, plus Zscaler | Le papier ne publie pas sa liste (9.3) ; seule une comparaison qualitative est possible |
+| 19 | 15 titres tech tirés au hasard, non nommés | Tirage avec graine hashée d'avance dans un pool daté de 62 titres utilisables, plus Zscaler ajouté hors pool (15 titres) | Le papier ne publie pas sa liste (9.3) ; seule une comparaison qualitative est possible |
 | 20 | Résumé avec réflexion en plusieurs étapes | Une seule réponse structurée en trois sections (résumer, critiquer, affiner) | Budget ; à comparer à la version en trois appels sur un échantillon en phase 3 |
 | 21 | Une seule forme de sortie par agent (analyse menant à BUY ou SELL) | Les agents Risque et ESG produisent `RiskAssessment` et `EsgAssessment`, pas une `View` ; leurs alertes et vetos sont calculés par des règles Python | Ils ne votent pas de direction : le Risque module la confiance (6.4), l'ESG filtre (CT-05). Des règles déterministes rendent ces deux fonctions de contrôle vérifiables et insensibles au LLM |
 
@@ -1011,13 +1106,15 @@ Les noms sont prévisionnels ; chaque exigence a au moins un test (sections 1 et
 | Phase | Tests | Fichiers prévus |
 | --- | --- | --- |
 | 1 | Cohérence de la spécification et de la matrice ; `test_dependances_entre_modules` (actif dès qu'il y a du code) | `tests/test_specifications.py` (en place) |
-| 2 | `test_aucune_donnee_posterieure_a_t` (prix, macro avec millésimes, dépôts, XBRL, news, ESG, change) ; fuseau EDGAR ; conversion EUR ; pas de proxy USD pour les taux ; dates de jonction ; contrôles qualité (trous, *splits*, doublons) ; couverture par source, dont ESG et news par date ; connecteurs `[network]` | `tests/data/` |
-| 3 | `LLMClient` : modes interactif et évaluation, relais 429 en interactif seulement, pause en évaluation, `modele_servi` constant, cache (dont réutilisation RAG), quotas, `embed` ; outils : formules du papier, momentum, VaR, alertes par seuils, régimes ; RAG et résumé ; schémas et validateurs ; débat : arrêt, consensus, contestation, avocat ; journal complet ; profil dans le prompt ; injection (encapsulation, liste d'outils) ; CLI d'une date ; réplication (graine hashée, remplacement) et comparaison `[llm]` ; évaluation RAG `[llm]` | `tests/llm/`, `tests/tools/`, `tests/agents/`, `tests/debate/` |
+| 2 | `test_aucune_donnee_posterieure_a_t` (prix, macro avec millésimes, dépôts, XBRL, news, ESG, change) ; acceptation EDGAR lue comme UTC brut ; poche titres limitée à 15 ; date de début du backtest par classe limitante ; monétaire EONIA puis €STR ; conversion EUR ; pas de proxy USD pour les taux ; dates de jonction ; contrôles qualité (trous, *splits*, doublons) ; couverture par source, dont ESG et news par date ; connecteurs `[network]` | `tests/data/` |
+| 3 | `LLMClient` : modes interactif et évaluation, relais 429 en interactif seulement, pause en évaluation, réessais 503, `modele_servi` constant, cache (dont réutilisation RAG), quotas, `embed` ; outils : formules du papier, momentum, VaR, alertes par seuils, régimes ; RAG et résumé ; schémas et validateurs ; débat : arrêt, consensus, contestation, avocat ; journal complet ; profil dans le prompt ; injection (encapsulation, liste d'outils) ; CLI d'une date ; réplication (graine hashée, remplacement) et comparaison `[llm]` ; évaluation RAG `[llm]` ; source ESG manuelle par ETF (valeur sans document `inconnu`, point-in-time, append-only) | `tests/llm/`, `tests/tools/`, `tests/agents/`, `tests/debate/` |
 | 4 | Retour au benchmark sans vue ; monotonie de la confiance (TE inactive et active) ; Idzorek forme fermée contre méthode exacte ; κ et κ_t ; monétaire résiduel et plancher de σ ; un test par contrainte CT-01 à CT-10 ; vérification post-solution ; relâchement ordonné ; méthodes de comparaison sous mêmes contraintes ; admissibilité du benchmark ; couverture ESG ; fréquences d'activation | `tests/portfolio/` |
-| 5 | Calendrier ; chaque déclencheur isolément (dont dérive relative sous poids minimal) ; exécution à la clôture de t ; coûts et coût de change ; rotation et petits ordres ; transitions de la file ; revérification des poids modifiés ; journal en ajout seul ; simulation sur 3 ans avec causes | `tests/rebalancing/` |
-| 6 | Attribution qui somme à l'écart ; fiche reliant écarts, vues et sources ; chiffres issus des données ; version client ; navigation de l'application (`AppTest`) ; avertissement dans l'interface ; test d'usage manuel (2 personnes) | `tests/explain/`, `tests/app/` |
-| 7 | Walk-forward sans fuite ; métriques contre valeurs calculées à la main ; ablations (dont confiance constante) ; *bootstrap* par blocs ; Holm ; variance des décisions ; effet minimal détectable ; étiquette « contaminé » ; anonymisation ; Brier et unanimité au tour 0 ; pré-enregistrement ; *live test* figé ; rapport L4 généré, tracé et déclarant son objet ; budget refusé si dépassement | `tests/evaluation/` |
+| 5 | Calendrier (allocation mensuelle partout ; poche titres trimestrielle puis mensuelle selon la frontière) ; chaque déclencheur isolément (dont dérive relative sous poids minimal) ; exécution à la clôture de t ; coûts et coût de change ; rotation et petits ordres ; transitions de la file ; revérification des poids modifiés ; journal en ajout seul ; simulation sur 3 ans avec causes | `tests/rebalancing/` |
+| 6 | Étiquette « non investissable » dans l'interface et les fiches ; attribution qui somme à l'écart ; fiche reliant écarts, vues et sources ; chiffres issus des données ; version client ; navigation de l'application (`AppTest`) ; avertissement dans l'interface ; test d'usage manuel (2 personnes) | `tests/explain/`, `tests/app/` |
+| 7 | Étiquette « non investissable » dans le reporting ; walk-forward sans fuite ; biais du survivant de la poche titres ; métriques contre valeurs calculées à la main ; ablations (dont confiance constante) ; *bootstrap* par blocs ; Holm ; variance des décisions ; effet minimal détectable ; étiquette « contaminé » ; anonymisation ; Brier et unanimité au tour 0 ; pré-enregistrement ; *live test* figé ; rapport L4 généré, tracé et déclarant son objet ; budget refusé si dépassement | `tests/evaluation/` |
 | 8-9 | Lien et commandes du README vérifiés (`test_readme_commandes_existent`) ; documents L5 et L6 présents avec l'avertissement | `tests/test_docs.py` |
+
+**Règle sur les tests (D-049).** Aucun test n'est supprimé ni affaibli sans l'accord du `reviewer-tester` ; un test devenu faux parce que le code change est réécrit par lui. Les noms de ce plan sont prévisionnels.
 
 Seuil de couverture proposé (H) : 80 % des lignes sur `portfolio/`, `rebalancing/`, `tools/` et `debate/consensus.py` (cœur déterministe).
 

@@ -25,5 +25,16 @@ Tu es le **chef de projet** (lead). Ta référence absolue est `prompts/prompt_m
 - Budget LLM 0 € : Gemini (niveau gratuit de l'API) en moteur principal, Ollama local (`llama3.1:8b`) pour le développement et les tests, Groq en relais. Aucune API payante.
 - Clés uniquement dans `.env` (ignoré par Git). Ne jamais afficher, logguer ou commiter une clé. Ne jamais utiliser `ANTHROPIC_API_KEY`.
 - Aucun chiffre inventé, données point-in-time, prototype académique (pas un conseil en investissement).
-- Fichiers à ne pas modifier : les deux PDF, `fiches/`, `graphify-out/`, `prompts/`.
+- Fichiers à ne pas modifier : les deux PDF, `fiches/`, `prompts/`. `graphify-out/` n'est modifié que par graphify (`graphify update .`, hooks Git), jamais à la main.
+- Aucun test ne peut être supprimé ou affaibli (assertion retirée, `xfail` ou `skip` ajouté, seuil relâché) sans l'accord du `reviewer-tester`. Un test qui devient faux parce que le code change est réécrit par le `reviewer-tester`, pas par l'auteur du code.
 - Le dépôt du projet est **ce dossier même** : la structure `amundi-agentic/` de la section 5.2 du prompt se crée directement ici, sans sous-dossier.
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+Rules:
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).

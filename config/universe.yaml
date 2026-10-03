@@ -1,0 +1,70 @@
+# `distribution` : acc (capitalisant), dist (distribuant) ou a_verifier. Règle : « dist » seulement
+# si des dividendes sont enregistrés dans les données (JPN.PA, proxys US) ; « acc » d'après le nom
+# Yahoo (« Acc ») et contredit par une erreur qualité si un dividende est enregistré ; sinon
+# « a_verifier » (aucune valeur inventée). Signalé dans le rapport de couverture.
+# Univers (L1 §9, D-011, D-029). Relevé préliminaire du 2026-10-02 ; tout est « à vérifier » :
+# la liste est une PROPOSITION, non figée (voir docs/couverture_donnees.md pour les mesures).
+reference_currency: EUR
+min_history_weeks: 260             # L1 §9.1, D-013
+
+asset_classes:
+  actions_etats_unis:
+    primary: {ticker: "500.PA", currency: EUR, distribution: acc, expected_name: "Amundi S&P 500 Swap UCITS ETF EUR Acc"}
+    proxy: {ticker: SPY, currency: USD, distribution: dist}
+    alternatives: []
+  actions_europe:
+    primary: {ticker: "MEU.PA", currency: EUR, distribution: acc, expected_name: "Amundi MSCI Europe UCITS ETF Acc"}
+    proxy: {ticker: VGK, currency: USD, distribution: dist}
+  actions_japon:
+    primary: {ticker: "JPN.PA", currency: EUR, distribution: dist, expected_name: "Amundi Japan TOPIX II UCITS ETF EUR Dist"}
+    proxy: {ticker: EWJ, currency: USD, distribution: dist}
+  actions_emergents:
+    primary: {ticker: "AEEM.PA", currency: EUR, distribution: acc, expected_name: "Amundi MSCI Emerging Markets Swap UCITS ETF EUR Acc"}
+    proxy: {ticker: EEM, currency: USD, distribution: dist}
+  souverain_euro:
+    primary: {ticker: "MTD.PA", currency: EUR, distribution: acc, expected_name: "Amundi Euro Government Bond 7-10Y UCITS ETF Acc"}
+    proxy: null                     # D-011 : jamais de proxy USD pour les taux
+    eur_series: [ecb:YC_SPOT_7Y, ecb:YC_SPOT_10Y]   # courbes BCE : taux, pas un rendement total (reconstruction à décider)
+    eur_series_total_return: false
+    alternatives: [{ticker: "EGOV.PA", currency: EUR, distribution: a_verifier}]
+  credit_ig_euro:
+    primary: {ticker: "CRP.PA", currency: EUR, distribution: acc, expected_name: "Amundi EUR Corporate Bond Climate Paris Aligned UCITS ETF Acc"}
+    proxy: null
+    eur_series: []                  # ICE BofA Euro Corporate : absent de FRED (voir couverture)
+  haut_rendement_euro:
+    primary: {ticker: "AHYE.PA", currency: EUR, distribution: a_verifier, expected_name: "Amundi EURO High Yield Bond ESG UCITS ETF DR"}
+    proxy: null
+    eur_series: [fred:BAMLHE00EHYITRIV]   # fenêtre ICE de 3 ans seulement
+    eur_series_total_return: true
+  or:
+    # Yahoo étiquette GOLD.PA en USD, mais la cotation est à Paris. Devise retenue : EUR ; le
+    # contrôle croisé GOLD.PA / (GLD converti au fixing BCE) du rapport de couverture (section
+    # « Contrôle croisé ETF primaire / proxy ») mesure ratio, dérive et erreur de suivi
+    # (rejouable) ; l'écart d'étiquette est signalé par le contrôle qualité (à confirmer).
+    primary: {ticker: "GOLD.PA", currency: EUR, distribution: a_verifier, expected_name: "Amundi Physical Gold ETC C"}
+    proxy: {ticker: GLD, currency: USD, distribution: a_verifier}
+  matieres_premieres:
+    primary: {ticker: "COMO.PA", currency: EUR, distribution: acc, expected_name: "Amundi Bloomberg Equal-weight Commodity ex-Agriculture UCITS ETF Acc"}
+    proxy: {ticker: DBC, currency: USD, distribution: dist}
+  monetaire_euro:
+    primary: {ticker: "C3M.PA", currency: EUR, distribution: acc, expected_name: "Amundi Euro Government Bond 0-6 M UCITS ETF Acc"}
+    proxy: null
+    eur_series: [ecb:EONIA, ecb:ESTR]  # capitalisation €STR/EONIA (universe.money_market_index)
+    eur_series_total_return: true
+    alternatives: [{ticker: "CSH2.PA", currency: EUR, distribution: a_verifier}]
+
+control:
+  actions_monde: {ticker: "CW8.PA", currency: EUR, distribution: acc, proxies: [URTH, ACWI], proxies_distribution: dist}
+
+stocks:
+  # Le connecteur accepte n'importe quelle liste. Liste de DÉMONSTRATION pour la couverture : ce
+  # n'est PAS le tirage de réplication (phase 3, D-021). ZS est le seul titre nommé par le papier.
+  paper_named_ticker: ZS            # seul titre nommé par le papier (L1 §9.3)
+  demo_tickers: [ZS, AAPL, MSFT, NVDA, AVGO, ORCL, CRM, ADBE, AMD, CSCO, INTC, QCOM, TXN, IBM, NOW]
+  pool:
+    # Pool daté de janvier 2024 : révision Wikipédia de la liste du S&P 500, secteur « Information Technology »
+    source: wikipedia_revision
+    page: "List of S&P 500 companies"
+    as_of: "2024-01-31"
+    sector: "Information Technology"
+  replication_cutoff: "2024-02-01"  # L1 §9.3 point 4

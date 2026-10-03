@@ -21,6 +21,8 @@ uv sync                 # crée .venv et installe les dépendances
 cp .env.example .env    # puis remplir les clés localement (jamais commitées)
 uv run pytest -m "not llm and not network"   # tests sans clé ni réseau
 uv run ruff check .     # lint
+uv run amundi-agentic data fetch      # télécharge les données gratuites (cache et reprise ; clés dans .env)
+uv run amundi-agentic data coverage   # génère docs/couverture_donnees.md
 ```
 
 ## Organisation

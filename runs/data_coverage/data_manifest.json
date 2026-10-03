@@ -1,0 +1,3648 @@
+{
+ "versions": {
+  "python": "3.12.14",
+  "pandas": "3.0.6",
+  "pyarrow": "25.0.1",
+  "yfinance": "1.7.0",
+  "requests": "2.34.2",
+  "feedparser": "6.0.14"
+ },
+ "config_sha256": {
+  "data.yaml": "040f2ed24f657c4b799a6a48cb53a75deadf3de43baf43c1a16907a03ed33b32",
+  "universe.yaml": "3727bc342e2059b1458048fb3bd6ced8bfa2fd2366d0a7a1e5b41319e02c0a91",
+  "esg.yaml": "ba8bb8923b6543b32fbe04677fd15d3a81e497c22c38613253be332bde11bb33"
+ },
+ "datasets": [
+  {
+   "kind": "derive",
+   "path": "esg/records.parquet",
+   "sha256": "e1e387866405d1eac73555056ded3df413562480afcc2a6d9dc6ada1492863c7",
+   "rows": 28,
+   "date_min": "2026-10-02 11:21:35.817662+00:00",
+   "date_max": "2026-10-02 11:22:03.171969+00:00",
+   "fetched_at": null
+  },
+  {
+   "kind": "derive",
+   "path": "filings/_companies.parquet",
+   "sha256": "df65e06c654b7ca9c4a2752dc6e6885ed9ef4e1274efcc30b539451477f23930",
+   "rows": 63,
+   "date_min": null,
+   "date_max": null,
+   "fetched_at": null
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/AAPL.parquet",
+   "sha256": "ca5c4feaad5623ccc65a1fb0823d997cc6c6f03116c3bf809fdf077ade1a1af6",
+   "rows": 361,
+   "date_min": "1994-01-26 10:00:00+00:00",
+   "date_max": "2026-07-31 14:01:02+00:00",
+   "fetched_at": "2026-10-02T11:19:43+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/ACN.parquet",
+   "sha256": "7799e9e01483c8b320eb53157f9cfb70307e7b3d343226f223192dc12d64dbd7",
+   "rows": 217,
+   "date_min": "2009-09-25 16:53:37+00:00",
+   "date_max": "2026-10-01 14:42:03+00:00",
+   "fetched_at": "2026-10-02T11:21:06+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/ADBE.parquet",
+   "sha256": "df1bae167f8b89dd80e4d8c01421d23dff3f3c9df037e0dbe240ef2772fd07be",
+   "rows": 361,
+   "date_min": "1995-02-17 05:00:00+00:00",
+   "date_max": "2026-09-22 20:04:02+00:00",
+   "fetched_at": "2026-10-02T11:20:21+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/ADI.parquet",
+   "sha256": "a669501d52289ec1ed9888bc20b9bfc4d3f79b289591151e489cf89b179c230f",
+   "rows": 422,
+   "date_min": "1994-03-11 10:00:00+00:00",
+   "date_max": "2026-09-18 00:15:18+00:00",
+   "fetched_at": "2026-10-02T11:21:07+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/ADSK.parquet",
+   "sha256": "7ba5743c2c4b35f5e4d705da96e7e28546e101356f81870eb6bea65cfeb7b90c",
+   "rows": 403,
+   "date_min": "1994-06-14 04:00:00+00:00",
+   "date_max": "2026-09-10 20:09:46+00:00",
+   "fetched_at": "2026-10-02T11:21:07+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/AKAM.parquet",
+   "sha256": "5b138527fd7dea3d87ad91f059259bfdd5459e661ccf29f63c0bbbf12769ac96",
+   "rows": 344,
+   "date_min": "2000-02-08 05:00:00+00:00",
+   "date_max": "2026-09-25 20:04:30+00:00",
+   "fetched_at": "2026-10-02T11:21:08+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/AMAT.parquet",
+   "sha256": "e280f0a9637ef28d277262bdeb490069076ee52247d235f5ea1315190e64e92b",
+   "rows": 435,
+   "date_min": "1994-02-28 05:00:00+00:00",
+   "date_max": "2026-08-27 20:12:40+00:00",
+   "fetched_at": "2026-10-02T11:21:08+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/AMD.parquet",
+   "sha256": "525ff7cc20aa10912c760dc912bb4f68b6eb9e303cc211f11a89f6b00e05207b",
+   "rows": 551,
+   "date_min": "1994-01-27 05:00:00+00:00",
+   "date_max": "2026-09-28 20:16:47+00:00",
+   "fetched_at": "2026-10-02T11:20:27+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/ANET.parquet",
+   "sha256": "ff0104717707bead3b0140f83b2b5620a601ed36d36baadc3605f6e976ed695a",
+   "rows": 138,
+   "date_min": "2014-07-31 20:05:21+00:00",
+   "date_max": "2026-08-04 22:08:09+00:00",
+   "fetched_at": "2026-10-02T11:21:09+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/APH.parquet",
+   "sha256": "3c5363692da3375643282b3a219c2d2222f1317a498c1ac4c606cdefd91db897",
+   "rows": 410,
+   "date_min": "1996-05-15 04:00:00+00:00",
+   "date_max": "2026-09-04 20:01:19+00:00",
+   "fetched_at": "2026-10-02T11:21:09+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/AVGO.parquet",
+   "sha256": "e20b8e3656da151777205a90dde887b7e4a0430f75f09a0bb1b447395b23df06",
+   "rows": 155,
+   "date_min": "2018-03-23 21:01:03+00:00",
+   "date_max": "2026-09-09 21:56:42+00:00",
+   "fetched_at": "2026-10-02T11:20:02+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/CDNS.parquet",
+   "sha256": "740bac216d6847140323bf1fe1ccfaacb18696f2f853e1dd0966574fa5a85a57",
+   "rows": 386,
+   "date_min": "1994-05-16 08:00:00+00:00",
+   "date_max": "2026-07-29 01:45:28+00:00",
+   "fetched_at": "2026-10-02T11:21:10+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/CDW.parquet",
+   "sha256": "9a0c7f64b31fddcb22493a804a4d3ace745b571e2db99bfb5d264a482c096feb",
+   "rows": 256,
+   "date_min": "2010-10-26 20:25:55+00:00",
+   "date_max": "2026-09-21 20:05:28+00:00",
+   "fetched_at": "2026-10-02T11:21:10+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/CRM.parquet",
+   "sha256": "bd7f54db69c010b75ef0985412745f3066605038b7da35bb8467097329cc0114",
+   "rows": 375,
+   "date_min": "2004-08-19 20:33:06+00:00",
+   "date_max": "2026-09-17 01:02:48+00:00",
+   "fetched_at": "2026-10-02T11:20:15+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/CSCO.parquet",
+   "sha256": "426798ece3c6e96b7239a9ec6d4a951b0ad3207f03ff1b32cfd8690295330d09",
+   "rows": 533,
+   "date_min": "1995-03-13 05:00:00+00:00",
+   "date_max": "2026-09-02 20:36:56+00:00",
+   "fetched_at": "2026-10-02T11:20:32+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/CTSH.parquet",
+   "sha256": "e4c65bba79b7dda79b506e94155cebd470784a356f7a5cb4942f36e0c585d658",
+   "rows": 327,
+   "date_min": "1998-08-12 04:00:00+00:00",
+   "date_max": "2026-07-29 13:09:21+00:00",
+   "fetched_at": "2026-10-02T11:21:11+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/ENPH.parquet",
+   "sha256": "d4d20c719e4eea1040313fcba5493cc3158fe0bde61692fafd8cf9ded1f024ae",
+   "rows": 206,
+   "date_min": "2012-04-06 18:00:19+00:00",
+   "date_max": "2026-08-10 20:14:51+00:00",
+   "fetched_at": "2026-10-02T11:21:11+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/EPAM.parquet",
+   "sha256": "a3ae8cec617fed2fe91a81135b8b03091ac056df49b6d4ebbcb0552f86b4cf40",
+   "rows": 180,
+   "date_min": "2012-03-19 21:02:32+00:00",
+   "date_max": "2026-08-06 20:00:53+00:00",
+   "fetched_at": "2026-10-02T11:21:12+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/FFIV.parquet",
+   "sha256": "c461505ea502a7a77158a08c6cc003d25a1ce9766e3dcded28ff75cb84ce55ff",
+   "rows": 322,
+   "date_min": "1999-08-11 04:00:00+00:00",
+   "date_max": "2026-08-06 18:39:25+00:00",
+   "fetched_at": "2026-10-02T11:21:12+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/FICO.parquet",
+   "sha256": "5536f349f8e9f8bb00d2e977f5146b1db4cefd228b389842302e60a640c044d3",
+   "rows": 352,
+   "date_min": "1995-05-11 04:00:00+00:00",
+   "date_max": "2026-07-29 20:16:29+00:00",
+   "fetched_at": "2026-10-02T11:21:13+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/FSLR.parquet",
+   "sha256": "c14358844c304479c713a0f5b1c7a5ce78b58fa44ffd9d5cf8636a3e3b3bf733",
+   "rows": 305,
+   "date_min": "2006-12-23 00:26:53+00:00",
+   "date_max": "2026-07-31 00:06:52+00:00",
+   "fetched_at": "2026-10-02T11:21:13+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/FTNT.parquet",
+   "sha256": "c452c8e601133c8c1eb555dde9a43985e12bc57acfb8cb19ce728e76a8afbb9e",
+   "rows": 200,
+   "date_min": "2010-01-27 02:31:20+00:00",
+   "date_max": "2026-07-31 01:30:32+00:00",
+   "fetched_at": "2026-10-02T11:21:14+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/GEN.parquet",
+   "sha256": "d916652aab2ebca2f9b8b8a83e6080d162111ac204dcad409248a918fad2d8ed",
+   "rows": 473,
+   "date_min": "1995-02-13 05:00:00+00:00",
+   "date_max": "2026-09-28 20:20:51+00:00",
+   "fetched_at": "2026-10-02T11:21:14+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/GLW.parquet",
+   "sha256": "9e0feebc6cf4502e7ccf73357b8550b4cb9ca9a823fbb8953a4fdf5a507db7b7",
+   "rows": 516,
+   "date_min": "1994-01-24 10:00:00+00:00",
+   "date_max": "2026-09-12 00:25:56+00:00",
+   "fetched_at": "2026-10-02T11:21:15+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/HPE.parquet",
+   "sha256": "914aebe3ed9b2a3739dd4e9431d8c6cc1645d5d05cb646d183e8db741e4c4d39",
+   "rows": 233,
+   "date_min": "2015-10-13 14:12:11+00:00",
+   "date_max": "2026-09-30 15:49:26+00:00",
+   "fetched_at": "2026-10-02T11:21:16+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/HPQ.parquet",
+   "sha256": "9e259f18231cc80d09c21e8a18ab83188e901113dba21c7f49e8996bc3028dce",
+   "rows": 513,
+   "date_min": "1994-01-28 05:00:00+00:00",
+   "date_max": "2026-09-21 10:08:34+00:00",
+   "fetched_at": "2026-10-02T11:21:16+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/IBM.parquet",
+   "sha256": "dee15eae8f3e7ffb66f2a0f8c2da866619a1f090c2b593ede533965048dbb5ec",
+   "rows": 692,
+   "date_min": "1994-03-28 10:00:00+00:00",
+   "date_max": "2026-10-02 00:18:19+00:00",
+   "fetched_at": "2026-10-02T11:20:54+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/INTC.parquet",
+   "sha256": "6a805b959b73da32c63fdcfdb41db9c5379bcb403acb17df88899065e242d8be",
+   "rows": 576,
+   "date_min": "1994-03-25 05:00:00+00:00",
+   "date_max": "2026-08-12 20:05:07+00:00",
+   "fetched_at": "2026-10-02T11:20:39+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/INTU.parquet",
+   "sha256": "79a68099b703a1885eb06a473b23eedfd052011d49e9396ee87929d06bf6e8cd",
+   "rows": 401,
+   "date_min": "1996-06-12 04:00:00+00:00",
+   "date_max": "2026-09-09 20:12:09+00:00",
+   "fetched_at": "2026-10-02T11:21:17+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/IT.parquet",
+   "sha256": "9ce1637c0cd7a4697538cede5549b70e20b5a48a20b584532e404ba6a15f877d",
+   "rows": 366,
+   "date_min": "1996-05-10 04:00:00+00:00",
+   "date_max": "2026-08-04 10:04:13+00:00",
+   "fetched_at": "2026-10-02T11:21:17+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/JBL.parquet",
+   "sha256": "761552506bc21b00d339aae9a44cb5705ee5571f83f720ebf838b561ef67eeb7",
+   "rows": 345,
+   "date_min": "1996-07-15 04:00:00+00:00",
+   "date_max": "2026-09-30 11:32:16+00:00",
+   "fetched_at": "2026-10-02T11:21:18+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/KEYS.parquet",
+   "sha256": "8f81627faf25667a6cdabb9455bce4fbfcbe2328198545ef41ea154b97252215",
+   "rows": 156,
+   "date_min": "2014-10-06 23:05:47+00:00",
+   "date_max": "2026-09-02 20:07:04+00:00",
+   "fetched_at": "2026-10-02T11:21:19+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/KLAC.parquet",
+   "sha256": "5c2a70ec831429abed9e2ad56066e1433b1c3403d90203b01c84c3fa8114254a",
+   "rows": 462,
+   "date_min": "1994-01-12 05:00:00+00:00",
+   "date_max": "2026-08-06 20:35:27+00:00",
+   "fetched_at": "2026-10-02T11:21:19+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/LRCX.parquet",
+   "sha256": "7f1e33f4184d3be9d1cb9f603b54d4d812afdda3ef812c91afd8edc7dceb3ac7",
+   "rows": 416,
+   "date_min": "1995-09-26 04:00:00+00:00",
+   "date_max": "2026-08-27 21:20:05+00:00",
+   "fetched_at": "2026-10-02T11:21:20+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/MCHP.parquet",
+   "sha256": "7603c95237e21ff26a79474798c326da24f74a7d510dbb5c894ad3a7b4a69bc6",
+   "rows": 359,
+   "date_min": "1996-08-12 04:00:00+00:00",
+   "date_max": "2026-08-19 18:57:09+00:00",
+   "fetched_at": "2026-10-02T11:21:21+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/MPWR.parquet",
+   "sha256": "0d02fcd2478acb0eb993c57a56fe8c65bd879c7e5fa4b091151a97648e321904",
+   "rows": 290,
+   "date_min": "2004-12-07 19:36:45+00:00",
+   "date_max": "2026-09-10 20:01:44+00:00",
+   "fetched_at": "2026-10-02T11:21:22+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/MSFT.parquet",
+   "sha256": "3cbc52744bc81adf2fd632b61c4187526aea6c6bc4354d810a1772f76e3d3afa",
+   "rows": 412,
+   "date_min": "1994-02-14 05:00:00+00:00",
+   "date_max": "2026-09-02 20:30:24+00:00",
+   "fetched_at": "2026-10-02T11:19:47+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/MSI.parquet",
+   "sha256": "be2dee3303f11cd2d08d7afc212ed4b971fac4179f511a993f945499cd7b9d8c",
+   "rows": 478,
+   "date_min": "1994-03-28 05:00:00+00:00",
+   "date_max": "2026-09-09 20:22:24+00:00",
+   "fetched_at": "2026-10-02T11:21:23+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/MU.parquet",
+   "sha256": "05fb08ed4b007c45c30d96126c5cf56f74d0730d06159893a83511f60ea508bb",
+   "rows": 504,
+   "date_min": "1994-03-07 05:00:00+00:00",
+   "date_max": "2026-09-30 20:02:22+00:00",
+   "fetched_at": "2026-10-02T11:21:23+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/NOW.parquet",
+   "sha256": "3f32e29328d25619f77c6be9950658e14444e638eda9e45ecae825ad47475285",
+   "rows": 181,
+   "date_min": "2012-08-01 20:15:00+00:00",
+   "date_max": "2026-07-22 23:07:00+00:00",
+   "fetched_at": "2026-10-02T11:21:01+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/NTAP.parquet",
+   "sha256": "ce9e8e286f34f8c7b4dcab7345712dead71a5d1cadee07ca6a192aacf3e52593",
+   "rows": 368,
+   "date_min": "1996-09-09 08:00:00+00:00",
+   "date_max": "2026-09-12 00:09:33+00:00",
+   "fetched_at": "2026-10-02T11:21:24+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/NVDA.parquet",
+   "sha256": "0e9785f96526e815e711ef891b2fb9814048e7c487dbb8aa6aa44fb23fc5f1b5",
+   "rows": 351,
+   "date_min": "1999-06-15 04:00:00+00:00",
+   "date_max": "2026-09-03 12:03:56+00:00",
+   "fetched_at": "2026-10-02T11:19:57+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/NXPI.parquet",
+   "sha256": "c5dfd451545c50a16ea858759cc1e9a79a237dc408ee214dada17695969c8dee",
+   "rows": 112,
+   "date_min": "2019-08-30 01:30:32+00:00",
+   "date_max": "2026-09-03 00:02:36+00:00",
+   "fetched_at": "2026-10-02T11:21:24+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/ON.parquet",
+   "sha256": "89317b7382e80869fedc5fb80c8c81bbe73b0d04f0ced0e80b0d50dd3ca098dd",
+   "rows": 539,
+   "date_min": "2000-02-25 10:00:00+00:00",
+   "date_max": "2026-10-02 01:10:07+00:00",
+   "fetched_at": "2026-10-02T11:21:25+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/ORCL.parquet",
+   "sha256": "11975b72eeaaf01a32e6b9c15989695e233d276af6ad663c3dfb924f4574dba9",
+   "rows": 287,
+   "date_min": "2006-02-10 01:00:23+00:00",
+   "date_max": "2026-09-14 14:01:59+00:00",
+   "fetched_at": "2026-10-02T11:20:07+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/PANW.parquet",
+   "sha256": "63766e93337db38c387d26ed04c166a3893d1ca08bf7e8c0b84c050c27da6969",
+   "rows": 194,
+   "date_min": "2012-09-11 00:14:08+00:00",
+   "date_max": "2026-09-11 00:19:53+00:00",
+   "fetched_at": "2026-10-02T11:21:25+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/PTC.parquet",
+   "sha256": "ff1ddc1cfa3385b9f56eef52e3f9a9578f54c9285e840f6c266175a97f07b692",
+   "rows": 396,
+   "date_min": "1995-05-15 04:00:00+00:00",
+   "date_max": "2026-07-31 20:01:56+00:00",
+   "fetched_at": "2026-10-02T11:21:26+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/QCOM.parquet",
+   "sha256": "3c34b3cc0019aae25a77ea3feaacc0048d316b3320e029fd2f908d3a901bef6c",
+   "rows": 381,
+   "date_min": "1996-05-13 04:00:00+00:00",
+   "date_max": "2026-09-08 13:00:20+00:00",
+   "fetched_at": "2026-10-02T11:20:45+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/QRVO.parquet",
+   "sha256": "24791deaa60b4ca62f3b637a96fb9a0c4385f18a0833e0a0a3220ef6a16fbec3",
+   "rows": 222,
+   "date_min": "2014-09-09 01:22:54+00:00",
+   "date_max": "2026-08-13 00:04:21+00:00",
+   "fetched_at": "2026-10-02T11:21:27+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/ROP.parquet",
+   "sha256": "8c6f12cf6633bab61cad0cbf516103ba54bf2704a53147aa5c686e407d8267ad",
+   "rows": 366,
+   "date_min": "1996-06-06 08:00:00+00:00",
+   "date_max": "2026-10-01 17:03:23+00:00",
+   "fetched_at": "2026-10-02T11:21:27+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/SNPS.parquet",
+   "sha256": "54eb8e6af784eb648f86ae99f0a09f08384f50fce8b5e95413bc089ba9cf70e6",
+   "rows": 389,
+   "date_min": "1996-05-14 04:00:00+00:00",
+   "date_max": "2026-08-26 21:02:25+00:00",
+   "fetched_at": "2026-10-02T11:21:28+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/STX.parquet",
+   "sha256": "2945d8ec17af0b98a8863e671387c402b521b83b5fe04d7e8546e15eaebe9dc3",
+   "rows": 498,
+   "date_min": "2003-02-10 20:19:11+00:00",
+   "date_max": "2026-09-09 12:42:48+00:00",
+   "fetched_at": "2026-10-02T11:21:28+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/SWKS.parquet",
+   "sha256": "aaf0c0f850daa1ca22b8f339005381467323b88ed4e182174f876a66366cbf47",
+   "rows": 390,
+   "date_min": "1995-02-08 10:00:00+00:00",
+   "date_max": "2026-09-30 16:39:33+00:00",
+   "fetched_at": "2026-10-02T11:21:29+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/TDY.parquet",
+   "sha256": "aa495c47d03e679b71df8aa155ddfa43cf39a2842d5ccf74ce5770113c3fa083",
+   "rows": 344,
+   "date_min": "1999-12-01 05:00:00+00:00",
+   "date_max": "2026-09-28 20:27:53+00:00",
+   "fetched_at": "2026-10-02T11:21:29+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/TEL.parquet",
+   "sha256": "503b7c85f661a10a04eb125f9e937c329a25a0c02af6af028fdbe7cf0d79f595",
+   "rows": 356,
+   "date_min": "2007-06-08 13:59:43+00:00",
+   "date_max": "2026-07-24 12:58:24+00:00",
+   "fetched_at": "2026-10-02T11:21:30+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/TER.parquet",
+   "sha256": "c825a57d0a899e744e12ec57fe1aefa06b76c3b9727b819bc879b4016796e700",
+   "rows": 340,
+   "date_min": "1994-03-31 10:00:00+00:00",
+   "date_max": "2026-08-11 00:08:31+00:00",
+   "fetched_at": "2026-10-02T11:21:30+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/TRMB.parquet",
+   "sha256": "27d49a0f904800694c4e5fb2cad17930ca24427ccdea924e86373f8348c1da8d",
+   "rows": 387,
+   "date_min": "1996-08-13 04:00:00+00:00",
+   "date_max": "2026-08-12 20:13:43+00:00",
+   "fetched_at": "2026-10-02T11:21:31+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/TXN.parquet",
+   "sha256": "be68ee89130c2437db0a8b230cd324573bd236ac5a6725c18fccef6eaabde0b2",
+   "rows": 439,
+   "date_min": "1994-01-28 05:00:00+00:00",
+   "date_max": "2026-09-17 20:11:46+00:00",
+   "fetched_at": "2026-10-02T11:20:49+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/TYL.parquet",
+   "sha256": "f311cdc6a6f9f628dc7516e54fcfa5752fede848423f25c18bf19c644c881d91",
+   "rows": 298,
+   "date_min": "1996-05-14 04:00:00+00:00",
+   "date_max": "2026-09-15 17:37:11+00:00",
+   "fetched_at": "2026-10-02T11:21:31+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/VRSN.parquet",
+   "sha256": "347b0d7cfe65ef238b9e320c890c22f77da202d3ed9140236e5f83001f07aded",
+   "rows": 443,
+   "date_min": "1998-05-11 08:00:00+00:00",
+   "date_max": "2026-08-28 00:01:37+00:00",
+   "fetched_at": "2026-10-02T11:21:32+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/WDC.parquet",
+   "sha256": "6be694b0d6902a6828f2e09f7459752459cb8812d557402d63817ecfeea9f5ec",
+   "rows": 578,
+   "date_min": "1994-01-05 05:00:00+00:00",
+   "date_max": "2026-09-14 12:00:07+00:00",
+   "fetched_at": "2026-10-02T11:21:32+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/ZBRA.parquet",
+   "sha256": "356ae516e8f12bebd9867014eb3aa063db49efc8dee746d03f201099db2c0b1d",
+   "rows": 342,
+   "date_min": "1996-05-14 04:00:00+00:00",
+   "date_max": "2026-08-04 20:07:59+00:00",
+   "fetched_at": "2026-10-02T11:21:33+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "filings/index/ZS.parquet",
+   "sha256": "886da35708b5670cfd1f23a44394342efa96da6d529aa833ddceff82fc81b5a9",
+   "rows": 94,
+   "date_min": "2018-05-03 10:16:02+00:00",
+   "date_max": "2026-09-24 20:07:41+00:00",
+   "fetched_at": "2026-10-02T11:19:36+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "fx/EXR_CHF.parquet",
+   "sha256": "2b0445a4422145ac55c88b0fbdbd5730221d4d2f91106aa5fdc7d3508ca602bc",
+   "rows": 7105,
+   "date_min": "1999-01-04 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:18:05+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "fx/EXR_GBP.parquet",
+   "sha256": "23f332032ccd5a8d4a0a32016e7dcedcedf1d75ca7bf000e1c90ba8a457e3768",
+   "rows": 7105,
+   "date_min": "1999-01-04 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:18:05+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "fx/EXR_JPY.parquet",
+   "sha256": "88d26b722692d056e089b0bf0283be40502c8278efb505340e2bad26e39be77d",
+   "rows": 7105,
+   "date_min": "1999-01-04 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:18:04+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "fx/EXR_USD.parquet",
+   "sha256": "e9044f35f1b5c5cee2b8882cde6019885cd22612e4e1d99fa4a2446f04a09a94",
+   "rows": 7105,
+   "date_min": "1999-01-04 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:18:04+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/ecb/EONIA.parquet",
+   "sha256": "5ec7e8225ee1735840ab0941eb6d08ca1ee8aaacb357068dc7a09be87d54617c",
+   "rows": 5890,
+   "date_min": "1999-01-04 00:00:00",
+   "date_max": "2021-12-31 00:00:00",
+   "fetched_at": "2026-10-02T11:55:26+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/ecb/ESTR.parquet",
+   "sha256": "a3b8fa7e62b42473f9e3ba9a0d89eb9463a0b14033e7d656598a82be78af1c93",
+   "rows": 1794,
+   "date_min": "2019-10-01 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:55:26+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/ecb/YC_SPOT_10Y.parquet",
+   "sha256": "9fb3968113432892935b450a413c24a1b973f0087dd2398647d2cb6205611f46",
+   "rows": 5643,
+   "date_min": "2004-09-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:55:26+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/ecb/YC_SPOT_2Y.parquet",
+   "sha256": "061020dce9deafe8a7adeeeed574c38b9e454725441346c442985cd2dcc95691",
+   "rows": 5643,
+   "date_min": "2004-09-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:55:26+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/ecb/YC_SPOT_7Y.parquet",
+   "sha256": "0207bf13affe23e40c5f1f54ca99844a988410d61e3ecd455cbc4fa1117d2242",
+   "rows": 5643,
+   "date_min": "2004-09-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:55:26+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/BAMLH0A0HYM2.parquet",
+   "sha256": "862e3af76037d5c5c58601436c91c7d3006cb95afc012b2ab972c16ecec19358",
+   "rows": 794,
+   "date_min": "2023-10-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:55:25+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/BAMLHE00EHYIOAS.parquet",
+   "sha256": "d08735abce8f54b3ae4e7b7dcefd93f23b3097163684a18730347bb11ff1ac9d",
+   "rows": 794,
+   "date_min": "2023-10-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:55:25+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/BAMLHE00EHYITRIV.parquet",
+   "sha256": "b6c19f01fb8fb396f1d2c67f2947eb48552afd19c91e0f43c5de7cce16f46ef4",
+   "rows": 794,
+   "date_min": "2023-10-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:55:25+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/CPIAUCSL.parquet",
+   "sha256": "b7a27ead880293726d093b8d7e7862f55244c0dda9c6a96db81ece272f397a88",
+   "rows": 3362,
+   "date_min": "1947-01-01 00:00:00",
+   "date_max": "2026-08-01 00:00:00",
+   "fetched_at": "2026-10-02T11:55:25+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/DGS10.parquet",
+   "sha256": "4855ac41d738b6059d4e1796ab1ab4df17d4539940f53a5a07340ae5adc09299",
+   "rows": 16892,
+   "date_min": "1962-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:55:24+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/DGS1MO.parquet",
+   "sha256": "fb51fc0298c7d1408018918d79768aa1be783e2e84a4e51bb2d8db5d8bbd6a3b",
+   "rows": 6567,
+   "date_min": "2001-07-31 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:55:24+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/DGS2.parquet",
+   "sha256": "a023dc2725dac9a22453c4c19f9e2dcfd1a31c25924390d4291f1cbfc6f05916",
+   "rows": 13132,
+   "date_min": "1976-06-01 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:55:24+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/ECBESTRVOLWGTTRMDMNRT.parquet",
+   "sha256": "1fcbcb3d51be9de5d00dfd1bf4775ef8eb383284c34c680839928493c359d289",
+   "rows": 1828,
+   "date_min": "2019-10-01 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:55:26+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/GDPC1.parquet",
+   "sha256": "c8fa0f221b5ac43ae0bd1fd351f59919a770c6f3e278463c52067cd3cf476c5d",
+   "rows": 4425,
+   "date_min": "1947-01-01 00:00:00",
+   "date_max": "2026-04-01 00:00:00",
+   "fetched_at": "2026-10-02T11:55:25+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/T10Y2Y.parquet",
+   "sha256": "3476b67c63b12754c063243c2a2200eda5855c7655d53d35af9fd6357b287eb1",
+   "rows": 13133,
+   "date_min": "1976-06-01 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:55:25+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/UNRATE.parquet",
+   "sha256": "987ac27ba249091ee829a0707da7fd5e452ac0e44d8313364dee4ab7abef71f1",
+   "rows": 2198,
+   "date_min": "1948-01-01 00:00:00",
+   "date_max": "2026-08-01 00:00:00",
+   "fetched_at": "2026-10-02T11:55:25+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/VIXCLS.parquet",
+   "sha256": "1efa883ba44ebc1784a4cfac4291483e818e25224626746639db96652ceed77c",
+   "rows": 9587,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:55:25+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "macro/fred/_meta.parquet",
+   "sha256": "789eb090e2d5ecc3a1f6adeaf93442531a44458ae248a6acb69cda878205c15b",
+   "rows": 12,
+   "date_min": null,
+   "date_max": null,
+   "fetched_at": null
+  },
+  {
+   "kind": "derive",
+   "path": "news/_gdelt_probe.parquet",
+   "sha256": "362deb3d2c4d56952f8521702614fe063ee150b03b3db8c98fa3fb92cf954479",
+   "rows": 9,
+   "date_min": null,
+   "date_max": null,
+   "fetched_at": null
+  },
+  {
+   "kind": "derive",
+   "path": "news/_gdelt_weeks.parquet",
+   "sha256": "3077ed7e2b723ab579694802e8c6c1b711fab527b773d422886860c10bbcc1d7",
+   "rows": 26,
+   "date_min": "2026-08-07 00:00:00",
+   "date_max": "2026-09-25 00:00:00",
+   "fetched_at": null
+  },
+  {
+   "kind": "derive",
+   "path": "news/items.parquet",
+   "sha256": "efd02b4ab00f18d94cc825c9c472e3e1b3d46849081e7f938c9d62c3da0e6f08",
+   "rows": 808,
+   "date_min": "2026-08-13 15:00:00+00:00",
+   "date_max": "2026-10-02 10:45:00+00:00",
+   "fetched_at": null
+  },
+  {
+   "kind": "derive",
+   "path": "prices/500.PA.parquet",
+   "sha256": "41f306d699268dc7679eabd980055705d7f7427b893b8ac873d92f557d078ac6",
+   "rows": 4174,
+   "date_min": "2010-06-08 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:15:49+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/AAPL.parquet",
+   "sha256": "a0a296f8aad2e4b46a0a3ca97daf270c0a1e634602a8c04e027698de0570623e",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:22+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ACN.parquet",
+   "sha256": "a6dba73b5a928a274b925944aa1da6478fe167da1dd082aadb1fad17e45f92be",
+   "rows": 6338,
+   "date_min": "2001-07-19 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:43+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ACWI.parquet",
+   "sha256": "cdd346f73a4b394ec82e4616a3e9c5dede290afaf5930b2b8893a5edb538a2c8",
+   "rows": 4658,
+   "date_min": "2008-03-28 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:19+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ADBE.parquet",
+   "sha256": "9afc01678f9a7747e365d8f738173c5b46dba2756d8436cc752fdc09f59f8ab9",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:31+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ADI.parquet",
+   "sha256": "da85957b9568f9fdf312e59254aae8c35aa6cd679dbd2cd32683079e9b2a97c7",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:44+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ADSK.parquet",
+   "sha256": "d0590191fdb0c9d403082cc501044b423b7a1e8dbe382bd3e3e7184df6d71c54",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:46+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/AEEM.PA.parquet",
+   "sha256": "651e8e2308f25551d29b457694e555481fa0022142c9fc9006b5d8f142cd1879",
+   "rows": 4049,
+   "date_min": "2010-11-30 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:15:58+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/AHYE.PA.parquet",
+   "sha256": "36df80bceb61352f0a2480a1102b67e1a6f3154652b4ff36355dbe1835010dad",
+   "rows": 3347,
+   "date_min": "2013-09-03 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:16:05+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/AKAM.parquet",
+   "sha256": "3fdb6752644a1d518af0a59dd67c5c486444b9fcaa9e0fc86e9f64dbf936d55a",
+   "rows": 6771,
+   "date_min": "1999-10-29 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:47+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/AMAT.parquet",
+   "sha256": "5d21be4c7d23d55d42319d8e5d6d3455ebe2ace30ba92a5282aec8b552a68038",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:49+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/AMD.parquet",
+   "sha256": "cdd076b730d2089de977b9464d7e65693fb9168beda1a247399525599a3e7298",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:32+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ANET.parquet",
+   "sha256": "339427f5b1105708b8d12ac904a5613b205100c2184faccdd2250fdc62ddfa38",
+   "rows": 3099,
+   "date_min": "2014-06-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:50+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/APH.parquet",
+   "sha256": "88c9dcb02612723fe16c1d6a7239e1de5d7a2b960cb301fd2d10619df997f6e0",
+   "rows": 8785,
+   "date_min": "1991-11-08 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:00+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/AVGO.parquet",
+   "sha256": "d4634bb565c2d48a5e558b73e142c725776cb0ded6d8cbb6a955172d0197df7b",
+   "rows": 4315,
+   "date_min": "2009-08-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:26+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/C3M.PA.parquet",
+   "sha256": "22fa80c22077fa779f4e1aa290a8ace018cd0c3990dd834aa59a2a2849671bc0",
+   "rows": 4421,
+   "date_min": "2009-06-22 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:16:13+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/CDNS.parquet",
+   "sha256": "f45fa83879eff2632808a4af865e031ec0166d6bea85b2d9c5df144c2aaa0e7f",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:02+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/CDW.parquet",
+   "sha256": "5d01c578029d69b0a8491c0a23d42389add7f5c55fc32c1023654c064b59bfd8",
+   "rows": 3336,
+   "date_min": "2013-06-27 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:03+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/COMO.PA.parquet",
+   "sha256": "0ed9ef20592477eac28129e19f14b8dc42f21b436014e65d93109efe9f82a4f7",
+   "rows": 4797,
+   "date_min": "2008-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:16:10+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/CRM.parquet",
+   "sha256": "9cc203e8deea2f7cabf52cb9055ef4e74f9593902934366dfeb585fe50714c24",
+   "rows": 5605,
+   "date_min": "2004-06-23 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:29+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/CRP.PA.parquet",
+   "sha256": "847ab2a71cc2de13f38ef78d152d706c6ec82219318ce0e05921129def52140d",
+   "rows": 4471,
+   "date_min": "2009-04-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:16:04+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/CSCO.parquet",
+   "sha256": "c4213212d268734ff3dcd021f313480319494d3b3690e391452ea42eb65a3f5d",
+   "rows": 9222,
+   "date_min": "1990-02-16 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:34+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/CSH2.PA.parquet",
+   "sha256": "1c52931debf68b601c123a85bbdfee2b4eafa4f5710ea7bc6c37946ef4e324a8",
+   "rows": 392,
+   "date_min": "2025-03-17 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:16:14+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/CTSH.parquet",
+   "sha256": "7b586fb4cf782dfbf494d2400c1ddbb128a463d5fa57d11004414275bcf26ae4",
+   "rows": 7115,
+   "date_min": "1998-06-19 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:05+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/CW8.PA.parquet",
+   "sha256": "f6b039d363d49f7024df9181de689e968c510c739325ee6db5ce79638b26bb35",
+   "rows": 4424,
+   "date_min": "2009-06-16 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:16:16+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/DBC.parquet",
+   "sha256": "c43a66419f7219d810bbeefbe3ac5c8266790b37da8931bd25c255b2d3b3fc6b",
+   "rows": 5196,
+   "date_min": "2006-02-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:11+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/EEM.parquet",
+   "sha256": "a966e3c6c79c8a9ec0100e0b0441064ae2815d445fa010537c0e5715fddd262b",
+   "rows": 5905,
+   "date_min": "2003-04-14 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:15:59+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/EGOV.PA.parquet",
+   "sha256": "a0971f269bb8d8a43480c7a615cb03290594fe5f4ffe57087856aa1ae8ab80d1",
+   "rows": 2530,
+   "date_min": "2016-11-11 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:16:02+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ENPH.parquet",
+   "sha256": "575e8a26e487824c5d7d8ff3c7c36cca993435369d445bf5bf8bb32640511903",
+   "rows": 3647,
+   "date_min": "2012-03-30 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:06+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/EPAM.parquet",
+   "sha256": "5740d3027c4b1ba1bf2a8cd046c55a437d5433397fbd2a11c1418b7058b49657",
+   "rows": 3683,
+   "date_min": "2012-02-08 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:08+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/EWJ.parquet",
+   "sha256": "566d35e6a50fc64f8cfa463bb6159c53b6c4759caee32ccc0a01ec342e6a0853",
+   "rows": 7685,
+   "date_min": "1996-03-18 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:15:56+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/FFIV.parquet",
+   "sha256": "89b9fab77e3211d99c2a3d4a996a2430b34594e59a652b3fe3bf563fff3447ab",
+   "rows": 6874,
+   "date_min": "1999-06-04 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:09+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/FICO.parquet",
+   "sha256": "35042454e52fb20d3c52f51cb958d8245b0c59a6b1d60b7c5e24ce2e65e36a69",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:11+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/FSLR.parquet",
+   "sha256": "8a92f8ff6fffb33baa4fd68cf4b22c38f0455d9b7d976d4688b3d14209fa9dca",
+   "rows": 4997,
+   "date_min": "2006-11-17 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:12+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/FTNT.parquet",
+   "sha256": "549d69d637aa66413ed5e040bfe8524868f9bea3d063fdb0c2d1e8b22d45cf70",
+   "rows": 4242,
+   "date_min": "2009-11-18 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:14+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/GEN.parquet",
+   "sha256": "1fe8b72a8a303497ea187717d0ecaed1de666db2929fd6d77025cc923eff7fed",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:15+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/GLD.parquet",
+   "sha256": "6361db07ed83e20e5a0871aab72f37c59029ed6764b268f34ffc7b413f0140a3",
+   "rows": 5501,
+   "date_min": "2004-11-18 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:08+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/GLW.parquet",
+   "sha256": "124466560cac4fde5fafea3432f6455852031b28b035cdc0c8da4cf6790b5165",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:17+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/GOLD.PA.parquet",
+   "sha256": "25af7d7f402cb6f26925829f606732cdbd4113e1fddcb68dd444e127419dea08",
+   "rows": 1884,
+   "date_min": "2019-05-23 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:16:07+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/HPE.parquet",
+   "sha256": "8f9ca1785ecc374afcfb8bcf7c1205f994b53b139306ac2b3211deafc6cc876e",
+   "rows": 2754,
+   "date_min": "2015-10-19 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:18+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/HPQ.parquet",
+   "sha256": "203f009382d814624f3ffd349e221156358b9ecdba74dd931101f449b1754c4c",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:20+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/IBM.parquet",
+   "sha256": "2989a34296e3b9da7619661537feabef5ef9776415ebae269c1ec624e98bfea5",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:40+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/INTC.parquet",
+   "sha256": "93a4280219723a8d0f4e3a6eb40edd2326ff2b47aac8700874a1b9e66ce22644",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:35+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/INTU.parquet",
+   "sha256": "5e1cbf5c241310488e9305a1307690f97cd2c7e1aa0e087b3c19a0f2b9547b4c",
+   "rows": 8447,
+   "date_min": "1993-03-12 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:21+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/IT.parquet",
+   "sha256": "f07da02f2a123f4e65b1ff47d92a56454c86cdf74835a2989b9893df09c1a54a",
+   "rows": 8304,
+   "date_min": "1993-10-05 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:23+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/JBL.parquet",
+   "sha256": "c4e5dc2384dc9d71aa0f75ea25af7ea02fa4532c83f177de2191780b96b29348",
+   "rows": 8412,
+   "date_min": "1993-05-03 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:24+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/JPN.PA.parquet",
+   "sha256": "c6fcfbda2bf4b0c396c80dfbc6b94f7742aebb27c20510bee113e8131edd16a8",
+   "rows": 4795,
+   "date_min": "2008-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:15:55+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/KEYS.parquet",
+   "sha256": "6551d8c8d49e4e1ba586c13db01bac27b7889bb33af162d571b714b889f96d19",
+   "rows": 3005,
+   "date_min": "2014-10-20 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:27+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/KLAC.parquet",
+   "sha256": "eda5df4a370758273929f22a58cfd5d381a83c77e93d4015970ee371d6358ccc",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:29+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/LRCX.parquet",
+   "sha256": "40257a34bc408e90ad9d39f781fa44e5edb03f553bcf92c2193f050310d9a083",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:30+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/MCHP.parquet",
+   "sha256": "56d84a6cb4c1693c886286f8dbda8f941006b952557e03b4dab72b48256aff90",
+   "rows": 8442,
+   "date_min": "1993-03-19 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:32+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/MEU.PA.parquet",
+   "sha256": "3fb886450af40ed86ae4480948df6a62bb1ef898460d6735a93ed3807faef154",
+   "rows": 4796,
+   "date_min": "2008-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:15:51+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/MPWR.parquet",
+   "sha256": "5be884fe28e3e218866958a818e3590c19f7e678c5f108fbdff7530ac1a1f5a2",
+   "rows": 5500,
+   "date_min": "2004-11-19 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:33+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/MSFT.parquet",
+   "sha256": "c4b8d2939678db909b5a09ac0cd7bfdde16405b12a76d88f9a271a2e94b4387d",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:23+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/MSI.parquet",
+   "sha256": "5a3d090eef447f56ef732678d5159b057bf5c6476e108eafc0e7ae13bd1f3506",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:35+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/MTD.PA.parquet",
+   "sha256": "f75178cf1acc71710b33b9fb7f15164343ec63d7fe1708755154d832220b98f2",
+   "rows": 4538,
+   "date_min": "2009-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "fetched_at": "2026-10-02T11:16:01+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/MU.parquet",
+   "sha256": "e7ee98d06e1fb87a0c29a599ea3603f6f0375326bd5f7fd3e05a96a24c25bb00",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:36+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/NOW.parquet",
+   "sha256": "8ac462b3944ca3b15a44feccc0fd0ec6126c4be92e4ea4bec506626d536e2c92",
+   "rows": 3584,
+   "date_min": "2012-06-29 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:41+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/NTAP.parquet",
+   "sha256": "3ba1436ec1a892a5c3a88eb546af7e81dbbd94b3697856e5f3cb3bcf306f1e98",
+   "rows": 7765,
+   "date_min": "1995-11-21 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:38+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/NVDA.parquet",
+   "sha256": "d27c7454375944d0ce79124a6435532221fd8b27776df03e66ae4b2548df7d34",
+   "rows": 6966,
+   "date_min": "1999-01-22 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:25+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/NXPI.parquet",
+   "sha256": "e781030372f27bd78959f518da2e163e45ed4e9c884654b0568477b992bd6da3",
+   "rows": 4063,
+   "date_min": "2010-08-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:39+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ON.parquet",
+   "sha256": "56812273de1885c2313d49d2accfe77242c454125f6ee05c7aea7af578a3df82",
+   "rows": 6644,
+   "date_min": "2000-05-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:41+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ORCL.parquet",
+   "sha256": "77d34b22e0d6bc07bcd14cb6949373ff5ed45074dc21180c633705a42dfcb7f1",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:28+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/PANW.parquet",
+   "sha256": "dab3361c23a9170bb62572fae4fc45e74f9638de7f1c6fbbe6e9ce3928927ad0",
+   "rows": 3570,
+   "date_min": "2012-07-20 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:42+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/PTC.parquet",
+   "sha256": "de7cf1a87eb81def64e8103f7690d8e928e595346b1d8005e1dd8ffe0000802c",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:44+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/QCOM.parquet",
+   "sha256": "16ceae5d25d67b11bb4ceba49693c1d68db126ce03c3bc42606bbf3f2a76cd6c",
+   "rows": 8761,
+   "date_min": "1991-12-13 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:37+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/QRVO.parquet",
+   "sha256": "5cb7d6af59c9eb71802e720ee472e6a0f23a42a80c14aff40c38d440decd9fab",
+   "rows": 2954,
+   "date_min": "2015-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:45+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ROP.parquet",
+   "sha256": "bf4b27a4c21dcdc6f87544fc1b7f626472e158fae47367f9ed058ea53ee0aabd",
+   "rows": 8719,
+   "date_min": "1992-02-13 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:47+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/SNPS.parquet",
+   "sha256": "2d7e831120df73d83431e9740011b023be5b7e6e2abe74cb3847a01c61961383",
+   "rows": 8711,
+   "date_min": "1992-02-26 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:48+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/SPY.parquet",
+   "sha256": "24e7f8a964d9579c8679e8b923516f063e69f471e8f54e06712c49bcb6d0856f",
+   "rows": 8476,
+   "date_min": "1993-01-29 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:15:50+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/STX.parquet",
+   "sha256": "df6ea23c68d35065bd75685891ad34633483267931dfc610fa02e9704b5c7ec1",
+   "rows": 5989,
+   "date_min": "2002-12-11 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:50+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/SWKS.parquet",
+   "sha256": "5d7da25a089cfef931ef382a28938dbc16b2798d13bef0ef645d74060f4fea31",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:52+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/TDY.parquet",
+   "sha256": "b5df4cf15d8afeee6c472d3d2d476ad6b43881545576b4f302a3f738363d41be",
+   "rows": 6754,
+   "date_min": "1999-11-23 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:53+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/TEL.parquet",
+   "sha256": "bbe103bb8eca17058d6e15ac92ca261a6518900c086229c7d30cae8fa7fec3b9",
+   "rows": 4856,
+   "date_min": "2007-06-14 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:54+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/TER.parquet",
+   "sha256": "f121e45c670de0306c3b0638a10c7624706d7fc3923aa776ecbdc59b4d09b576",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:56+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/TRMB.parquet",
+   "sha256": "45fbceed11386d8cd240b622d4a4a20466d9467668d6d0a88650ee20096569d3",
+   "rows": 9116,
+   "date_min": "1990-07-20 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:57+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/TXN.parquet",
+   "sha256": "6942c146a8d57566975db481a8d61d8026847dd834c4bacc0bc2268d532cbfdb",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:38+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/TYL.parquet",
+   "sha256": "20136c481e0e7461e69689cc0dc64f78f89cd26d638ec543208ba423cfa6e347",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:17:59+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/URTH.parquet",
+   "sha256": "093f52b2de2501ca4ce8492bf3aaa7430e85fba416887b6296935d91767d2545",
+   "rows": 3701,
+   "date_min": "2012-01-12 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:17+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/VGK.parquet",
+   "sha256": "5c4d04ec147747520c6f34c71a70fa8ecf3638de7c6fc369ac3fcac49bb5da06",
+   "rows": 5425,
+   "date_min": "2005-03-10 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:15:53+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/VRSN.parquet",
+   "sha256": "59a21d263e059d46d7ffb7f7ffe8d197374ccddcdb1d4cac4ec74de71181883a",
+   "rows": 7212,
+   "date_min": "1998-01-30 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:18:00+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/WDC.parquet",
+   "sha256": "be66a7f7953f40c9e3897b2c857fdfa13b7849826329a54f7f3c6754ece717f9",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:18:02+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ZBRA.parquet",
+   "sha256": "301cf15a8d881fb84e0489eb87e0639ac52f461753b8eab20ea4e87fb2b86712",
+   "rows": 8845,
+   "date_min": "1991-08-15 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:18:03+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/ZS.parquet",
+   "sha256": "90c8f975c8cad2bf5f486c6d4e375c648888b4570b0cb90f317e750510addfc1",
+   "rows": 2148,
+   "date_min": "2018-03-16 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "fetched_at": "2026-10-02T11:16:20+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "prices/_meta.parquet",
+   "sha256": "70f7e076bb676c47138b3335f63b4a8201a2122a512bee3ff250f496f91bb9a3",
+   "rows": 84,
+   "date_min": null,
+   "date_max": null,
+   "fetched_at": null
+  },
+  {
+   "kind": "derive",
+   "path": "universe/pool.parquet",
+   "sha256": "3ec41b588f988ebc71d0220b28126b1b9bf33e63e19e2556474a36d1b00c2d9e",
+   "rows": 64,
+   "date_min": null,
+   "date_max": null,
+   "fetched_at": null
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/AAPL.parquet",
+   "sha256": "a7608d1a1fc2555ae38d0d0888cc960d7f92ccea05d9afc7b8f87985853fa26d",
+   "rows": 2008,
+   "date_min": "2009-07-22 00:00:00",
+   "date_max": "2026-07-31 00:00:00",
+   "fetched_at": "2026-10-02T11:19:44+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/ADBE.parquet",
+   "sha256": "78877568b6cfd5b075c5aba5b356da8c5fb55b7b8187c91e9582c99b451beefb",
+   "rows": 2195,
+   "date_min": "2009-06-26 00:00:00",
+   "date_max": "2026-09-22 00:00:00",
+   "fetched_at": "2026-10-02T11:20:21+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/AMD.parquet",
+   "sha256": "4ca73bf90c0f9573dd3415958973b9b007022c1a62e18a97f7b389de5beb30e1",
+   "rows": 1637,
+   "date_min": "2010-08-04 00:00:00",
+   "date_max": "2026-08-05 00:00:00",
+   "fetched_at": "2026-10-02T11:20:27+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/AVGO.parquet",
+   "sha256": "274b3dc83c9594ac6aaf2a707ad2da0d0453320a84d2757b2c512bd99c207d9a",
+   "rows": 854,
+   "date_min": "2018-06-14 00:00:00",
+   "date_max": "2026-09-10 00:00:00",
+   "fetched_at": "2026-10-02T11:20:02+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/CRM.parquet",
+   "sha256": "098c7b2c24a23ec67b4cd409d0b06d7f27fd60b36fd3c23915c161333492201b",
+   "rows": 2377,
+   "date_min": "2009-08-25 00:00:00",
+   "date_max": "2026-08-27 00:00:00",
+   "fetched_at": "2026-10-02T11:20:15+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/CSCO.parquet",
+   "sha256": "068aaa665aac564c32a78613214ff9ca0c4455b597c22b08b90d8c3582bd9a10",
+   "rows": 1969,
+   "date_min": "2009-11-18 00:00:00",
+   "date_max": "2026-09-02 00:00:00",
+   "fetched_at": "2026-10-02T11:20:32+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/IBM.parquet",
+   "sha256": "a0b985b7b627ff7a556c3f0312d0da75dd4bef72860f7f12e2576b9baa7a9460",
+   "rows": 1393,
+   "date_min": "2009-07-28 00:00:00",
+   "date_max": "2026-07-23 00:00:00",
+   "fetched_at": "2026-10-02T11:20:54+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/INTC.parquet",
+   "sha256": "6740c750ef6c4ab1c503c311304a599ab878f3194b41e0beb6c52a3971c95463",
+   "rows": 1485,
+   "date_min": "2009-08-03 00:00:00",
+   "date_max": "2026-07-24 00:00:00",
+   "fetched_at": "2026-10-02T11:20:39+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/MSFT.parquet",
+   "sha256": "27ea1f16ab2f53ca608ff7c0f35dcbdcd2b12aa79847e0cd8fea7bae843b767e",
+   "rows": 2178,
+   "date_min": "2009-10-23 00:00:00",
+   "date_max": "2026-07-29 00:00:00",
+   "fetched_at": "2026-10-02T11:19:48+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/NOW.parquet",
+   "sha256": "bde5074460c5ebadc67ddd4521789d1be8ebb04ad1711c59ea96e8cf9c66831b",
+   "rows": 1461,
+   "date_min": "2012-08-10 00:00:00",
+   "date_max": "2026-07-23 00:00:00",
+   "fetched_at": "2026-10-02T11:21:02+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/NVDA.parquet",
+   "sha256": "dc50b178a8f1521ccfcc89cf390a4f1d6a698416b07383d7d1cd20b45784a3e5",
+   "rows": 2106,
+   "date_min": "2009-08-20 00:00:00",
+   "date_max": "2026-08-26 00:00:00",
+   "fetched_at": "2026-10-02T11:19:58+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/ORCL.parquet",
+   "sha256": "455645ca6629329c77dafb6bdd6cc6ff554b1d67af63a2edc4c2dfc3f7a51e1d",
+   "rows": 1491,
+   "date_min": "2009-09-21 00:00:00",
+   "date_max": "2026-09-25 00:00:00",
+   "fetched_at": "2026-10-02T11:20:07+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/QCOM.parquet",
+   "sha256": "42da3deb0ec6d9b3b2962f061b89f871fbbae9ede4351fdc8734698a7ff63749",
+   "rows": 2079,
+   "date_min": "2009-07-22 00:00:00",
+   "date_max": "2026-07-29 00:00:00",
+   "fetched_at": "2026-10-02T11:20:45+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/TXN.parquet",
+   "sha256": "48132ecbbb455ace0503e0a8a7e858c1358d527270ee9b61924cdaf64751fc59",
+   "rows": 1793,
+   "date_min": "2009-07-29 00:00:00",
+   "date_max": "2026-07-24 00:00:00",
+   "fetched_at": "2026-10-02T11:20:50+00:00"
+  },
+  {
+   "kind": "derive",
+   "path": "xbrl/ZS.parquet",
+   "sha256": "232155ce771df44a20a8a455015cdb467e06dd64dc8b56946f9ac886f129b345",
+   "rows": 903,
+   "date_min": "2018-06-07 00:00:00",
+   "date_max": "2026-09-03 00:00:00",
+   "fetched_at": "2026-10-02T11:19:37+00:00"
+  },
+  {
+   "kind": "snapshot",
+   "path": "esg/2026-10-02/records.parquet",
+   "sha256": "085284ddcf9690fd4268e58e1ec3ae11ae06e99f36f8f0a696b97ccc96dfba8a",
+   "rows": 28,
+   "date_min": "2026-10-02 11:21:35.817662+00:00",
+   "date_max": "2026-10-02 11:22:03.171969+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/_companies.parquet",
+   "sha256": "df65e06c654b7ca9c4a2752dc6e6885ed9ef4e1274efcc30b539451477f23930",
+   "rows": 63,
+   "date_min": null,
+   "date_max": null,
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__AAPL.parquet",
+   "sha256": "ca5c4feaad5623ccc65a1fb0823d997cc6c6f03116c3bf809fdf077ade1a1af6",
+   "rows": 361,
+   "date_min": "1994-01-26 10:00:00+00:00",
+   "date_max": "2026-07-31 14:01:02+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__ACN.parquet",
+   "sha256": "7799e9e01483c8b320eb53157f9cfb70307e7b3d343226f223192dc12d64dbd7",
+   "rows": 217,
+   "date_min": "2009-09-25 16:53:37+00:00",
+   "date_max": "2026-10-01 14:42:03+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__ADBE.parquet",
+   "sha256": "df1bae167f8b89dd80e4d8c01421d23dff3f3c9df037e0dbe240ef2772fd07be",
+   "rows": 361,
+   "date_min": "1995-02-17 05:00:00+00:00",
+   "date_max": "2026-09-22 20:04:02+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__ADI.parquet",
+   "sha256": "a669501d52289ec1ed9888bc20b9bfc4d3f79b289591151e489cf89b179c230f",
+   "rows": 422,
+   "date_min": "1994-03-11 10:00:00+00:00",
+   "date_max": "2026-09-18 00:15:18+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__ADSK.parquet",
+   "sha256": "7ba5743c2c4b35f5e4d705da96e7e28546e101356f81870eb6bea65cfeb7b90c",
+   "rows": 403,
+   "date_min": "1994-06-14 04:00:00+00:00",
+   "date_max": "2026-09-10 20:09:46+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__AKAM.parquet",
+   "sha256": "5b138527fd7dea3d87ad91f059259bfdd5459e661ccf29f63c0bbbf12769ac96",
+   "rows": 344,
+   "date_min": "2000-02-08 05:00:00+00:00",
+   "date_max": "2026-09-25 20:04:30+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__AMAT.parquet",
+   "sha256": "e280f0a9637ef28d277262bdeb490069076ee52247d235f5ea1315190e64e92b",
+   "rows": 435,
+   "date_min": "1994-02-28 05:00:00+00:00",
+   "date_max": "2026-08-27 20:12:40+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__AMD.parquet",
+   "sha256": "525ff7cc20aa10912c760dc912bb4f68b6eb9e303cc211f11a89f6b00e05207b",
+   "rows": 551,
+   "date_min": "1994-01-27 05:00:00+00:00",
+   "date_max": "2026-09-28 20:16:47+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__ANET.parquet",
+   "sha256": "ff0104717707bead3b0140f83b2b5620a601ed36d36baadc3605f6e976ed695a",
+   "rows": 138,
+   "date_min": "2014-07-31 20:05:21+00:00",
+   "date_max": "2026-08-04 22:08:09+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__APH.parquet",
+   "sha256": "3c5363692da3375643282b3a219c2d2222f1317a498c1ac4c606cdefd91db897",
+   "rows": 410,
+   "date_min": "1996-05-15 04:00:00+00:00",
+   "date_max": "2026-09-04 20:01:19+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__AVGO.parquet",
+   "sha256": "e20b8e3656da151777205a90dde887b7e4a0430f75f09a0bb1b447395b23df06",
+   "rows": 155,
+   "date_min": "2018-03-23 21:01:03+00:00",
+   "date_max": "2026-09-09 21:56:42+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__CDNS.parquet",
+   "sha256": "740bac216d6847140323bf1fe1ccfaacb18696f2f853e1dd0966574fa5a85a57",
+   "rows": 386,
+   "date_min": "1994-05-16 08:00:00+00:00",
+   "date_max": "2026-07-29 01:45:28+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__CDW.parquet",
+   "sha256": "9a0c7f64b31fddcb22493a804a4d3ace745b571e2db99bfb5d264a482c096feb",
+   "rows": 256,
+   "date_min": "2010-10-26 20:25:55+00:00",
+   "date_max": "2026-09-21 20:05:28+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__CRM.parquet",
+   "sha256": "bd7f54db69c010b75ef0985412745f3066605038b7da35bb8467097329cc0114",
+   "rows": 375,
+   "date_min": "2004-08-19 20:33:06+00:00",
+   "date_max": "2026-09-17 01:02:48+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__CSCO.parquet",
+   "sha256": "426798ece3c6e96b7239a9ec6d4a951b0ad3207f03ff1b32cfd8690295330d09",
+   "rows": 533,
+   "date_min": "1995-03-13 05:00:00+00:00",
+   "date_max": "2026-09-02 20:36:56+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__CTSH.parquet",
+   "sha256": "e4c65bba79b7dda79b506e94155cebd470784a356f7a5cb4942f36e0c585d658",
+   "rows": 327,
+   "date_min": "1998-08-12 04:00:00+00:00",
+   "date_max": "2026-07-29 13:09:21+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__ENPH.parquet",
+   "sha256": "d4d20c719e4eea1040313fcba5493cc3158fe0bde61692fafd8cf9ded1f024ae",
+   "rows": 206,
+   "date_min": "2012-04-06 18:00:19+00:00",
+   "date_max": "2026-08-10 20:14:51+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__EPAM.parquet",
+   "sha256": "a3ae8cec617fed2fe91a81135b8b03091ac056df49b6d4ebbcb0552f86b4cf40",
+   "rows": 180,
+   "date_min": "2012-03-19 21:02:32+00:00",
+   "date_max": "2026-08-06 20:00:53+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__FFIV.parquet",
+   "sha256": "c461505ea502a7a77158a08c6cc003d25a1ce9766e3dcded28ff75cb84ce55ff",
+   "rows": 322,
+   "date_min": "1999-08-11 04:00:00+00:00",
+   "date_max": "2026-08-06 18:39:25+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__FICO.parquet",
+   "sha256": "5536f349f8e9f8bb00d2e977f5146b1db4cefd228b389842302e60a640c044d3",
+   "rows": 352,
+   "date_min": "1995-05-11 04:00:00+00:00",
+   "date_max": "2026-07-29 20:16:29+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__FSLR.parquet",
+   "sha256": "c14358844c304479c713a0f5b1c7a5ce78b58fa44ffd9d5cf8636a3e3b3bf733",
+   "rows": 305,
+   "date_min": "2006-12-23 00:26:53+00:00",
+   "date_max": "2026-07-31 00:06:52+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__FTNT.parquet",
+   "sha256": "c452c8e601133c8c1eb555dde9a43985e12bc57acfb8cb19ce728e76a8afbb9e",
+   "rows": 200,
+   "date_min": "2010-01-27 02:31:20+00:00",
+   "date_max": "2026-07-31 01:30:32+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__GEN.parquet",
+   "sha256": "d916652aab2ebca2f9b8b8a83e6080d162111ac204dcad409248a918fad2d8ed",
+   "rows": 473,
+   "date_min": "1995-02-13 05:00:00+00:00",
+   "date_max": "2026-09-28 20:20:51+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__GLW.parquet",
+   "sha256": "9e0feebc6cf4502e7ccf73357b8550b4cb9ca9a823fbb8953a4fdf5a507db7b7",
+   "rows": 516,
+   "date_min": "1994-01-24 10:00:00+00:00",
+   "date_max": "2026-09-12 00:25:56+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__HPE.parquet",
+   "sha256": "914aebe3ed9b2a3739dd4e9431d8c6cc1645d5d05cb646d183e8db741e4c4d39",
+   "rows": 233,
+   "date_min": "2015-10-13 14:12:11+00:00",
+   "date_max": "2026-09-30 15:49:26+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__HPQ.parquet",
+   "sha256": "9e259f18231cc80d09c21e8a18ab83188e901113dba21c7f49e8996bc3028dce",
+   "rows": 513,
+   "date_min": "1994-01-28 05:00:00+00:00",
+   "date_max": "2026-09-21 10:08:34+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__IBM.parquet",
+   "sha256": "dee15eae8f3e7ffb66f2a0f8c2da866619a1f090c2b593ede533965048dbb5ec",
+   "rows": 692,
+   "date_min": "1994-03-28 10:00:00+00:00",
+   "date_max": "2026-10-02 00:18:19+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__INTC.parquet",
+   "sha256": "6a805b959b73da32c63fdcfdb41db9c5379bcb403acb17df88899065e242d8be",
+   "rows": 576,
+   "date_min": "1994-03-25 05:00:00+00:00",
+   "date_max": "2026-08-12 20:05:07+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__INTU.parquet",
+   "sha256": "79a68099b703a1885eb06a473b23eedfd052011d49e9396ee87929d06bf6e8cd",
+   "rows": 401,
+   "date_min": "1996-06-12 04:00:00+00:00",
+   "date_max": "2026-09-09 20:12:09+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__IT.parquet",
+   "sha256": "9ce1637c0cd7a4697538cede5549b70e20b5a48a20b584532e404ba6a15f877d",
+   "rows": 366,
+   "date_min": "1996-05-10 04:00:00+00:00",
+   "date_max": "2026-08-04 10:04:13+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__JBL.parquet",
+   "sha256": "761552506bc21b00d339aae9a44cb5705ee5571f83f720ebf838b561ef67eeb7",
+   "rows": 345,
+   "date_min": "1996-07-15 04:00:00+00:00",
+   "date_max": "2026-09-30 11:32:16+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__KEYS.parquet",
+   "sha256": "8f81627faf25667a6cdabb9455bce4fbfcbe2328198545ef41ea154b97252215",
+   "rows": 156,
+   "date_min": "2014-10-06 23:05:47+00:00",
+   "date_max": "2026-09-02 20:07:04+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__KLAC.parquet",
+   "sha256": "5c2a70ec831429abed9e2ad56066e1433b1c3403d90203b01c84c3fa8114254a",
+   "rows": 462,
+   "date_min": "1994-01-12 05:00:00+00:00",
+   "date_max": "2026-08-06 20:35:27+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__LRCX.parquet",
+   "sha256": "7f1e33f4184d3be9d1cb9f603b54d4d812afdda3ef812c91afd8edc7dceb3ac7",
+   "rows": 416,
+   "date_min": "1995-09-26 04:00:00+00:00",
+   "date_max": "2026-08-27 21:20:05+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__MCHP.parquet",
+   "sha256": "7603c95237e21ff26a79474798c326da24f74a7d510dbb5c894ad3a7b4a69bc6",
+   "rows": 359,
+   "date_min": "1996-08-12 04:00:00+00:00",
+   "date_max": "2026-08-19 18:57:09+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__MPWR.parquet",
+   "sha256": "0d02fcd2478acb0eb993c57a56fe8c65bd879c7e5fa4b091151a97648e321904",
+   "rows": 290,
+   "date_min": "2004-12-07 19:36:45+00:00",
+   "date_max": "2026-09-10 20:01:44+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__MSFT.parquet",
+   "sha256": "3cbc52744bc81adf2fd632b61c4187526aea6c6bc4354d810a1772f76e3d3afa",
+   "rows": 412,
+   "date_min": "1994-02-14 05:00:00+00:00",
+   "date_max": "2026-09-02 20:30:24+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__MSI.parquet",
+   "sha256": "be2dee3303f11cd2d08d7afc212ed4b971fac4179f511a993f945499cd7b9d8c",
+   "rows": 478,
+   "date_min": "1994-03-28 05:00:00+00:00",
+   "date_max": "2026-09-09 20:22:24+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__MU.parquet",
+   "sha256": "05fb08ed4b007c45c30d96126c5cf56f74d0730d06159893a83511f60ea508bb",
+   "rows": 504,
+   "date_min": "1994-03-07 05:00:00+00:00",
+   "date_max": "2026-09-30 20:02:22+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__NOW.parquet",
+   "sha256": "3f32e29328d25619f77c6be9950658e14444e638eda9e45ecae825ad47475285",
+   "rows": 181,
+   "date_min": "2012-08-01 20:15:00+00:00",
+   "date_max": "2026-07-22 23:07:00+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__NTAP.parquet",
+   "sha256": "ce9e8e286f34f8c7b4dcab7345712dead71a5d1cadee07ca6a192aacf3e52593",
+   "rows": 368,
+   "date_min": "1996-09-09 08:00:00+00:00",
+   "date_max": "2026-09-12 00:09:33+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__NVDA.parquet",
+   "sha256": "0e9785f96526e815e711ef891b2fb9814048e7c487dbb8aa6aa44fb23fc5f1b5",
+   "rows": 351,
+   "date_min": "1999-06-15 04:00:00+00:00",
+   "date_max": "2026-09-03 12:03:56+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__NXPI.parquet",
+   "sha256": "c5dfd451545c50a16ea858759cc1e9a79a237dc408ee214dada17695969c8dee",
+   "rows": 112,
+   "date_min": "2019-08-30 01:30:32+00:00",
+   "date_max": "2026-09-03 00:02:36+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__ON.parquet",
+   "sha256": "89317b7382e80869fedc5fb80c8c81bbe73b0d04f0ced0e80b0d50dd3ca098dd",
+   "rows": 539,
+   "date_min": "2000-02-25 10:00:00+00:00",
+   "date_max": "2026-10-02 01:10:07+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__ORCL.parquet",
+   "sha256": "11975b72eeaaf01a32e6b9c15989695e233d276af6ad663c3dfb924f4574dba9",
+   "rows": 287,
+   "date_min": "2006-02-10 01:00:23+00:00",
+   "date_max": "2026-09-14 14:01:59+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__PANW.parquet",
+   "sha256": "63766e93337db38c387d26ed04c166a3893d1ca08bf7e8c0b84c050c27da6969",
+   "rows": 194,
+   "date_min": "2012-09-11 00:14:08+00:00",
+   "date_max": "2026-09-11 00:19:53+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__PTC.parquet",
+   "sha256": "ff1ddc1cfa3385b9f56eef52e3f9a9578f54c9285e840f6c266175a97f07b692",
+   "rows": 396,
+   "date_min": "1995-05-15 04:00:00+00:00",
+   "date_max": "2026-07-31 20:01:56+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__QCOM.parquet",
+   "sha256": "3c34b3cc0019aae25a77ea3feaacc0048d316b3320e029fd2f908d3a901bef6c",
+   "rows": 381,
+   "date_min": "1996-05-13 04:00:00+00:00",
+   "date_max": "2026-09-08 13:00:20+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__QRVO.parquet",
+   "sha256": "24791deaa60b4ca62f3b637a96fb9a0c4385f18a0833e0a0a3220ef6a16fbec3",
+   "rows": 222,
+   "date_min": "2014-09-09 01:22:54+00:00",
+   "date_max": "2026-08-13 00:04:21+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__ROP.parquet",
+   "sha256": "8c6f12cf6633bab61cad0cbf516103ba54bf2704a53147aa5c686e407d8267ad",
+   "rows": 366,
+   "date_min": "1996-06-06 08:00:00+00:00",
+   "date_max": "2026-10-01 17:03:23+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__SNPS.parquet",
+   "sha256": "54eb8e6af784eb648f86ae99f0a09f08384f50fce8b5e95413bc089ba9cf70e6",
+   "rows": 389,
+   "date_min": "1996-05-14 04:00:00+00:00",
+   "date_max": "2026-08-26 21:02:25+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__STX.parquet",
+   "sha256": "2945d8ec17af0b98a8863e671387c402b521b83b5fe04d7e8546e15eaebe9dc3",
+   "rows": 498,
+   "date_min": "2003-02-10 20:19:11+00:00",
+   "date_max": "2026-09-09 12:42:48+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__SWKS.parquet",
+   "sha256": "aaf0c0f850daa1ca22b8f339005381467323b88ed4e182174f876a66366cbf47",
+   "rows": 390,
+   "date_min": "1995-02-08 10:00:00+00:00",
+   "date_max": "2026-09-30 16:39:33+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__TDY.parquet",
+   "sha256": "aa495c47d03e679b71df8aa155ddfa43cf39a2842d5ccf74ce5770113c3fa083",
+   "rows": 344,
+   "date_min": "1999-12-01 05:00:00+00:00",
+   "date_max": "2026-09-28 20:27:53+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__TEL.parquet",
+   "sha256": "503b7c85f661a10a04eb125f9e937c329a25a0c02af6af028fdbe7cf0d79f595",
+   "rows": 356,
+   "date_min": "2007-06-08 13:59:43+00:00",
+   "date_max": "2026-07-24 12:58:24+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__TER.parquet",
+   "sha256": "c825a57d0a899e744e12ec57fe1aefa06b76c3b9727b819bc879b4016796e700",
+   "rows": 340,
+   "date_min": "1994-03-31 10:00:00+00:00",
+   "date_max": "2026-08-11 00:08:31+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__TRMB.parquet",
+   "sha256": "27d49a0f904800694c4e5fb2cad17930ca24427ccdea924e86373f8348c1da8d",
+   "rows": 387,
+   "date_min": "1996-08-13 04:00:00+00:00",
+   "date_max": "2026-08-12 20:13:43+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__TXN.parquet",
+   "sha256": "be68ee89130c2437db0a8b230cd324573bd236ac5a6725c18fccef6eaabde0b2",
+   "rows": 439,
+   "date_min": "1994-01-28 05:00:00+00:00",
+   "date_max": "2026-09-17 20:11:46+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__TYL.parquet",
+   "sha256": "f311cdc6a6f9f628dc7516e54fcfa5752fede848423f25c18bf19c644c881d91",
+   "rows": 298,
+   "date_min": "1996-05-14 04:00:00+00:00",
+   "date_max": "2026-09-15 17:37:11+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__VRSN.parquet",
+   "sha256": "347b0d7cfe65ef238b9e320c890c22f77da202d3ed9140236e5f83001f07aded",
+   "rows": 443,
+   "date_min": "1998-05-11 08:00:00+00:00",
+   "date_max": "2026-08-28 00:01:37+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__WDC.parquet",
+   "sha256": "6be694b0d6902a6828f2e09f7459752459cb8812d557402d63817ecfeea9f5ec",
+   "rows": 578,
+   "date_min": "1994-01-05 05:00:00+00:00",
+   "date_max": "2026-09-14 12:00:07+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__ZBRA.parquet",
+   "sha256": "356ae516e8f12bebd9867014eb3aa063db49efc8dee746d03f201099db2c0b1d",
+   "rows": 342,
+   "date_min": "1996-05-14 04:00:00+00:00",
+   "date_max": "2026-08-04 20:07:59+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "filings/2026-10-02/index__ZS.parquet",
+   "sha256": "886da35708b5670cfd1f23a44394342efa96da6d529aa833ddceff82fc81b5a9",
+   "rows": 94,
+   "date_min": "2018-05-03 10:16:02+00:00",
+   "date_max": "2026-09-24 20:07:41+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "fx/2026-10-02/EXR_CHF.parquet",
+   "sha256": "2b0445a4422145ac55c88b0fbdbd5730221d4d2f91106aa5fdc7d3508ca602bc",
+   "rows": 7105,
+   "date_min": "1999-01-04 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "fx/2026-10-02/EXR_GBP.parquet",
+   "sha256": "23f332032ccd5a8d4a0a32016e7dcedcedf1d75ca7bf000e1c90ba8a457e3768",
+   "rows": 7105,
+   "date_min": "1999-01-04 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "fx/2026-10-02/EXR_JPY.parquet",
+   "sha256": "88d26b722692d056e089b0bf0283be40502c8278efb505340e2bad26e39be77d",
+   "rows": 7105,
+   "date_min": "1999-01-04 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "fx/2026-10-02/EXR_USD.parquet",
+   "sha256": "e9044f35f1b5c5cee2b8882cde6019885cd22612e4e1d99fa4a2446f04a09a94",
+   "rows": 7105,
+   "date_min": "1999-01-04 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/ecb__EONIA.parquet",
+   "sha256": "5ec7e8225ee1735840ab0941eb6d08ca1ee8aaacb357068dc7a09be87d54617c",
+   "rows": 5890,
+   "date_min": "1999-01-04 00:00:00",
+   "date_max": "2021-12-31 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/ecb__ESTR.parquet",
+   "sha256": "a3b8fa7e62b42473f9e3ba9a0d89eb9463a0b14033e7d656598a82be78af1c93",
+   "rows": 1794,
+   "date_min": "2019-10-01 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/ecb__YC_SPOT_10Y.parquet",
+   "sha256": "9fb3968113432892935b450a413c24a1b973f0087dd2398647d2cb6205611f46",
+   "rows": 5643,
+   "date_min": "2004-09-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/ecb__YC_SPOT_2Y.parquet",
+   "sha256": "061020dce9deafe8a7adeeeed574c38b9e454725441346c442985cd2dcc95691",
+   "rows": 5643,
+   "date_min": "2004-09-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/ecb__YC_SPOT_7Y.parquet",
+   "sha256": "0207bf13affe23e40c5f1f54ca99844a988410d61e3ecd455cbc4fa1117d2242",
+   "rows": 5643,
+   "date_min": "2004-09-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__BAMLH0A0HYM2.parquet",
+   "sha256": "862e3af76037d5c5c58601436c91c7d3006cb95afc012b2ab972c16ecec19358",
+   "rows": 794,
+   "date_min": "2023-10-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__BAMLHE00EHYIOAS.parquet",
+   "sha256": "d08735abce8f54b3ae4e7b7dcefd93f23b3097163684a18730347bb11ff1ac9d",
+   "rows": 794,
+   "date_min": "2023-10-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__BAMLHE00EHYITRIV.parquet",
+   "sha256": "b6c19f01fb8fb396f1d2c67f2947eb48552afd19c91e0f43c5de7cce16f46ef4",
+   "rows": 794,
+   "date_min": "2023-10-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__CPIAUCSL.parquet",
+   "sha256": "b7a27ead880293726d093b8d7e7862f55244c0dda9c6a96db81ece272f397a88",
+   "rows": 3362,
+   "date_min": "1947-01-01 00:00:00",
+   "date_max": "2026-08-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__DGS10.parquet",
+   "sha256": "4855ac41d738b6059d4e1796ab1ab4df17d4539940f53a5a07340ae5adc09299",
+   "rows": 16892,
+   "date_min": "1962-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__DGS1MO.parquet",
+   "sha256": "fb51fc0298c7d1408018918d79768aa1be783e2e84a4e51bb2d8db5d8bbd6a3b",
+   "rows": 6567,
+   "date_min": "2001-07-31 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__DGS2.parquet",
+   "sha256": "a023dc2725dac9a22453c4c19f9e2dcfd1a31c25924390d4291f1cbfc6f05916",
+   "rows": 13132,
+   "date_min": "1976-06-01 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__ECBESTRVOLWGTTRMDMNRT.parquet",
+   "sha256": "1fcbcb3d51be9de5d00dfd1bf4775ef8eb383284c34c680839928493c359d289",
+   "rows": 1828,
+   "date_min": "2019-10-01 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__GDPC1.parquet",
+   "sha256": "c8fa0f221b5ac43ae0bd1fd351f59919a770c6f3e278463c52067cd3cf476c5d",
+   "rows": 4425,
+   "date_min": "1947-01-01 00:00:00",
+   "date_max": "2026-04-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__T10Y2Y.parquet",
+   "sha256": "3476b67c63b12754c063243c2a2200eda5855c7655d53d35af9fd6357b287eb1",
+   "rows": 13133,
+   "date_min": "1976-06-01 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__UNRATE.parquet",
+   "sha256": "987ac27ba249091ee829a0707da7fd5e452ac0e44d8313364dee4ab7abef71f1",
+   "rows": 2198,
+   "date_min": "1948-01-01 00:00:00",
+   "date_max": "2026-08-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred__VIXCLS.parquet",
+   "sha256": "1efa883ba44ebc1784a4cfac4291483e818e25224626746639db96652ceed77c",
+   "rows": 9587,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "macro/2026-10-02/fred___meta.parquet",
+   "sha256": "789eb090e2d5ecc3a1f6adeaf93442531a44458ae248a6acb69cda878205c15b",
+   "rows": 12,
+   "date_min": null,
+   "date_max": null,
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "news/2026-10-02/_gdelt_probe.parquet",
+   "sha256": "362deb3d2c4d56952f8521702614fe063ee150b03b3db8c98fa3fb92cf954479",
+   "rows": 9,
+   "date_min": null,
+   "date_max": null,
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "news/2026-10-02/_gdelt_weeks.parquet",
+   "sha256": "3077ed7e2b723ab579694802e8c6c1b711fab527b773d422886860c10bbcc1d7",
+   "rows": 26,
+   "date_min": "2026-08-07 00:00:00",
+   "date_max": "2026-09-25 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "news/2026-10-02/items.parquet",
+   "sha256": "efd02b4ab00f18d94cc825c9c472e3e1b3d46849081e7f938c9d62c3da0e6f08",
+   "rows": 808,
+   "date_min": "2026-08-13 15:00:00+00:00",
+   "date_max": "2026-10-02 10:45:00+00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/500.PA.parquet",
+   "sha256": "a2ddddb4cfe4d7c620023cc03f97bb08ef10494e6bc863b0d9e078c265db32c7",
+   "rows": 4174,
+   "date_min": "2010-06-08 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/AAPL.parquet",
+   "sha256": "af66bb52fc9cdf3fb57b2da32da2b68a9da2face4815564d958b854311986e99",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ACN.parquet",
+   "sha256": "62b55ffafaa9a22a33e72fa6ed51d31b5dd711312b52ad8fcaa6df9fe2f75f44",
+   "rows": 6338,
+   "date_min": "2001-07-19 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ACWI.parquet",
+   "sha256": "e9dd317a6f50b62a6ec5d79f1b36328590b115dcb3f0839e77155598298649db",
+   "rows": 4658,
+   "date_min": "2008-03-28 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ADBE.parquet",
+   "sha256": "2f5f187832e34cb3e80a70a0b79ebb9e9cf1b4271b710064dd602834c14d193b",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ADI.parquet",
+   "sha256": "6b1c05df3e20c2a35d5111acb9e6516c7afc7dc2844f5689b5788cd080c1ab5b",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ADSK.parquet",
+   "sha256": "025fbe4c967b0d6f0d021c29e59f0a6a159952ef9ba38b0781113cb19f813894",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/AEEM.PA.parquet",
+   "sha256": "401b3ccc54da159870acd90e49963eb7d90bd1fb2b7653636cf895b00708fab4",
+   "rows": 4049,
+   "date_min": "2010-11-30 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/AHYE.PA.parquet",
+   "sha256": "eb3162c699a231122ccf718addf7dca57e64450210539d9d1378c9477d844b1c",
+   "rows": 3347,
+   "date_min": "2013-09-03 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/AKAM.parquet",
+   "sha256": "aaaecbf77f5361f1ed456e4fbd33f56b885cd590fba4106de07299e622fdc112",
+   "rows": 6771,
+   "date_min": "1999-10-29 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/AMAT.parquet",
+   "sha256": "61bca9b380496d3a7f09a261f5f95092f9b5cff4d955bae7515ec6b14282830a",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/AMD.parquet",
+   "sha256": "5fd9e9d96ef59febbacc8f577a984d449aaa4e85ec141cbee675a50b6e5244f5",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ANET.parquet",
+   "sha256": "578fbd954bce2d5c937e33fe7fe0675d2b82bd0d31f3fb03ccab9c65f28f57a6",
+   "rows": 3099,
+   "date_min": "2014-06-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/APH.parquet",
+   "sha256": "02a2bdc9a3bfa9cffcd464fc8bde355576af5d3f6caaa94257b8ad58313192e7",
+   "rows": 8785,
+   "date_min": "1991-11-08 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/AVGO.parquet",
+   "sha256": "6c89a9cacd3d291612d0aaf599f0bba9d0bc7c2788611e91c151c15698dbfd68",
+   "rows": 4315,
+   "date_min": "2009-08-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/C3M.PA.parquet",
+   "sha256": "385999251a4efc0991cb70441e45b318106b7b20dc7eb749031a460ed39285ec",
+   "rows": 4421,
+   "date_min": "2009-06-22 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/CDNS.parquet",
+   "sha256": "8de6a02fac6d1afd1fcf8b1b7e156ca992a68e383b3535a7ef99392b29fa5056",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/CDW.parquet",
+   "sha256": "303fe642ac86bd11691ed2213d96e4e294bd544767bc8c9bc505f18564e25b4d",
+   "rows": 3336,
+   "date_min": "2013-06-27 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/COMO.PA.parquet",
+   "sha256": "e52eb127e0fa5fa7859c28198d5bf6f54823aff98d5b521e23b7bf6a06e3588e",
+   "rows": 4797,
+   "date_min": "2008-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/CRM.parquet",
+   "sha256": "91648525f7539b1b9b17c4068f9204a4b81c520059736d0923e5a08a7aee347d",
+   "rows": 5605,
+   "date_min": "2004-06-23 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/CRP.PA.parquet",
+   "sha256": "f071730bef1aaee7aa596d98df5a501d08e67a1be3ca5541cc854ab208f809cc",
+   "rows": 4471,
+   "date_min": "2009-04-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/CSCO.parquet",
+   "sha256": "3ba10c3a434a0715acd7adac55ed4c24586c74f4a38ddf1b9034c5f492a3921f",
+   "rows": 9222,
+   "date_min": "1990-02-16 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/CSH2.PA.parquet",
+   "sha256": "8ff6bcba5aaa8cef0985dccac74ebcc18c875dcfe8de7846f7caee520430c199",
+   "rows": 392,
+   "date_min": "2025-03-17 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/CTSH.parquet",
+   "sha256": "cc1f7dec4d1397b421b045575945fb51799ee66d995d2e1d43590d362cda79ea",
+   "rows": 7115,
+   "date_min": "1998-06-19 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/CW8.PA.parquet",
+   "sha256": "5bc6724b07b3d7b5f1e2ebbd3b23da524c2551e997d6c3cba0d427712a88edfd",
+   "rows": 4424,
+   "date_min": "2009-06-16 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/DBC.parquet",
+   "sha256": "7dfda7f4cf615c3b3509408750a6c06363f06e6926dc119ec8dc8e5f3f962f09",
+   "rows": 5196,
+   "date_min": "2006-02-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/EEM.parquet",
+   "sha256": "2bc319465af88bc834aeb181a6bb818d185b0d02028f7377a01c84e6d295b9d5",
+   "rows": 5905,
+   "date_min": "2003-04-14 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/EGOV.PA.parquet",
+   "sha256": "38036bcf448ad833689f74f0512ae4c42f53e347a843deadc6094e94adcf2b2c",
+   "rows": 2530,
+   "date_min": "2016-11-11 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ENPH.parquet",
+   "sha256": "6196fbb2ead82a63abc297fb797c976042257d6561c020168de095b11f936b69",
+   "rows": 3647,
+   "date_min": "2012-03-30 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/EPAM.parquet",
+   "sha256": "5379e7a2aa60bc4dfa5603d348e4224984e265ac8c25e5386bc85b561869f52d",
+   "rows": 3683,
+   "date_min": "2012-02-08 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/EWJ.parquet",
+   "sha256": "20aec355e976842cc4f4682097482af5cccfaa5013eed7a9569ba0c5aafd70a8",
+   "rows": 7685,
+   "date_min": "1996-03-18 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/FFIV.parquet",
+   "sha256": "f935d4b90893e33b56d60a217a49d738049288a3fcb78c0bd89bcad2f1e58740",
+   "rows": 6874,
+   "date_min": "1999-06-04 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/FICO.parquet",
+   "sha256": "21205b4c2cefcd2ae2fc53128f7184d0e9bf9cd55d203e07ab0e2423ff102a5a",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/FSLR.parquet",
+   "sha256": "a135fa6a5ee7c1d9da73fabc0c1e0763078818454161dff350bd650f21861dd3",
+   "rows": 4997,
+   "date_min": "2006-11-17 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/FTNT.parquet",
+   "sha256": "dcfa439f99b91ada8814cf86fa9fb1a5da2a7932bf9b6513c3f630c82124d0e5",
+   "rows": 4242,
+   "date_min": "2009-11-18 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/GEN.parquet",
+   "sha256": "6d8cb2c7a9a24374e62e51138f2c6e9bcd25f86bf036690fea2d36c79cc21890",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/GLD.parquet",
+   "sha256": "6e6ff58d02dbfb7bff541d9c53cf3aaf4ee6d7d28f1e8ca1c023f2371201100d",
+   "rows": 5501,
+   "date_min": "2004-11-18 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/GLW.parquet",
+   "sha256": "e1449c2972cfa7d28322d8e27ac1b9fb3361943bcd6728169baaad38bde7e4d6",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/GOLD.PA.parquet",
+   "sha256": "827d55ca6775b5e1e0294f142dd87917e1fa2828e77ab8f85aa7f937ccddb1f7",
+   "rows": 1884,
+   "date_min": "2019-05-23 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/HPE.parquet",
+   "sha256": "3608667c9d1152bfab6e0d9cbbf92a83625ccd834026c03965bf047fd57e68b9",
+   "rows": 2754,
+   "date_min": "2015-10-19 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/HPQ.parquet",
+   "sha256": "089ae657a6c3d45053418f9f014bd91efd2f48ede310051df4cd85ff6080225c",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/IBM.parquet",
+   "sha256": "45c238f5f3fcef594ed6aba4cd9da44a675234b1796f3e9c2ed4e11e5d456cc2",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/INTC.parquet",
+   "sha256": "2e021a9ae1fdca508c13564e4e09f8d6258a54ed6dbaebef239a3c36b30883df",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/INTU.parquet",
+   "sha256": "1273e83255f45b766a6e9766f9fd0b3d810994025dd6a5ede1884f1ae22f904f",
+   "rows": 8447,
+   "date_min": "1993-03-12 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/IT.parquet",
+   "sha256": "600a9279a5099ce611dd93a81bfe898803c4895ddeca89c6cdfe0f33ba9f3cdd",
+   "rows": 8304,
+   "date_min": "1993-10-05 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/JBL.parquet",
+   "sha256": "87fdf475f56fbe9103c252266e94e861d011ccf87048159ac8584b40c78cd150",
+   "rows": 8412,
+   "date_min": "1993-05-03 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/JPN.PA.parquet",
+   "sha256": "22f4cac7d077d9818c33e8e4e147ce7a535b3ece9edfc8e5d5459453f1ebc771",
+   "rows": 4795,
+   "date_min": "2008-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/KEYS.parquet",
+   "sha256": "3fc5bf99f83b575c8a44594d6fb0127bbf73b7889add1ad1e609ddc775f74e67",
+   "rows": 3005,
+   "date_min": "2014-10-20 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/KLAC.parquet",
+   "sha256": "c142e53091a017c421e3d9bf9989e9a2edaba6d725a4e1e76611ee634999ebdf",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/LRCX.parquet",
+   "sha256": "d978168ba9578f1f7104181b738b93a3e25633d8cdb1aebeb58c769dda9a3f1d",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/MCHP.parquet",
+   "sha256": "e111de2eba9d47dd434f804eb44dbc4a1977fe32a5ddac252218dc8b4d713c0f",
+   "rows": 8442,
+   "date_min": "1993-03-19 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/MEU.PA.parquet",
+   "sha256": "9c14770cec368d93674d5d1abbeb826dcc9806c98e9c5001a303c8d321e96063",
+   "rows": 4796,
+   "date_min": "2008-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/MPWR.parquet",
+   "sha256": "4bdad41347983266cb31a1ec1a4f35442ef28bef3f6e575038ba83a351260f17",
+   "rows": 5500,
+   "date_min": "2004-11-19 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/MSFT.parquet",
+   "sha256": "2fbfc25c28a0a4c0debe006405c593b4e5aa882a7fda6faaa0ed53263fd7d3f9",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/MSI.parquet",
+   "sha256": "5da4d20c033b419871e82d229a373fbd5136f4aa6b9b70e42ca3836922857a3a",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/MTD.PA.parquet",
+   "sha256": "6567316f62f4f148bf8763efe14691bc5bb2ed52aa9187c11f0034ea908901e7",
+   "rows": 4538,
+   "date_min": "2009-01-02 00:00:00",
+   "date_max": "2026-09-30 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/MU.parquet",
+   "sha256": "ec519a3015bb72fc909687ff80ac4fcf244bced615f6ea33fef117682f6917fd",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/NOW.parquet",
+   "sha256": "e0749bbee5ba98329666d878d9fc94afc199aa64697750c1086f0e03caebe407",
+   "rows": 3584,
+   "date_min": "2012-06-29 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/NTAP.parquet",
+   "sha256": "95f6e64266bf37d804e13a76c6289003ccdea6922362f1390163b3e034f06c1d",
+   "rows": 7765,
+   "date_min": "1995-11-21 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/NVDA.parquet",
+   "sha256": "3d48128e8a45da01387696282c66bb0de80388b905b21a3416b4e02beb933903",
+   "rows": 6966,
+   "date_min": "1999-01-22 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/NXPI.parquet",
+   "sha256": "683d70ce91aef24c5d5c4f6d8c32074dccd73e7086a3301eb5435eb073b92dab",
+   "rows": 4063,
+   "date_min": "2010-08-06 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ON.parquet",
+   "sha256": "5c73cd329e8802ed5e3a5ecfb20486ec6ab462b354aced23ee3606a14c645397",
+   "rows": 6644,
+   "date_min": "2000-05-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ORCL.parquet",
+   "sha256": "9cbd1d131caa144d92023fb81ed4b667f171e411a912a964a1466a7b125a80d2",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/PANW.parquet",
+   "sha256": "4cd4420d67000a8a246c2930182b7699d4ce3921eba16661931b2606b65cb913",
+   "rows": 3570,
+   "date_min": "2012-07-20 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/PTC.parquet",
+   "sha256": "4e25d0db7a1f509706a677c9739b10cde3670c34f710dd32a4241bbc7606f947",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/QCOM.parquet",
+   "sha256": "fb82b2cef676c937e90e6357de3a3d187fdffd8d133dd5222a617dcf48ad23eb",
+   "rows": 8761,
+   "date_min": "1991-12-13 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/QRVO.parquet",
+   "sha256": "972c3eadd0078627cafdd4ee2753163670400f2c60bbfcd25a8c0800a6b879b5",
+   "rows": 2954,
+   "date_min": "2015-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ROP.parquet",
+   "sha256": "a718934d7cfcc795aebe141e3b82285ff8fdcbd2a2e89a6fbdf84e7813b79f20",
+   "rows": 8719,
+   "date_min": "1992-02-13 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/SNPS.parquet",
+   "sha256": "b5c22c259e3cc3a4a86025f7bef5970babc7cc0564fccec90e5fe1d6fd13995d",
+   "rows": 8711,
+   "date_min": "1992-02-26 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/SPY.parquet",
+   "sha256": "a1df32200f1be01370dc6db48433219567321d93bcb0d296df9274b4c8786695",
+   "rows": 8476,
+   "date_min": "1993-01-29 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/STX.parquet",
+   "sha256": "7fe5c98d085c09ae7e1dcadd13836c1f41d19954eda0aea77d02733084f04668",
+   "rows": 5989,
+   "date_min": "2002-12-11 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/SWKS.parquet",
+   "sha256": "6a23165695b4addae532d9bf9bc55042af9bc241744699ba35cabc1292bbfb16",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/TDY.parquet",
+   "sha256": "1160724bf51805a3cc6bb66207d91c0e9437e88ea9734291fc4818204034bf89",
+   "rows": 6754,
+   "date_min": "1999-11-23 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/TEL.parquet",
+   "sha256": "f03012dff0c9144460c9a372b6a34682a8ec0e8bd89c9c1c943d0af678223dbc",
+   "rows": 4856,
+   "date_min": "2007-06-14 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/TER.parquet",
+   "sha256": "d8cc3b0a1463616c5962a88f430632ed4a8774d8498119555e36bf1c5b6d0237",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/TRMB.parquet",
+   "sha256": "865e83597bdfa65d9f408f68164e8911337152965c7809bf303055a0255e865f",
+   "rows": 9116,
+   "date_min": "1990-07-20 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/TXN.parquet",
+   "sha256": "efeb198dc55b3caa4fc1dc79347f2888593bdf457e4f4cee097946d5171c14d7",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/TYL.parquet",
+   "sha256": "4fb84ac2bb04b377a8d7b340c5b988d66c61b3850dd389d8f0e220131e48e294",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/URTH.parquet",
+   "sha256": "0c6aa6eca8e0a0b0cdb4b3134751909c77be7812ca870d403b7ba7081e1ffae1",
+   "rows": 3701,
+   "date_min": "2012-01-12 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/VGK.parquet",
+   "sha256": "daa70eed2444b14e4fb4465f9f24805186ebcf134bee661950f5e726f8a26659",
+   "rows": 5425,
+   "date_min": "2005-03-10 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/VRSN.parquet",
+   "sha256": "cb3933d6eed927d8e89be55093557bb4e37b567b2b7ab5fa41aaea4b6dc6c88e",
+   "rows": 7212,
+   "date_min": "1998-01-30 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/WDC.parquet",
+   "sha256": "b345aaf332f6b6d47ce755ae6366a845d036a8bafc688669e4e1230ecf00737c",
+   "rows": 9255,
+   "date_min": "1990-01-02 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ZBRA.parquet",
+   "sha256": "d9209bafae78b0fdffd9ceec1bd1f1759b49d5f5437122f817ce3dc2c06773a5",
+   "rows": 8845,
+   "date_min": "1991-08-15 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/ZS.parquet",
+   "sha256": "d5803736f06ef32445e06188d6c6d75f93e23c787e9c87448a44d4c90eee5ea2",
+   "rows": 2148,
+   "date_min": "2018-03-16 00:00:00",
+   "date_max": "2026-10-01 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "prices/2026-10-02/_meta.parquet",
+   "sha256": "d709913c2948bdb658f151d40c86ba17198b3a81ac6d637af17021ec1b36adbd",
+   "rows": 84,
+   "date_min": null,
+   "date_max": null,
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "universe/2026-10-02/pool.parquet",
+   "sha256": "3ec41b588f988ebc71d0220b28126b1b9bf33e63e19e2556474a36d1b00c2d9e",
+   "rows": 64,
+   "date_min": null,
+   "date_max": null,
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/AAPL.parquet",
+   "sha256": "a7608d1a1fc2555ae38d0d0888cc960d7f92ccea05d9afc7b8f87985853fa26d",
+   "rows": 2008,
+   "date_min": "2009-07-22 00:00:00",
+   "date_max": "2026-07-31 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/ADBE.parquet",
+   "sha256": "78877568b6cfd5b075c5aba5b356da8c5fb55b7b8187c91e9582c99b451beefb",
+   "rows": 2195,
+   "date_min": "2009-06-26 00:00:00",
+   "date_max": "2026-09-22 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/AMD.parquet",
+   "sha256": "4ca73bf90c0f9573dd3415958973b9b007022c1a62e18a97f7b389de5beb30e1",
+   "rows": 1637,
+   "date_min": "2010-08-04 00:00:00",
+   "date_max": "2026-08-05 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/AVGO.parquet",
+   "sha256": "274b3dc83c9594ac6aaf2a707ad2da0d0453320a84d2757b2c512bd99c207d9a",
+   "rows": 854,
+   "date_min": "2018-06-14 00:00:00",
+   "date_max": "2026-09-10 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/CRM.parquet",
+   "sha256": "098c7b2c24a23ec67b4cd409d0b06d7f27fd60b36fd3c23915c161333492201b",
+   "rows": 2377,
+   "date_min": "2009-08-25 00:00:00",
+   "date_max": "2026-08-27 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/CSCO.parquet",
+   "sha256": "068aaa665aac564c32a78613214ff9ca0c4455b597c22b08b90d8c3582bd9a10",
+   "rows": 1969,
+   "date_min": "2009-11-18 00:00:00",
+   "date_max": "2026-09-02 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/IBM.parquet",
+   "sha256": "a0b985b7b627ff7a556c3f0312d0da75dd4bef72860f7f12e2576b9baa7a9460",
+   "rows": 1393,
+   "date_min": "2009-07-28 00:00:00",
+   "date_max": "2026-07-23 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/INTC.parquet",
+   "sha256": "6740c750ef6c4ab1c503c311304a599ab878f3194b41e0beb6c52a3971c95463",
+   "rows": 1485,
+   "date_min": "2009-08-03 00:00:00",
+   "date_max": "2026-07-24 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/MSFT.parquet",
+   "sha256": "27ea1f16ab2f53ca608ff7c0f35dcbdcd2b12aa79847e0cd8fea7bae843b767e",
+   "rows": 2178,
+   "date_min": "2009-10-23 00:00:00",
+   "date_max": "2026-07-29 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/NOW.parquet",
+   "sha256": "bde5074460c5ebadc67ddd4521789d1be8ebb04ad1711c59ea96e8cf9c66831b",
+   "rows": 1461,
+   "date_min": "2012-08-10 00:00:00",
+   "date_max": "2026-07-23 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/NVDA.parquet",
+   "sha256": "dc50b178a8f1521ccfcc89cf390a4f1d6a698416b07383d7d1cd20b45784a3e5",
+   "rows": 2106,
+   "date_min": "2009-08-20 00:00:00",
+   "date_max": "2026-08-26 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/ORCL.parquet",
+   "sha256": "455645ca6629329c77dafb6bdd6cc6ff554b1d67af63a2edc4c2dfc3f7a51e1d",
+   "rows": 1491,
+   "date_min": "2009-09-21 00:00:00",
+   "date_max": "2026-09-25 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/QCOM.parquet",
+   "sha256": "42da3deb0ec6d9b3b2962f061b89f871fbbae9ede4351fdc8734698a7ff63749",
+   "rows": 2079,
+   "date_min": "2009-07-22 00:00:00",
+   "date_max": "2026-07-29 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/TXN.parquet",
+   "sha256": "48132ecbbb455ace0503e0a8a7e858c1358d527270ee9b61924cdaf64751fc59",
+   "rows": 1793,
+   "date_min": "2009-07-29 00:00:00",
+   "date_max": "2026-07-24 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  },
+  {
+   "kind": "snapshot",
+   "path": "xbrl/2026-10-02/ZS.parquet",
+   "sha256": "232155ce771df44a20a8a455015cdb467e06dd64dc8b56946f9ac886f129b345",
+   "rows": 903,
+   "date_min": "2018-06-07 00:00:00",
+   "date_max": "2026-09-03 00:00:00",
+   "origin": "reconstruit_depuis_le_stockage",
+   "fetched_at": "2026-10-02"
+  }
+ ],
+ "manifest_sha256": "9e72347596a2cbca916ecae714c63a872e7ef7eff919f6dbc3df2da6d62b7b69",
+ "generated_at": "2026-10-02T14:08:08+00:00"
+}

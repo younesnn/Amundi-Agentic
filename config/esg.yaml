@@ -1,0 +1,56 @@
+# ESG (phase 2, L1 §9.4, D-007, D-022, R-04). Hypothèses de conception (H), à confirmer (Q-3, Q-12, Q-14).
+# Les exclusions par secteur sont un PROXY : elles reposent sur le code SIC courant de l'émetteur
+# (EDGAR), pas sur le chiffre d'affaires réel par activité. Elles ne sont pas historisées
+# (non point-in-time) : usage backtest seulement en mode « non_pit » avec analyse de sensibilité.
+
+normative_exclusions:
+  controversial_weapons:
+    label: "Armes controversées"
+    sic_ranges: []                 # aucun code SIC ne distingue les armes controversées
+    vendor_flag: controversialWeapons
+    note: "Pas de règle sectorielle : seul un indicateur fournisseur peut le détecter."
+  tobacco:
+    label: "Tabac"
+    sic_ranges: [[2100, 2199]]
+    vendor_flag: tobacco
+    note: "SIC 2100-2199 : produits du tabac."
+  thermal_coal:
+    label: "Charbon thermique"
+    sic_ranges: [[1200, 1299]]
+    vendor_flag: thermalCoal
+    note: "SIC 12xx : extraction de charbon (inclut le charbon métallurgique : sur-exclusion possible)."
+  military_contracting:
+    label: "Armement conventionnel (information, non exclusif)"
+    sic_ranges: [[3480, 3489], [3760, 3769]]
+    vendor_flag: militaryContract
+    enforce: false                 # (H) signalé seulement : hors D-007
+    note: "SIC 348x (armes et munitions) et 376x (missiles guidés)."
+
+# Score fournisseur : yfinance expose les scores de risque ESG Sustainalytics (plus bas = meilleur),
+# sans historique. Le sens est enregistré ; aucune normalisation n'est fixée en phase 2 (CT-06, phase 4).
+score:
+  vendor: yfinance_sustainability
+  direction: lower_is_better
+  normalization: null
+  s_min: null                       # CT-06 : s_min = score du benchmark (L1 §7.6), non absolu
+
+# ETF : exclusions et score dérivés de la méthodologie de l'indice (D-022). `basis` est déduit du
+# nom Yahoo relevé dans L1 §9.1 ; `verified: false` tant que le prospectus n'a pas été lu.
+etf_methodology:
+  default: {basis: none_known, verified: false}
+  by_ticker:
+    CRP.PA: {basis: paris_aligned_index, regulation: "Règlement délégué (UE) 2020/1818 (PAB)", verified: false}
+    AHYE.PA: {basis: esg_index, verified: false}
+
+# Ce que chaque base méthodologique d'ETF permet d'affirmer. « esg_index » : le contenu des
+# exclusions n'est pas connu sans le prospectus : aucune exclusion n'est donc déclarée (inconnu).
+basis_definitions:
+  paris_aligned_index:
+    exclusions: [controversial_weapons, tobacco, thermal_coal]
+    note: "Exclusions minimales d'un indice Paris-Aligned (UE) 2020/1818, art. 12 : à confirmer sur l'indice réel."
+  esg_index:
+    exclusions: []
+    determined: false
+  none_known:
+    exclusions: []
+    determined: false

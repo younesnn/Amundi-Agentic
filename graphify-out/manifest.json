@@ -1,0 +1,482 @@
+{
+  "pyproject.toml": {
+    "mtime": 1790939478.7556155,
+    "seen": 1791026231.281298,
+    "ast_hash": "32c3a37698fefd2d28e5dd8cd1857c23",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/__init__.py": {
+    "mtime": 1790932031.9565487,
+    "seen": 1791026231.281303,
+    "ast_hash": "3374c18e0af7c3e98fa6565debbe7ee0",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/agents/__init__.py": {
+    "mtime": 1790932135.5289164,
+    "seen": 1791026231.281306,
+    "ast_hash": "d2bc0384e3fe9bf73317d702e4408b5b",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/cli.py": {
+    "mtime": 1790949495.6651862,
+    "seen": 1791026231.281307,
+    "ast_hash": "158b6d19e4253b1ec78456cd4c15aae8",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/__init__.py": {
+    "mtime": 1790942764.2846634,
+    "seen": 1791026231.281307,
+    "ast_hash": "89e3e65a783d728c099dd8d6c3121b6f",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/analysis.py": {
+    "mtime": 1790950062.019704,
+    "seen": 1791026231.281308,
+    "ast_hash": "c3615d5959645e92e2d17ff48ac16e0e",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/connectors/__init__.py": {
+    "mtime": 1790938945.6666374,
+    "seen": 1791026231.281309,
+    "ast_hash": "00133ec0cfb7fbd4608bd4c763f19879",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/connectors/esg.py": {
+    "mtime": 1790949549.6761065,
+    "seen": 1791026231.2813098,
+    "ast_hash": "6a77f9ac1499eefa26f4d7f6a9665759",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/connectors/filings.py": {
+    "mtime": 1790949693.6315136,
+    "seen": 1791026231.2813098,
+    "ast_hash": "1f8e0333b35e979827aa12ff3f554e82",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/connectors/fx.py": {
+    "mtime": 1790949474.6333652,
+    "seen": 1791026231.281311,
+    "ast_hash": "57da4b38d04742861e8d3f9f08a5a006",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/connectors/macro.py": {
+    "mtime": 1790949693.6312087,
+    "seen": 1791026231.281312,
+    "ast_hash": "f2ebb67554b06a9ed35f00bcaf6f2295",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/connectors/news.py": {
+    "mtime": 1790949474.6337273,
+    "seen": 1791026231.281313,
+    "ast_hash": "eb1414c2ab40bb2a85d97aebb095f098",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/connectors/prices.py": {
+    "mtime": 1790949474.6317496,
+    "seen": 1791026231.281313,
+    "ast_hash": "36264b71ae5316b5a29626ed0252ba57",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/coverage.py": {
+    "mtime": 1790950062.020601,
+    "seen": 1791026231.2813141,
+    "ast_hash": "e27bc1583001209968c75e1b99fd0bce",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/http.py": {
+    "mtime": 1790947439.7658463,
+    "seen": 1791026231.281315,
+    "ast_hash": "a2d42f6f7c7ce3aaa4c3a32170bb619c",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/manifest.py": {
+    "mtime": 1790949495.6631706,
+    "seen": 1791026231.281315,
+    "ast_hash": "6cec40aaab54e442f9df1b672a618087",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/models.py": {
+    "mtime": 1790939399.778611,
+    "seen": 1791026231.281316,
+    "ast_hash": "1360bd2e1511c1a13e81c31ef771e282",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/pipeline.py": {
+    "mtime": 1790949495.6634557,
+    "seen": 1791026231.2813172,
+    "ast_hash": "07803bf2d28cd390ca377e6f775cbf25",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/pit.py": {
+    "mtime": 1790947452.7241247,
+    "seen": 1791026231.281318,
+    "ast_hash": "fe9297f9b3424b09fc62ddb8e54ce311",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/quality.py": {
+    "mtime": 1790949506.9125621,
+    "seen": 1791026231.281319,
+    "ast_hash": "e88db83eaa382b392ed00627a46637ab",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/settings.py": {
+    "mtime": 1790949488.1645539,
+    "seen": 1791026231.2813199,
+    "ast_hash": "b75c7af044bc860425e51a49bdbbd66d",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/store.py": {
+    "mtime": 1790949474.6311326,
+    "seen": 1791026231.2813199,
+    "ast_hash": "16c39dc8aeee82a265d14e89ca8002d3",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/data/universe.py": {
+    "mtime": 1790949693.6317873,
+    "seen": 1791026231.281321,
+    "ast_hash": "6729ce1ab46f9458c1a08f0509c73a28",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/debate/__init__.py": {
+    "mtime": 1790932031.9574265,
+    "seen": 1791026231.281322,
+    "ast_hash": "7548bcd8848853d6e000ce71c4fec0d8",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/evaluation/__init__.py": {
+    "mtime": 1790932031.95781,
+    "seen": 1791026231.281323,
+    "ast_hash": "ec064119d7190108373f68b1be7cf537",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/explain/__init__.py": {
+    "mtime": 1790932031.957689,
+    "seen": 1791026231.2813241,
+    "ast_hash": "4da13255e950c61c1580854c269f19e7",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/llm/__init__.py": {
+    "mtime": 1790932031.9569619,
+    "seen": 1791026231.281325,
+    "ast_hash": "b1fa80d6f7bb22b79e021a433f55bdbb",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/portfolio/__init__.py": {
+    "mtime": 1790932031.9575155,
+    "seen": 1791026231.281326,
+    "ast_hash": "98ad2be3eaacb3e5c342bba24a9c055a",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/rebalancing/__init__.py": {
+    "mtime": 1790932031.9576063,
+    "seen": 1791026231.281326,
+    "ast_hash": "dd0adac4792f0af55d08bcdbc1e4b142",
+    "semantic_hash": ""
+  },
+  "src/amundi_agentic/tools/__init__.py": {
+    "mtime": 1790932031.957199,
+    "seen": 1791026231.281327,
+    "ast_hash": "b562c9cde389e2cffbf15b94b4bc748b",
+    "semantic_hash": ""
+  },
+  "tests/data/conftest.py": {
+    "mtime": 1790947470.1877403,
+    "seen": 1791026231.2813282,
+    "ast_hash": "e5179f9b51d86a51fab99bbd774be8b2",
+    "semantic_hash": ""
+  },
+  "tests/data/data_helpers.py": {
+    "mtime": 1790947470.1883583,
+    "seen": 1791026231.281329,
+    "ast_hash": "18d4f0b17bf858034acd19151915cf93",
+    "semantic_hash": ""
+  },
+  "tests/data/test_connectors.py": {
+    "mtime": 1790948329.889548,
+    "seen": 1791026231.281329,
+    "ast_hash": "79b5a2cf7ff84b78c2610878d01189fe",
+    "semantic_hash": ""
+  },
+  "tests/data/test_http_store.py": {
+    "mtime": 1790947470.1903567,
+    "seen": 1791026231.2813299,
+    "ast_hash": "af6129bb62ae0b5371918e3f57e543c8",
+    "semantic_hash": ""
+  },
+  "tests/data/test_network.py": {
+    "mtime": 1790947501.14414,
+    "seen": 1791026231.281331,
+    "ast_hash": "6516343057b9ad5f5bd6795141bf45ee",
+    "semantic_hash": ""
+  },
+  "tests/data/test_pipeline.py": {
+    "mtime": 1790947470.1917558,
+    "seen": 1791026231.281333,
+    "ast_hash": "ac436438867718be44ccdc441d3c70e1",
+    "semantic_hash": ""
+  },
+  "tests/data/test_pit.py": {
+    "mtime": 1790947501.1439753,
+    "seen": 1791026231.281333,
+    "ast_hash": "4349454631a2d12fbe499268cc45866d",
+    "semantic_hash": ""
+  },
+  "tests/data/test_quality.py": {
+    "mtime": 1790947515.4742064,
+    "seen": 1791026231.281334,
+    "ast_hash": "3438d4457fae1886619ede4c9b4dc2ab",
+    "semantic_hash": ""
+  },
+  "tests/data/test_rejouabilite_analyses.py": {
+    "mtime": 1790950062.1216033,
+    "seen": 1791026231.281335,
+    "ast_hash": "7fbb9c343b6583b283b769f014fbf194",
+    "semantic_hash": ""
+  },
+  "tests/data/test_revue_corrections.py": {
+    "mtime": 1790950255.0687878,
+    "seen": 1791026231.281335,
+    "ast_hash": "5ca2b22b3136d54fb01894d96d593c5d",
+    "semantic_hash": ""
+  },
+  "tests/data/test_revue_pit_adverse.py": {
+    "mtime": 1790948409.6482418,
+    "seen": 1791026231.281336,
+    "ast_hash": "cbf3cfe72bba2c8e79b42557a7139515",
+    "semantic_hash": ""
+  },
+  "tests/data/test_revue_rejouabilite.py": {
+    "mtime": 1790950209.604773,
+    "seen": 1791026231.281337,
+    "ast_hash": "0e03c11b6175d622807ff64bb54ab7d4",
+    "semantic_hash": ""
+  },
+  "tests/data/test_revue_robustesse.py": {
+    "mtime": 1790948022.7805655,
+    "seen": 1791026231.2813382,
+    "ast_hash": "0cca12ea28c2760b523978b8534807e2",
+    "semantic_hash": ""
+  },
+  "tests/data/test_universe_coverage.py": {
+    "mtime": 1790947470.196547,
+    "seen": 1791026231.281339,
+    "ast_hash": "72278a2ee8ea5325059502d3e6fd2fe2",
+    "semantic_hash": ""
+  },
+  "tests/test_config.py": {
+    "mtime": 1790936484.3675046,
+    "seen": 1791026231.28134,
+    "ast_hash": "162b5c6ec7faedd20b3eaef9d64d3e2f",
+    "semantic_hash": ""
+  },
+  "tests/test_config_revue.py": {
+    "mtime": 1790934900.694262,
+    "seen": 1791026231.2813408,
+    "ast_hash": "9499085c588deb939664bf58d3bb0c0f",
+    "semantic_hash": ""
+  },
+  "tests/test_socle.py": {
+    "mtime": 1790932131.7082143,
+    "seen": 1791026231.2813408,
+    "ast_hash": "567b775c1011474a7ddfb2d83db7f811",
+    "semantic_hash": ""
+  },
+  "tests/test_socle_revue.py": {
+    "mtime": 1790932218.0037427,
+    "seen": 1791026231.281342,
+    "ast_hash": "679ec2a0b8defab5bdeaf572708b57c3",
+    "semantic_hash": ""
+  },
+  "tests/test_specifications.py": {
+    "mtime": 1790934866.85848,
+    "seen": 1791026231.281343,
+    "ast_hash": "82d0b3643f5adf81b897424d113a645d",
+    "semantic_hash": ""
+  },
+  ".claude/agents/agents-engineer.md": {
+    "mtime": 1790931467.2662797,
+    "seen": 1791026231.281343,
+    "ast_hash": "a13d397a52850f64532089c846d6e675",
+    "semantic_hash": ""
+  },
+  ".claude/agents/architect.md": {
+    "mtime": 1790931467.2635324,
+    "seen": 1791026231.281344,
+    "ast_hash": "ffc31161dcf28c28051c70dfc9a3c615",
+    "semantic_hash": ""
+  },
+  ".claude/agents/data-engineer.md": {
+    "mtime": 1790931467.265021,
+    "seen": 1791026231.2813451,
+    "ast_hash": "1caeff21b631601f5222c6171bffc747",
+    "semantic_hash": ""
+  },
+  ".claude/agents/financial-critic.md": {
+    "mtime": 1790931467.2701395,
+    "seen": 1791026231.281346,
+    "ast_hash": "c367a5471600c8591479d993be76dbf3",
+    "semantic_hash": ""
+  },
+  ".claude/agents/quant.md": {
+    "mtime": 1790931467.2675872,
+    "seen": 1791026231.281346,
+    "ast_hash": "f80536af5626574968012517dd632891",
+    "semantic_hash": ""
+  },
+  ".claude/agents/reviewer-tester.md": {
+    "mtime": 1790931467.268887,
+    "seen": 1791026231.281347,
+    "ast_hash": "15a752d77cb7eaaeae6e2a7f115d86cc",
+    "semantic_hash": ""
+  },
+  ".claude/agents/tech-writer.md": {
+    "mtime": 1790931467.2715406,
+    "seen": 1791026231.281348,
+    "ast_hash": "6c155823f518e2e285600753a262b2af",
+    "semantic_hash": ""
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1790932264.626285,
+    "seen": 1791026231.281348,
+    "ast_hash": "d98dbd967afa37412d813043b0f14afe",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1791026436.8107352,
+    "seen": 1791026685.354954,
+    "ast_hash": "305592b14d7636d5bc6b3119146cc151",
+    "semantic_hash": ""
+  },
+  "DECISIONS.md": {
+    "mtime": 1791026462.9570768,
+    "seen": 1791026685.354955,
+    "ast_hash": "48a54cefc7f86d39adc8ad04ac950030",
+    "semantic_hash": ""
+  },
+  "PROGRESS.md": {
+    "mtime": 1791026683.533891,
+    "seen": 1791026685.3549562,
+    "ast_hash": "237dd64d4bbc38bd3fc018617bd338d1",
+    "semantic_hash": ""
+  },
+  "PROMPT.md": {
+    "mtime": 1790932031.9243922,
+    "seen": 1791026231.281352,
+    "ast_hash": "2a86219126c2d620d0f5546829c252d7",
+    "semantic_hash": ""
+  },
+  "QUESTIONS_AMUNDI.md": {
+    "mtime": 1790948862.4158318,
+    "seen": 1791026231.281352,
+    "ast_hash": "9d96d5b9c5ba5b5e9e213d12150c210c",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1790940904.8909826,
+    "seen": 1791026231.281353,
+    "ast_hash": "b6380ab35ff61ec7db85d56f52e1f18a",
+    "semantic_hash": ""
+  },
+  "agent_prompts/README.md": {
+    "mtime": 1790932061.1298838,
+    "seen": 1791026231.281354,
+    "ast_hash": "1d9a7cd6d158f2d68f03ae8cf3d1c1b5",
+    "semantic_hash": ""
+  },
+  "app/README.md": {
+    "mtime": 1790932061.132581,
+    "seen": 1791026231.281354,
+    "ast_hash": "a2b740849bc355d8cad4ecbc053b29e8",
+    "semantic_hash": ""
+  },
+  "config/README.md": {
+    "mtime": 1790938872.1954925,
+    "seen": 1791026231.281355,
+    "ast_hash": "3be32441b66ce3de362a1a22f9b6c4ea",
+    "semantic_hash": ""
+  },
+  "config/data.yaml": {
+    "mtime": 1790950079.8680444,
+    "seen": 1791026231.281356,
+    "ast_hash": "7ae0f16b13fb855ecf50e66c6d11804a",
+    "semantic_hash": ""
+  },
+  "config/esg.yaml": {
+    "mtime": 1790939186.5046523,
+    "seen": 1791026231.281357,
+    "ast_hash": "d9467013d25cc5e960523e1c017c4aae",
+    "semantic_hash": ""
+  },
+  "config/llm.yaml": {
+    "mtime": 1790936484.3671486,
+    "seen": 1791026231.281358,
+    "ast_hash": "e7ec83c0aaf5ad469222dba5584f7227",
+    "semantic_hash": ""
+  },
+  "config/universe.yaml": {
+    "mtime": 1790949435.7008128,
+    "seen": 1791026231.281358,
+    "ast_hash": "ac601b586e9e98b1e2b1fd5c0df4b7c0",
+    "semantic_hash": ""
+  },
+  "docs/L1_specifications.md": {
+    "mtime": 1791026620.4506822,
+    "seen": 1791026685.354967,
+    "ast_hash": "bee1acf980bbaceb96adeb428d635251",
+    "semantic_hash": ""
+  },
+  "docs/couverture_donnees.md": {
+    "mtime": 1790950088.381479,
+    "seen": 1791026231.28136,
+    "ast_hash": "1d4efd2ea65cf20b5f13d9560bc29e27",
+    "semantic_hash": ""
+  },
+  "docs/tracabilite.md": {
+    "mtime": 1791026633.7608876,
+    "seen": 1791026685.354969,
+    "ast_hash": "8b4f8f280a185ad58897d07e8a858946",
+    "semantic_hash": ""
+  },
+  "fiches/fiche_alphaagents_blackrock.md": {
+    "mtime": 1790927757.3018212,
+    "seen": 1791026231.2813609,
+    "ast_hash": "d3300c497bb6f1957ac0eafc448f6a13",
+    "semantic_hash": ""
+  },
+  "fiches/fiche_markowitz_black_litterman.md": {
+    "mtime": 1790927758.2225637,
+    "seen": 1791026231.2813618,
+    "ast_hash": "3f77edd8450d0c39e00bae41fcc543e1",
+    "semantic_hash": ""
+  },
+  "fiches/fiche_projet_amundi.md": {
+    "mtime": 1790927757.7405407,
+    "seen": 1791026231.281363,
+    "ast_hash": "3ffe6355ef75c5f501f0557695caafa8",
+    "semantic_hash": ""
+  },
+  "prompts/prompt_maitre_amundi.md": {
+    "mtime": 1790929859.8638413,
+    "seen": 1791026231.281363,
+    "ast_hash": "2a86219126c2d620d0f5546829c252d7",
+    "semantic_hash": ""
+  },
+  "Fiche projet Amundi Agentic.pdf": {
+    "mtime": 1790890242.4854593,
+    "seen": 1791026231.281364,
+    "ast_hash": "2b3e4e055cb0e84213d07b9693279921",
+    "semantic_hash": ""
+  },
+  "papier BlackRock.pdf": {
+    "mtime": 1790890185.082919,
+    "seen": 1791026231.281365,
+    "ast_hash": "b317efe5ae861e6f81dc5d1702511afc",
+    "semantic_hash": ""
+  },
+  ".claude/settings.json": {
+    "mtime": 1791026253.433653,
+    "seen": 1791026685.3548899,
+    "ast_hash": "5fdaa498a09eb38d8ecd149920f25f5a",
+    "semantic_hash": ""
+  }
+}

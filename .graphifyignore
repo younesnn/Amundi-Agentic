@@ -1,0 +1,24 @@
+# Exclusions de l'analyse graphify : données, caches, secrets, environnements.
+# Syntaxe identique à .gitignore.
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Données téléchargées, caches, instantanés
+.cache/
+data_store/
+runs/
+
+# Environnements et caches d'outils
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# Dépendances verrouillées (pas du code du projet)
+uv.lock
