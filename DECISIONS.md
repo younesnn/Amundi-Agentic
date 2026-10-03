@@ -500,3 +500,44 @@ Décisions du 2026-10-03 (validation de la phase 2 par Younes).
   4. relevé des quotas, des dates de fin d'entraînement et des conditions d'usage des niveaux gratuits : agent de recherche en lecture seule.
 - **Suite prévue :** RAG et résumé avec réflexion ; agents, prompts, coordinateur et débat ; réplication AlphaAgents (15 actions tech, 1er février 2024) ; puis extension multi-actifs. Chaque branche passe par le `reviewer-tester` avant fusion, puis par le `financial-critic` pour les parties chiffrées.
 - **CI :** `actions/checkout@v7`, `astral-sh/setup-uv@v10.2.0` (pas de tag de version majeure `v10`), runner `ubuntu-24.04` épinglé (le label `ubuntu-latest` migre vers Ubuntu 26 le 2026-10-19). Vérifié vert sur Python 3.11 et 3.12.
+
+## D-052 — Quotas, dates de fin d'entraînement et conditions des niveaux gratuits (2026-10-03)
+
+Relevé fait par un agent de recherche le 2026-10-03, **à partir de pages officielles lues par un outil qui les résume** : les citations sont de seconde main et à revérifier à l'œil avant de figer le pré-enregistrement (D-027). « Non trouvé » signifie que rien n'a été trouvé, pas qu'il n'existe rien.
+
+### Limites du niveau gratuit
+
+| Fournisseur et modèle | Limites | Source et réserve |
+| --- | --- | --- |
+| Groq `openai/gpt-oss-120b` | 30 requêtes/min, 1 000 requêtes/jour, 8 000 tokens/min, 200 000 tokens/jour (niveau gratuit, par organisation) | https://console.groq.com/docs/rate-limits ; page sans date de mise à jour |
+| Gemini (les 4 identifiants de `config/llm.yaml`) | **non trouvé** : la page officielle ne donne aucun chiffre ; les limites se lisent dans Google AI Studio, **page réservée aux comptes connectés** (https://aistudio.google.com/rate-limit). Limites par projet, « not guaranteed » | https://ai.google.dev/gemini-api/docs/rate-limits |
+
+- **Action pour Younes :** relever dans l'AI Studio les limites (requêtes/min, tokens/min, requêtes/jour) de `gemini-3.8-flash`, `gemini-3.5-flash-lite`, `gemini-flash-latest` et `gemini-flash-lite-latest`. Sans elles, la faisabilité du budget d'appels de L1 §11.2 (environ 9 060 appels par profil sur 8,1 ans) ne peut pas être tranchée.
+- **Conséquence pour le relais Groq :** avec 8 000 tokens/min et 200 000 tokens/jour, le relais est inutilisable pour de longs prompts (extraits de rapports 10-K du RAG) et plafonné à quelques centaines d'appels par jour. Le relais sert aux appels courts seulement.
+
+### Date de fin d'entraînement (borne de contamination de D-025)
+
+| Modèle | Fin d'entraînement | Mise à disposition | Fiabilité |
+| --- | --- | --- | --- |
+| `gemini-3.8-flash` | **mars 2026 pour certains domaines, janvier 2025 pour d'autres** (la fiche ne dit pas quels domaines) | 2026-09-02 | carte du modèle DeepMind, lue |
+| `gemini-3.5-flash-lite` | mars 2026 pour la plupart des domaines, janvier 2025 pour d'autres | 2026-07-21 | carte du modèle DeepMind, lue |
+| `openai/gpt-oss-120b` | juin 2024 | août 2025 | **indirecte** : exemple du format Harmony dans la documentation officielle, pas la fiche du modèle |
+| `llama3.1:8b` | décembre 2023 | 2024-07-23 | fiche de modèle de Meta, lue |
+
+- **Alias `*-latest` :** `gemini-flash-latest` pointait vers `gemini-3.5-flash` depuis le 2026-05-19 (journal des modifications de l'API) ; on ignore s'il a été déplacé vers 3.8 depuis. La cible de `gemini-flash-lite-latest` n'est pas indiquée. Les alias sont donc à proscrire pour toute évaluation (déjà acté par D-024).
+- **Conséquence sur la période hors échantillon** (calcul, fenêtre de données jusqu'au 2026-09-30) :
+  - Gemini 3.8 Flash, borne prudente mars 2026 : **environ 6 mois** hors échantillon ; en prenant janvier 2025 pour les connaissances générales : environ 1,7 an. L'évaluation de performance ne repose donc que sur quelques mois de données vraiment hors échantillon, plus le live test. Cela confirme D-025 (L4 démontre la mécanique, pas un alpha).
+  - **La réplication AlphaAgents (décision au 2026-02-01 sur des données de janvier 2024) est postérieure à la date de fin d'entraînement de `llama3.1:8b` (décembre 2023)** : avec ce modèle, elle serait réellement hors échantillon, à la qualité d'un modèle de 8 milliards de paramètres. Avec Gemini, elle est contaminée (D-025).
+  - `gpt-oss-120b` (juin 2024) donnerait environ 2,3 ans hors échantillon, mais ses quotas Groq ne permettent pas un backtest.
+- **Décision à prendre par Younes (phase 3, compte rendu) :** quel modèle pour les exécutions d'évaluation et la réplication (Gemini à version figée, `llama3.1:8b` local, ou les deux comparés comme l'ablation par fournisseur de la section 5.1 du prompt).
+
+### Conditions d'utilisation des niveaux gratuits
+
+| Fournisseur | Entraînement sur les données | Zone géographique | Source |
+| --- | --- | --- | --- |
+| Gemini (gratuit) | **Oui** : « Google uses the content you submit … to provide, improve, and develop Google products » ; des relecteurs humains peuvent lire les entrées et les sorties ; ne pas envoyer d'informations sensibles ou confidentielles | **EEE, Suisse, Royaume-Uni : services payants uniquement** « when making API Clients available to users » dans ces zones | https://ai.google.dev/gemini-api/docs/terms ; page de tarifs : « Content used to improve our products : Yes » |
+| Groq | Non, par contrat : source **secondaire** seulement, la page officielle ne l'aborde pas ; journaux conservés jusqu'à 30 jours | aucune restriction trouvée | https://console.groq.com/docs/your-data |
+| Ollama / Llama 3.1 | sans objet (local) | aucune restriction vue | licence « Llama 3.1 Community License » |
+
+- **Risque juridique à instruire (L6, Q-27) :** la clause de Google vise la mise à disposition d'API Clients à des utilisateurs de l'EEE ; notre usage de recherche par une équipe étudiante n'est probablement pas visé tel quel, mais ce n'est pas établi. En production chez Amundi, le niveau gratuit est inutilisable (données envoyées pour l'entraînement, zone EEE). Les données du projet (prix, macro, dépôts publics) ne sont pas confidentielles. À faire relire par ESCP ou Amundi.
+- **Signalement des erreurs :** 429 `RESOURCE_EXHAUSTED` (Gemini) et 429 avec en-tête `retry-after` (Groq), 503 `UNAVAILABLE` (les deux) ; Gemini n'indique ni `retry-after` ni délai : backoff exponentiel obligatoire.
