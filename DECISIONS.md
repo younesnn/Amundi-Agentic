@@ -490,3 +490,13 @@ Décisions du 2026-10-03 (validation de la phase 2 par Younes).
   - versionnés : `graph.json`, `GRAPH_REPORT.md`, `manifest.json` ; ignorés : `graph.html`, `cache/`, `.graphify_*`.
 - **Nommage des communautés :** uniquement avec Ollama en local (`llama3.1:8b`, `--missing-only`), jamais avec une API ; abandonné s'il exige une clé.
 
+
+## D-051 — Organisation de la phase 3 (2026-10-03)
+
+- **Choix :** première vague de 4 tâches indépendantes, chacune dans son worktree Git (règle 1 de `CLAUDE.md`) :
+  1. socle LLM (`schemas.py`, `LLMClient`, mock, cache, relais, mode évaluation) : `agents-engineer` ;
+  2. outils de calcul financier (`tools/`) : **`quant`**, et non `agents-engineer` : ce sont des formules financières à tester contre des valeurs calculées à la main ; l'écart avec le tableau de `CLAUDE.md` est volontaire ;
+  3. source ESG manuelle par ETF (D-048) : `data-engineer` ;
+  4. relevé des quotas, des dates de fin d'entraînement et des conditions d'usage des niveaux gratuits : agent de recherche en lecture seule.
+- **Suite prévue :** RAG et résumé avec réflexion ; agents, prompts, coordinateur et débat ; réplication AlphaAgents (15 actions tech, 1er février 2024) ; puis extension multi-actifs. Chaque branche passe par le `reviewer-tester` avant fusion, puis par le `financial-critic` pour les parties chiffrées.
+- **CI :** `actions/checkout@v7`, `astral-sh/setup-uv@v10.2.0` (pas de tag de version majeure `v10`), runner `ubuntu-24.04` épinglé (le label `ubuntu-latest` migre vers Ubuntu 26 le 2026-10-19). Vérifié vert sur Python 3.11 et 3.12.
