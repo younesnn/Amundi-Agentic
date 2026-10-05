@@ -40,6 +40,15 @@ quality:
   min_history_weeks: 260            # L1 §9.1 : 260 semaines avant t
   window_start: "2013-01-01"        # (H) fenêtre utile : stale/outlier avant cette date comptés à part
   liquidity_since: "2018-01-01"     # liquidité mesurée depuis cette date
+  # Plafond de |rendement quotidien| propre à la classe (H, signalement seul : rien n'est corrigé ni masqué).
+  # Monétaire 1 % ; obligations souveraines et crédit IG 3 % hors mars 2020 ; haut rendement 5 % hors mars 2020.
+  class_abs_return:
+    C3M.PA: {max: 0.01}
+    CSH2.PA: {max: 0.01}
+    MTD.PA: {max: 0.03, exempt: [["2020-03-01", "2020-03-31"]]}
+    EGOV.PA: {max: 0.03, exempt: [["2020-03-01", "2020-03-31"]]}
+    CRP.PA: {max: 0.03, exempt: [["2020-03-01", "2020-03-31"]]}
+    AHYE.PA: {max: 0.05, exempt: [["2020-03-01", "2020-03-31"]]}
   # Faux positifs structurels connus (signalement « stale » rangé à part, avec sa justification)
   structural_stale:
     C3M.PA: "ETF monétaire : cours quasi constant par construction (capitalisation de quelques centimes)"

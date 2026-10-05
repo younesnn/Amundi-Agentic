@@ -95,11 +95,12 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 import yaml
@@ -108,6 +109,7 @@ from amundi_agentic.data.pit import cutoff_utc
 from amundi_agentic.data.settings import CONFIG_DIR
 from amundi_agentic.data.store import ParquetStore
 
+PARIS = ZoneInfo("Europe/Paris")
 INCONNU = "inconnu"
 CHAMPS = ("sfdr", "indice", "caractere_indice", "exclusions")
 SFDR_VALEURS = frozenset({"article_6", "article_8", "article_9", "non_applicable"})
@@ -628,6 +630,16 @@ def check_lock(sources: EtfSources, lock_path: Path) -> list[str]:
     return violations
 
 
+def jour_paris(clock: Callable[[], datetime]) -> date:
+    """Date du jour à Paris (`Europe/Paris`, heure d'été comprise), cohérente avec la coupure t 00:00 (D-031).
+
+    `clock` doit renvoyer un instant daté (fuseau explicite) ; un instant naïf est refusé, jamais deviné."""
+    instant = clock()
+    if instant.tzinfo is None:
+        raise ValueError("l'horloge doit renvoyer un datetime avec fuseau (UTC ou Europe/Paris)")
+    return instant.astimezone(PARIS).date()
+
+
 def _verifier_nouvelles(sources: EtfSources, connus: set[str], today: date) -> list[str]:
     """Toute entrée servie absente de l'état verrouillé doit être saisie aujourd'hui (ni antidatée, ni future).
 
@@ -646,13 +658,15 @@ def verify_and_snapshot(
     *,
     lock_path: Path | None = None,
     today: date | None = None,
+    clock: Callable[[], datetime] | None = None,
 ) -> Path | None:
     """Refuse toute modification rétroactive et tout antidatage, puis écrit l'instantané du jour (idempotent).
 
     État verrouillé = instantanés locaux ET registre `lock_path` (si fourni). Une entrée absente de cet état
-    doit avoir `date_saisie` == `today` (par défaut le jour de l'horloge du stockage) ; le tout premier état
+    doit avoir `date_saisie` == `today` (par défaut le jour de Paris,
+    lu sur `clock`, sinon sur l'horloge du stockage, comme `write_lock`) ; le tout premier état
     (rien de verrouillé) est accepté tel quel (amorçage). Le registre n'est écrit que par `write_lock`."""
-    jour = today or store._clock().date()
+    jour = today or jour_paris(clock or store._clock)
     violations = check_append_only(sources, store)
     if lock_path is not None:
         violations += check_lock(sources, lock_path)
@@ -672,13 +686,20 @@ def verify_and_snapshot(
     )
 
 
-def write_lock(sources: EtfSources, lock_path: Path, *, today: date | None = None) -> Path:
+def write_lock(
+    sources: EtfSources,
+    lock_path: Path,
+    *,
+    today: date | None = None,
+    clock: Callable[[], datetime] | None = None,
+) -> Path:
     """Ajoute au registre versionné les entrées nouvelles (commande explicite `lock` ou `snapshot`).
 
     Refuse toute entrée existante modifiée, redatée, réordonnée ou supprimée, et toute entrée nouvelle dont
-    `date_saisie` n'est pas `today` (par défaut le jour réel) ; le premier registre (inexistant) est un
+    `date_saisie` n'est pas `today` (par défaut le jour de Paris lu sur `clock`,
+    sinon sur l'horloge système) ; le premier registre (inexistant) est un
     amorçage accepté tel quel. Le registre existant n'est jamais réécrit : on n'y ajoute que des lignes."""
-    jour = today or date.today()
+    jour = today or jour_paris(clock or (lambda: datetime.now(UTC)))
     p = Path(lock_path)
     verrou = read_lock(p)
     violations = check_lock(sources, p)

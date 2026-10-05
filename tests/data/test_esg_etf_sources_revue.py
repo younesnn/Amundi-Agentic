@@ -949,13 +949,34 @@ def test_b1_amorcage_accepte_une_fois_puis_plus_jamais(tmp_path):
         write_lock(parse_sources(plus), lock, today=date(2026, 10, 4))
 
 
-def test_b1_horloge_pas_detournable_par_la_commande_de_production():
-    """`today=` n'est exposé qu'aux appelants de bibliothèque : la commande `lock`/`snapshot` ne le passe pas
-    (horloge système pour le registre ; horloge du stockage, système par défaut, pour les instantanés)."""
-    src = inspect.getsource(mod.main)
-    assert "today" not in src
-    assert "date.today()" in inspect.getsource(mod.write_lock)
-    assert "_clock().date()" in inspect.getsource(mod.verify_and_snapshot)
+def test_b1_horloge_pas_detournable_par_la_commande_de_production(monkeypatch, tmp_path):
+    """La commande de production (`main`) n'expose aucun moyen de fixer la date ni l'horloge : `lock` et
+    `snapshot` appellent `write_lock` / `verify_and_snapshot` sans `today` ni `clock` (la date de Paris vient
+    alors de l'horloge système, ou de celle du stockage). Vérification comportementale par espions."""
+    assert list(inspect.signature(mod.main).parameters) == ["argv"]
+    appels: list[tuple[str, dict]] = []
+
+    def espion_lock(sources, lock_path, **kw):
+        appels.append(("write_lock", kw))
+        return Path(lock_path)
+
+    def espion_snap(sources, store, **kw):
+        appels.append(("verify_and_snapshot", kw))
+        return None
+
+    monkeypatch.setattr(mod, "write_lock", espion_lock)
+    monkeypatch.setattr(mod, "verify_and_snapshot", espion_snap)
+    # une tentative d'injection par la ligne de commande n'est pas interprétée comme une date
+    mod.main(["lock", "--today", "2020-01-01"])
+    mod.main(["snapshot", "today=2020-01-01"])
+    noms = [n for n, _ in appels]
+    assert "write_lock" in noms and "verify_and_snapshot" in noms
+    for nom, kw in appels:
+        assert "today" not in kw and "clock" not in kw, (nom, kw)
+    # chemin par défaut : les deux fonctions passent par jour_paris sur l'horloge système (instant daté)
+    assert mod.jour_paris(lambda: datetime.now(mod.PARIS)) == datetime.now(mod.PARIS).date()
+    with pytest.raises(ValueError, match="fuseau"):
+        mod.jour_paris(lambda: datetime(2026, 1, 1))
 
 
 def test_b2_corrige_en_strict_en_non_pit_et_en_chaine():
