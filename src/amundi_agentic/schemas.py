@@ -281,6 +281,8 @@ class DebateLog(_Modele):
 
 ModeExecution = Literal["interactif", "evaluation"]
 TierEffectif = Literal["main", "light", "fallback", "dev"]
+TierDemande = Literal["main", "light", "fallback", "dev", "embed"]
+ProfilExecution = Literal["dev", "prod"]
 
 
 class ExecutionRecord(_Modele):
@@ -290,7 +292,8 @@ class ExecutionRecord(_Modele):
     run_id: str = Field(min_length=1)
     horodatage: AwareDatetime
     agent: str = Field(min_length=1)
-    tier: TierEffectif
+    tier: TierEffectif  # niveau effectivement servi (relais : fallback)
+    tier_demande: TierDemande | None = None  # niveau demandé par l'appelant
     mode: ModeExecution
     modele_demande: str
     modele_servi: str  # lu dans la réponse du fournisseur
@@ -337,15 +340,36 @@ class RunRecord(_Modele):
     uv_lock_sha256: str
     config_sha256: str
     preregistration_sha256: str | None = None
-    modele_servi_fige: str | None = None
+    # Mode évaluation : un modèle servi par niveau (main, light, embed), gelé au premier appel.
+    modele_servi_fige: dict[str, str] | None = None
+    profile: ProfilExecution
+    # Instantané de `evaluation.models` (plus le modèle d'embedding) au lancement du run.
+    modeles_demandes: dict[str, str]
+    llm_config_sha256: str
+    # Date de fin d'entraînement de chaque modèle figé (None si non relevée).
+    fin_entrainement: dict[str, date | None] = Field(default_factory=dict)
+    usage: dict[str, float] = Field(default_factory=dict)  # appels, cache_hits, jetons
     graine: int
     mode: ModeExecution
     avertissement: str
+
+    @field_validator("llm_config_sha256")
+    @classmethod
+    def _hex64(cls, v: str) -> str:
+        if not _SHA256.fullmatch(v):
+            raise ValueError("SHA-256 hexadécimal (64 caractères) attendu")
+        return v
 
     @model_validator(mode="after")
     def _preenregistrement_en_evaluation(self) -> RunRecord:
         if self.mode == "evaluation" and not self.preregistration_sha256:
             raise ValueError("pré-enregistrement obligatoire en mode évaluation (EX-O5-12)")
+        if self.mode == "evaluation" and self.profile != "prod":
+            raise ValueError("le mode évaluation exige le profil prod (D-024)")
+        if self.fin_entrainement and not set(self.fin_entrainement) <= set(
+            self.modele_servi_fige or {}
+        ):
+            raise ValueError("fin_entrainement ne porte que sur des niveaux figés")
         if self.fin is not None and self.fin < self.debut:
             raise ValueError("fin antérieure au début")
         return self

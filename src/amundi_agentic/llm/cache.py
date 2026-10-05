@@ -24,6 +24,7 @@ def cache_key(
     schema: dict[str, Any] | None,
     params: dict[str, Any],
     date_donnees: date,
+    scope: str = "",
 ) -> str:
     charge = {
         "kind": kind,
@@ -32,6 +33,9 @@ def cache_key(
         "schema": schema,
         "params": params,
         "date_donnees": date_donnees.isoformat(),
+        # Cloisonnement par mode et profil : une entrée interactive ou dev n'est jamais servie
+        # à une exécution d'évaluation (EX-NF-13).
+        "scope": scope,
     }
     brut = json.dumps(charge, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
     return hashlib.sha256(brut.encode("utf-8")).hexdigest()
@@ -50,7 +54,9 @@ class DiskCache:
             return None
         chemin = self._path(key)
         try:
-            return json.loads(chemin.read_text(encoding="utf-8"))
+            entree = json.loads(chemin.read_text(encoding="utf-8"))
+            # Une entrée valide mais d'une autre forme (liste, nombre) est traitée comme absente.
+            return entree if isinstance(entree, dict) else None
         except FileNotFoundError:
             return None
         except (json.JSONDecodeError, UnicodeDecodeError, OSError):

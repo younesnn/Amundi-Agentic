@@ -283,6 +283,9 @@ def run(**kw):
         "git_commit": "abc",
         "uv_lock_sha256": "0" * 64,
         "config_sha256": "1" * 64,
+        "llm_config_sha256": "3" * 64,
+        "profile": "prod",
+        "modeles_demandes": {"main": "fournisseur/modele-fige"},
         "graine": 0,
         "mode": "interactif",
         "avertissement": "prototype académique",
@@ -294,6 +297,6 @@ def test_preenregistrement_obligatoire_en_evaluation():
     run()
     with pytest.raises(ValidationError, match="pré-enregistrement"):
         run(mode="evaluation")
-    run(mode="evaluation", preregistration_sha256="2" * 64, modele_servi_fige="m")
+    run(mode="evaluation", preregistration_sha256="2" * 64, modele_servi_fige={"main": "m"})
     with pytest.raises(ValidationError):
         run(fin=AVANT - timedelta(seconds=1))

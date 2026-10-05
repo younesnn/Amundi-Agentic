@@ -6,13 +6,15 @@ sont jamais lues ici ; la config ne nomme que des variables d'environnement.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 from datetime import date
 from pathlib import Path
 from typing import Any, Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 ROOT = Path(__file__).resolve().parents[3]
 CONFIG_PATH = Path(os.environ.get("AMUNDI_CONFIG_DIR", ROOT / "config")) / "llm.yaml"
@@ -97,6 +99,8 @@ class LLMConfig(_Cfg):
     pricing: dict[str, PriceCfg] = Field(default_factory=dict)
     embeddings: dict[str, str] = Field(default_factory=dict)
     training_cutoff: dict[str, date] = Field(default_factory=dict)
+    # SHA-256 de la configuration effective (rempli par `load_config`, absent du fichier).
+    source_sha256: str | None = Field(default=None, exclude=True)
 
     @model_validator(mode="after")
     def _coherence(self) -> LLMConfig:
@@ -112,9 +116,17 @@ class LLMConfig(_Cfg):
                 raise ValueError(f"fallback_order.{niveau} cite un niveau non déclaré")
         if self.evaluation.fallback_enabled:
             raise ValueError("le mode évaluation n'admet aucun relais (D-024)")
-        for niveau in self.evaluation.models:
+        interactifs = set(self.models.values())
+        for niveau, ident in self.evaluation.models.items():
             if niveau not in self.models:
                 raise ValueError(f"evaluation.models.{niveau} : niveau inconnu")
+            if "latest" in ident.lower():
+                raise ValueError(f"evaluation.models.{niveau} : version figée exigée (D-024)")
+            if ident in interactifs:
+                raise ValueError(
+                    f"evaluation.models.{niveau} coïncide avec un identifiant de `models` : "
+                    "le mode évaluation exige des modèles distincts du mode interactif (D-024)"
+                )
         return self
 
     # ------------------------------------------------------------------ résolution
@@ -154,13 +166,27 @@ class LLMConfig(_Cfg):
 
 def load_config(path: Path | None = None, overrides: dict[str, Any] | None = None) -> LLMConfig:
     """Charge `config/llm.yaml` ; `overrides` (fusion superficielle par section) sert aux tests."""
-    brut = yaml.safe_load((path or CONFIG_PATH).read_text(encoding="utf-8"))
+    fichier = path or CONFIG_PATH
+    octets = fichier.read_bytes()
+    brut = yaml.safe_load(octets.decode("utf-8"))
     for section, valeur in (overrides or {}).items():
         if isinstance(valeur, dict) and isinstance(brut.get(section), dict):
             brut[section] = {**brut[section], **valeur}
         else:
             brut[section] = valeur
-    return LLMConfig.model_validate(brut)
+    try:
+        config = LLMConfig.model_validate(brut)
+    except ValidationError as exc:
+        raise ConfigurationError(str(exc)) from None
+    sans_surcharge = not overrides
+    config.source_sha256 = (
+        hashlib.sha256(octets).hexdigest()
+        if sans_surcharge
+        else hashlib.sha256(
+            json.dumps(brut, sort_keys=True, default=str).encode("utf-8")
+        ).hexdigest()
+    )
+    return config
 
 
 def resolve_path(chemin: str | Path) -> Path:

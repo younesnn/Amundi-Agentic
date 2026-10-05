@@ -15,6 +15,8 @@ from __future__ import annotations
 
 import json
 import logging
+import os
+import tempfile
 import threading
 import time
 import uuid
@@ -26,13 +28,20 @@ from typing import Any
 from pydantic import BaseModel, ValidationError
 
 from amundi_agentic.llm.cache import DiskCache, cache_key
-from amundi_agentic.llm.config import LLMConfig, Profil, load_config, resolve_path
+from amundi_agentic.llm.config import (
+    ConfigurationError,
+    LLMConfig,
+    Profil,
+    load_config,
+    resolve_path,
+)
 from amundi_agentic.llm.quotas import QuotaJournal
 from amundi_agentic.llm.redact import redact
 from amundi_agentic.llm.transport import LiteLLMTransport
 from amundi_agentic.llm.types import (
     EmbeddingResult,
     ExecutionPausee,
+    FichierFigeCorrompu,
     LLMResult,
     Message,
     ModeleServiChange,
@@ -96,7 +105,14 @@ class LLMClient:
             raise ValueError(f"mode inconnu : {mode!r}")
         self.config = config or load_config()
         self.mode: ModeExecution = mode
-        self.profile: Profil = profile or self.config.default_mode
+        if mode == "evaluation" and profile == "dev":
+            raise ConfigurationError(
+                "le mode évaluation exige le profil prod (modèles figés, D-024) ; "
+                "le profil dev n'est autorisé qu'en mode interactif"
+            )
+        self.profile: Profil = profile or (
+            "prod" if mode == "evaluation" else self.config.default_mode
+        )
         self.run_id = run_id
         self.run_dir = Path(run_dir) if run_dir else None
         self.seed = self.config.defaults.seed if seed is None else seed
@@ -119,6 +135,47 @@ class LLMClient:
         self._cooldown: dict[str, float] = {}
         self._lock = threading.Lock()
         self._fige: dict[str, str] = self._charger_fige()
+
+    @property
+    def _scope(self) -> str:
+        return f"{self.mode}/{self.profile}"
+
+    def _entree_acceptable(self, entree: dict[str, Any], modele_demande: str, champ: str) -> bool:
+        """Une entrée de cache illisible, ou (en évaluation) produite par un relais ou par un
+        autre modèle que celui du run, est ignorée : on relit auprès du fournisseur."""
+        if champ not in entree:
+            return False
+        if self.mode == "evaluation":
+            return (not entree.get("relais_utilise")) and entree.get("modele_demande") == (
+                modele_demande
+            )
+        return True
+
+    def _config_sha256(self) -> str:
+        """Hash du fichier de config (ou de la config fusionnée) si la config vient de
+        `load_config` ; sinon hash du JSON canonique de la configuration effective."""
+        if self.config.source_sha256:
+            return self.config.source_sha256
+        canon = json.dumps(self.config.model_dump(mode="json"), sort_keys=True)
+        return sha256_text(canon)
+
+    def run_fields(self) -> dict[str, Any]:
+        """Champs de `RunRecord` que le client connaît (le reste vient de l'appelant : commande,
+        commit, uv.lock, pré-enregistrement)."""
+        demandes = dict(self.config.evaluation.models)
+        if self.profile in self.config.embeddings:
+            demandes["embed"] = self.config.embeddings[self.profile]
+        u = self.usage()
+        return {
+            "profile": self.profile,
+            "mode": self.mode,
+            "graine": self.seed,
+            "modeles_demandes": demandes,
+            "llm_config_sha256": self._config_sha256(),
+            "modele_servi_fige": dict(self._fige) or None,
+            "fin_entrainement": {n: self._fin_entrainement(m) for n, m in self._fige.items()},
+            "usage": {"appels": u["appels"], "cache_hits": u["cache_hits"]},
+        }
 
     # ------------------------------------------------------------------ API publique
 
@@ -155,11 +212,12 @@ class LLMClient:
             schema=schema_json,
             params={"temperature": temp, "seed": graine, "max_tokens": max_tok},
             date_donnees=date_donnees,
+            scope=self._scope,
         )
-        ctx = _Contexte(agent, ref, cle, graine, temp, date_donnees, chaine[0][1])
+        ctx = _Contexte(agent, ref, cle, graine, temp, date_donnees, chaine[0][1], tier)
 
         entree = self.cache.get(cle)
-        if entree is not None:
+        if entree is not None and self._entree_acceptable(entree, chaine[0][1], "text"):
             parsed = None
             ok = True
             if schema is not None:
@@ -244,16 +302,17 @@ class LLMClient:
             schema=None,
             params={},
             date_donnees=date_donnees,
+            scope=self._scope,
         )
         ref = PromptRef(
             prompt_id=_EMBED,
             version="0",
             sha256=sha256_text(json.dumps(textes, ensure_ascii=False)),
         )
-        ctx = _Contexte(agent, ref, cle, self.seed, 0.0, date_donnees, modele)
+        ctx = _Contexte(agent, ref, cle, self.seed, 0.0, date_donnees, modele, "embed")
         niveau = "dev" if self.profile == "dev" else "main"
         entree = self.cache.get(cle)
-        if entree is not None:
+        if entree is not None and self._entree_acceptable(entree, modele, "vectors"):
             rec = self._enregistrer_cache(entree, ctx, niveau, _EMBED)
             return EmbeddingResult(entree["vectors"], rec)
 
@@ -439,7 +498,22 @@ class LLMClient:
             tokens_in = getattr(raw, "tokens_in", 0)
             tokens_out = getattr(raw, "tokens_out", 0)
             self.quotas.record(fournisseur, modele, tokens_in=tokens_in, tokens_out=tokens_out)
-            self._verifier_modele_servi(cle_fige, getattr(raw, "model_served", ""))
+            try:
+                self._verifier_modele_servi(cle_fige, getattr(raw, "model_served", ""))
+            except ModeleServiChange as exc:
+                self._enregistrer_erreur(
+                    ctx,
+                    niveau_enreg,
+                    modele,
+                    relais,
+                    latence,
+                    "modele_servi_change",
+                    redact(exc),
+                    servi=getattr(raw, "model_served", ""),
+                    tokens_in=tokens_in,
+                    tokens_out=tokens_out,
+                )
+                raise
             return raw, latence
 
     # --- mode évaluation : modèle servi constant
@@ -448,13 +522,38 @@ class LLMClient:
         return self.run_dir / "modele_servi_fige.json" if self.run_dir else None
 
     def _charger_fige(self) -> dict[str, str]:
+        """Mode évaluation : relit le gel d'un run repris. Un fichier illisible ou de forme
+        inattendue arrête l'exécution (jamais de regel silencieux)."""
         chemin = self._fichier_fige()
-        if chemin and chemin.is_file():
-            try:
-                return dict(json.loads(chemin.read_text(encoding="utf-8")))
-            except (json.JSONDecodeError, OSError):
-                return {}
-        return {}
+        if self.mode != "evaluation" or chemin is None or not chemin.is_file():
+            return {}
+        try:
+            brut = json.loads(chemin.read_text(encoding="utf-8"))
+        except (ValueError, OSError) as exc:
+            raise FichierFigeCorrompu(
+                f"{chemin.name} illisible ({type(exc).__name__}) : run d'évaluation arrêté, "
+                "ne pas regeler sur une version quelconque (EX-NF-13)"
+            ) from None
+        if not (
+            isinstance(brut, dict)
+            and all(isinstance(k, str) and isinstance(v, str) and v for k, v in brut.items())
+        ):
+            raise FichierFigeCorrompu(
+                f"{chemin.name} de forme inattendue (attendu : niveau -> modèle servi) : "
+                "run d'évaluation arrêté"
+            )
+        return dict(brut)
+
+    def _ecrire_fige(self, chemin: Path) -> None:
+        chemin.parent.mkdir(parents=True, exist_ok=True)
+        fd, tmp = tempfile.mkstemp(dir=chemin.parent, prefix=".tmp-", suffix=".json")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                json.dump(self._fige, f, sort_keys=True)
+            os.replace(tmp, chemin)
+        except BaseException:
+            Path(tmp).unlink(missing_ok=True)
+            raise
 
     def _verifier_modele_servi(self, niveau: str, servi: str) -> None:
         if self.mode != "evaluation":
@@ -469,8 +568,7 @@ class LLMClient:
                 self._fige[niveau] = servi
                 chemin = self._fichier_fige()
                 if chemin:
-                    chemin.parent.mkdir(parents=True, exist_ok=True)
-                    chemin.write_text(json.dumps(self._fige, sort_keys=True), encoding="utf-8")
+                    self._ecrire_fige(chemin)
             elif attendu != servi:
                 raise ModeleServiChange(
                     f"le modèle servi du niveau {niveau!r} a changé en cours de run : "
@@ -497,6 +595,7 @@ class LLMClient:
             "horodatage": self._clock(),
             "agent": ctx.agent,
             "tier": niveau,
+            "tier_demande": ctx.tier_demande,
             "mode": self.mode,
             "modele_demande": modele,
             "fournisseur": modele.split("/", 1)[0],
@@ -547,15 +646,20 @@ class LLMClient:
         latence: int,
         kind: str,
         msg: str,
+        *,
+        servi: str = "",
+        tokens_in: int = 0,
+        tokens_out: int = 0,
+        cache_hit: bool = False,
     ) -> None:
         self._publier(
             ExecutionRecord(
                 **self._base(ctx, niveau, modele, relais),
-                modele_servi="",
-                cache_hit=False,
-                tokens_entree=0,
-                tokens_sortie=0,
-                cout_eur=0.0,
+                modele_servi=servi,
+                cache_hit=cache_hit,
+                tokens_entree=tokens_in,
+                tokens_sortie=tokens_out,
+                cout_eur=self._cout(modele.split("/", 1)[0], tokens_in, tokens_out),
                 latence_ms=latence,
                 erreur=f"{kind}: {msg}"[:500],
             )
@@ -565,11 +669,25 @@ class LLMClient:
         self, entree: dict[str, Any], ctx: _Contexte, niveau: str, cle_fige: str
     ) -> ExecutionRecord:
         servi = entree.get("modele_servi", "") or "inconnu"
-        self._verifier_modele_servi(cle_fige, entree.get("modele_servi", ""))
+        try:
+            self._verifier_modele_servi(cle_fige, entree.get("modele_servi", ""))
+        except ModeleServiChange as exc:
+            self._enregistrer_erreur(
+                ctx,
+                entree.get("tier", niveau),
+                entree.get("modele_demande", ctx.modele),
+                bool(entree.get("relais_utilise")),
+                0,
+                "modele_servi_change",
+                redact(exc),
+                servi=entree.get("modele_servi", ""),
+                cache_hit=True,
+            )
+            raise
         base = self._base(
             ctx, entree.get("tier", niveau), entree.get("modele_demande", ctx.modele), False
         )
-        base["relais_utilise"] = bool(entree.get("relais_utilise")) and self.mode != "evaluation"
+        base["relais_utilise"] = bool(entree.get("relais_utilise"))
         base["fournisseur"] = entree.get("fournisseur", base["fournisseur"])
         return self._publier(
             ExecutionRecord(
@@ -588,7 +706,16 @@ class LLMClient:
 class _Contexte:
     """Paramètres d'un appel partagés par les enregistrements."""
 
-    __slots__ = ("agent", "ref", "cle", "graine", "temperature", "date_donnees", "modele")
+    __slots__ = (
+        "agent",
+        "ref",
+        "cle",
+        "graine",
+        "temperature",
+        "date_donnees",
+        "modele",
+        "tier_demande",
+    )
 
     def __init__(
         self,
@@ -599,7 +726,9 @@ class _Contexte:
         temperature: float,
         date_donnees: date,
         modele: str,
+        tier_demande: str,
     ) -> None:
+        self.tier_demande = tier_demande
         self.agent = agent
         self.ref = ref
         self.cle = cle

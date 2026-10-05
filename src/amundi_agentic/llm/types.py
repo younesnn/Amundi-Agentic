@@ -105,6 +105,11 @@ class ModeleServiChange(LLMError):  # noqa: N818
     """Mode évaluation : le modèle servi diffère du modèle figé du run (EX-NF-13)."""
 
 
+class FichierFigeCorrompu(LLMError):  # noqa: N818
+    """Mode évaluation : `modele_servi_fige.json` illisible ou de forme inattendue. L'exécution
+    s'arrête : regeler sur une version quelconque ferait perdre la garantie EX-NF-13."""
+
+
 class StructuredOutputError(LLMError):
     """Sortie non conforme au schéma après les nouvelles tentatives autorisées."""
 
