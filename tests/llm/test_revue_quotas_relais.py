@@ -178,8 +178,11 @@ def test_un_seul_client_multithread_ne_perd_aucun_compte(cfg, tmp_path):
         threading.Thread(target=lambda: [j.record("gemini", "gemini/x") for _ in range(100)])
         for _ in range(4)
     ]
+    for t in ths:
+        t.daemon = True
     [t.start() for t in ths]
-    [t.join() for t in ths]
+    [t.join(60) for t in ths]
+    assert not any(t.is_alive() for t in ths), "thread bloqué sur le journal"
     assert j.usage("gemini")["requests"] == 400
 
 

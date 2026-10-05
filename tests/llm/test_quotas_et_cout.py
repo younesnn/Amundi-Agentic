@@ -16,12 +16,26 @@ def jour(n):
     return date(2024, 2, 1) + timedelta(days=n)
 
 
+GROQ_RELAIS = "groq/openai/gpt-oss-120b"
+CHAMPS_LIMITES = ("requests_per_day", "requests_per_minute", "tokens_per_minute")
+
+
 def test_limites_non_relevees_valent_null_dans_la_config(cfg):
-    """Les limites sont relevées par un autre agent : jamais inventées ici."""
-    for limites in cfg.quotas.limits.values():
-        assert limites.requests_per_day is None
-        assert limites.requests_per_minute is None
-        assert limites.tokens_per_minute is None
+    """Jamais de valeur inventée : seule la limite relevée du modèle de relais Groq (D-052, page
+    officielle des limites, 2026-10-03) est renseignée ; Gemini et Ollama restent null."""
+    assert cfg.models["fallback"] == GROQ_RELAIS
+    for cle, limites in cfg.quotas.limits.items():
+        if cle == GROQ_RELAIS:
+            continue
+        assert cle in {"gemini", "groq", "ollama"}, f"limite inattendue pour {cle!r}"
+        for champ in CHAMPS_LIMITES:
+            assert getattr(limites, champ) is None, (cle, champ)
+    relayee = cfg.quotas.limits[GROQ_RELAIS]
+    assert (relayee.requests_per_minute, relayee.requests_per_day, relayee.tokens_per_minute) == (
+        30,
+        1000,
+        8000,
+    )
     assert cfg.quotas.alert_threshold == 0.8
 
 

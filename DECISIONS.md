@@ -541,3 +541,23 @@ Relevé fait par un agent de recherche le 2026-10-03, **à partir de pages offic
 
 - **Risque juridique à instruire (L6, Q-27) :** la clause de Google vise la mise à disposition d'API Clients à des utilisateurs de l'EEE ; notre usage de recherche par une équipe étudiante n'est probablement pas visé tel quel, mais ce n'est pas établi. En production chez Amundi, le niveau gratuit est inutilisable (données envoyées pour l'entraînement, zone EEE). Les données du projet (prix, macro, dépôts publics) ne sont pas confidentielles. À faire relire par ESCP ou Amundi.
 - **Signalement des erreurs :** 429 `RESOURCE_EXHAUSTED` (Gemini) et 429 avec en-tête `retry-after` (Groq), 503 `UNAVAILABLE` (les deux) ; Gemini n'indique ni `retry-after` ni délai : backoff exponentiel obligatoire.
+
+## D-053 — Première vague de la phase 3 fusionnée ; valeurs de configuration LLM (2026-10-05)
+
+- **Fusionné dans `main`** (chaque branche relue par le `reviewer-tester`, tests adverses et mutations) :
+  - socle LLM : `schemas.py`, `LLMClient`, mock, cache cloisonné par mode et profil, quotas sous `flock`, mode évaluation sans relais ;
+  - outils de calcul (`tools/`) ;
+  - source ESG manuelle par ETF (D-048), avec registre d'empreintes versionné et archives des réponses de l'API de la gestionnaire.
+- **Défauts trouvés par les revues et corrigés avant fusion** (liste utile pour L4 et la gouvernance du risque de modèle) :
+  - cache : une réponse relayée par Groq pouvait ressortir en mode évaluation ;
+  - fichier de modèle figé corrompu ignoré en silence ; mode évaluation exécutable sur Ollama ;
+  - perte de comptes de quotas avec 4 processus ou plus ;
+  - masquage de secrets incomplet (Bearer en base64, Basic, Digest) ;
+  - ESG : entrée antidatée acceptée (fuite du futur), `corrige` ignoré ;
+  - outils : régime de volatilité dépendant d'un paramètre de rejeu, ratios absurdes sur séries plates, `source_id` instable entre `float` et `np.float64`.
+- **Valeurs inscrites dans `config/llm.yaml`** (D-052) :
+  - limites du relais Groq `openai/gpt-oss-120b` : 30 requêtes/min, 1 000/jour, 8 000 tokens/min (la limite de 200 000 tokens/jour n'a pas de champ) ; limites Gemini non publiées, restent `null` ;
+  - `training_cutoff` (fin de mois, borne prudente) : `gemini-3.8-flash` et `gemini-3.5-flash-lite` 2026-03-31, `openai/gpt-oss-120b` 2024-06-30 (indice indirect), `llama3.1:8b` 2023-12-31.
+- **Modèle d'embeddings local** `nomic-embed-text` installé (`ollama pull`, 274 Mo) pour le RAG en profil dev ; l'identifiant d'embedding Gemini de production reste à tester.
+- **CI :** `fetch-depth: 0` (les tests d'append-only lisent l'historique Git) ; les tests dépendant du temps doivent être robustes sur un runner à 2 cœurs (le test de verrou à seuil de 0,5 s a échoué avec 0,54 s ; réécrit par le `reviewer-tester`).
+- **Reportés** : `ToolMeta.to_dict` doit passer ses paramètres par `canonical_params` avant l'écriture des sources dans le journal ; date « jour réel » de l'ESG à unifier sur Paris (UTC pour les instantanés, locale pour le registre) ; variation de 1,04 % en un jour de C3M.PA le 2025-07-22 à vérifier avec la couche de données ; `DEFAULT_REPLAY_WEEKS`, `MIN_ANNUALIZED_VOLATILITY`, `MIN_ABS_DRAWDOWN` à geler dans `config/debate.yaml` et au pré-enregistrement.

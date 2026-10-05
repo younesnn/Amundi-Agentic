@@ -40,6 +40,7 @@ addopts = "-ra --strict-markers --import-mode=importlib"
 markers = [
     "llm: test qui appelle un vrai LLM (exclu par défaut en CI)",
     "network: test qui appelle une source de données en ligne (exclu par défaut en CI)",
+    "slow: test de concurrence intensif (multi-processus), ignoré par défaut ; `uv run pytest -m slow`",
 ]
 
 [tool.ruff]

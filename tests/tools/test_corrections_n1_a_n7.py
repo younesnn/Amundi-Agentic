@@ -582,22 +582,35 @@ def test_n7_branchement_sur_risk_report_cles_techniques_a_filtrer():
 
 
 # ======================================================================== N4 : temps de calcul
+def _mediane(f, essais=5):
+    mesures = []
+    for _ in range(essais):
+        debut = time.perf_counter()
+        f()
+        mesures.append(time.perf_counter() - debut)
+    return sorted(mesures)[len(mesures) // 2]
+
+
 def test_n2_cout_du_repli_par_rejeu_de_52_semaines_raisonnable():
+    """Garde contre une dérive d'ordre de grandeur, en mesure RELATIVE : les durées sont rapportées
+    à celle d'une opération de référence pandas (volatilité glissante) mesurée dans ce test, sur
+    la même machine et sous la même charge. Les seuils absolus en secondes (0,5 s et 3 s) ont été
+    abandonnés : ils dépendaient de la vitesse du runner. Valeurs observées (poste local) :
+    régime environ 300x la référence, risk_report 11 actifs environ 370x ; bornes à 2 000x et 4 000x
+    (marge d'environ dix, médianes de 5 essais)."""
     s = marche_aleatoire(1500, 9)
     t = apres(s)
-    risk.volatility_regime(s, t)  # échauffement
-    debut = time.perf_counter()
-    for _ in range(5):
-        risk.volatility_regime(s, t)
-    moyen = (time.perf_counter() - debut) / 5
     p = pd.DataFrame({k: marche_aleatoire(1500, 20 + i) for i, k in enumerate("ABCDEFGHIJK")})
-    debut = time.perf_counter()
+    risk.volatility_regime(s, t)  # échauffement
     risk.risk_report(p, p["A"], t)
-    rapport = time.perf_counter() - debut
+    ref = _mediane(lambda: s.pct_change().rolling(52).std().dropna().to_numpy().sum(), essais=9)
+    moyen = _mediane(lambda: risk.volatility_regime(s, t))
+    rapport = _mediane(lambda: risk.risk_report(p, p["A"], t))
     print(
-        f"régime (rejeu 52) : {moyen * 1e3:.1f} ms ; risk_report 11 actifs : {rapport * 1e3:.0f} ms"
+        f"régime (rejeu 52) : {moyen * 1e3:.1f} ms ({moyen / ref:.0f}x réf) ; risk_report 11 "
+        f"actifs : {rapport * 1e3:.0f} ms ({rapport / ref:.0f}x réf)"
     )
-    assert moyen < 0.5 and rapport < 3.0  # marge large : mesure, pas micro-benchmark
+    assert moyen < 2000 * ref and rapport < 4000 * ref
 
 
 def test_n5_meta_macro_regime_serialisable_et_sourcee():

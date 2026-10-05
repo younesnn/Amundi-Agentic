@@ -64,7 +64,10 @@ def tenir_verrou(dossier, pret, arret):
     os.close(fd)
 
 
-def record_puis_signaler(chemin, fini):
+def record_puis_signaler(chemin, demarre, fini):
+    """`demarre` : signalé juste avant `record` (le journal est construit, le fils est prêt) ;
+    `fini` : signalé quand `record` a rendu la main."""
     j = QuotaJournal(load_config(), Path(chemin), clock=horloge)
+    demarre.set()
     j.record("gemini", "gemini/m", tokens_in=1)
     fini.set()

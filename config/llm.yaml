@@ -83,6 +83,13 @@ quotas:
   limits:
     gemini: {requests_per_day: null, requests_per_minute: null, tokens_per_minute: null}
     groq: {requests_per_day: null, requests_per_minute: null, tokens_per_minute: null}
+    # Groq, niveau gratuit, relevé le 2026-10-03 (D-052, source https://console.groq.com/docs/rate-limits,
+    # lue par un outil de résumé : à revérifier avant le pré-enregistrement) : 30 requêtes/min,
+    # 1 000 requêtes/jour, 8 000 tokens/min, et 200 000 tokens/JOUR (limite non représentée ici :
+    # c'est le facteur limitant du relais, qui ne convient donc qu'aux appels courts).
+    groq/openai/gpt-oss-120b: {requests_per_day: 1000, requests_per_minute: 30, tokens_per_minute: 8000}
+    # Gemini : limites du niveau gratuit non publiées (lisibles seulement dans Google AI Studio,
+    # compte connecté) : à relever à la main (D-052). Restent null.
     ollama: {requests_per_day: null, requests_per_minute: null, tokens_per_minute: null}
 
 # Coût en euros par million de jetons. Niveaux gratuits : 0. Le calcul existe pour que le coût
@@ -102,4 +109,14 @@ embeddings:
 
 # Date de fin d'entraînement par modèle servi (EX-O5-06), à relever avant le pré-enregistrement
 # (D-025). Clé : identifiant renvoyé par le fournisseur ; valeur : date AAAA-MM-JJ.
-training_cutoff: {}
+training_cutoff:
+  # Fin des données d'entraînement (D-052, relevé le 2026-10-03). Quand la source ne donne que le
+  # mois, on retient le DERNIER jour du mois : borne haute prudente pour la contamination (D-025).
+  # Gemini 3.x : « mars 2026 pour certains domaines, janvier 2025 pour d'autres » (carte du modèle
+  # DeepMind) ; la borne retenue est mars 2026.
+  gemini-3.8-flash: "2026-03-31"
+  gemini-3.5-flash-lite: "2026-03-31"
+  # gpt-oss-120b : juin 2024, indice officiel INDIRECT (exemple du format Harmony), pas la fiche du modèle.
+  openai/gpt-oss-120b: "2024-06-30"
+  # Llama 3.1 : décembre 2023 (fiche de modèle de Meta).
+  llama3.1:8b: "2023-12-31"
