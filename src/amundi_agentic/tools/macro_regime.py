@@ -29,7 +29,12 @@ Hypothèses (H) :
   annuelle (cible de la Fed et de la BCE ; ordre de grandeur de la croissance potentielle). L1 ne
   fixe aucun seuil : paramètres de `MacroThresholds`, à geler dans la configuration.
 * H2 : un indicateur n'est calculé que si la dernière observation connue a au plus `max_age_days`
-  jours à t (série quotidienne 10 j, mensuelle 100 j, trimestrielle 220 j) ; sinon il est ABSENT.
+  jours à t (série quotidienne 10 j, mensuelle 100 j, trimestrielle 240 j) ; sinon il est ABSENT.
+  Cycle du PIB trimestriel : l'observation est datée du début du trimestre et sa première estimation
+  sort environ 115 j plus tard ; juste avant la publication suivante, la dernière observation connue
+  a donc environ 205 à 211 j d'âge. 240 j = ce maximum observé + environ un mois de marge pour une
+  publication retardée (H) ; un retard de plus d'un mois rend l'indicateur absent, ce qui est voulu.
+  Mensuel (CPI, chômage) : pire cas normal environ 71 j, marge conservée à 100 j.
 * H3 : « il y a k mois / 1 an » = dernière observation de date <= (dernière date - k mois) et au
   plus `lookback_tolerance_days` plus ancienne (7 j quotidien ; 10 j mensuel ou trimestriel) ;
   sinon la variation est ABSENTE. Le PIB et le CPI sont lus au millésime connu à t pour chaque
@@ -92,7 +97,7 @@ class MacroThresholds:
     growth_yoy: float = 0.02  # H1
     inflation_yoy: float = 0.02  # H1
     max_age_days: Mapping[str, int] = field(
-        default_factory=lambda: {"quotidien": 10, "mensuel": 100, "trimestriel": 220}
+        default_factory=lambda: {"quotidien": 10, "mensuel": 100, "trimestriel": 240}
     )  # H2
     lookback_tolerance_days: Mapping[str, int] = field(
         default_factory=lambda: {"quotidien": 7, "mensuel": 10, "trimestriel": 10}

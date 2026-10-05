@@ -23,6 +23,13 @@ Hypothèses (H) :
   (`tools.market_data`).
 * H3 : Sortino : seuil minimal acceptable (MAR) = taux sans risque journalier ; semi-écart calculé
   sur les n rendements (dénominateur n, pas seulement les rendements négatifs).
+* H5 : `sharpe_ratio` et `sortino_ratio` lèvent `DegenerateSeriesError` quand la volatilité
+  annualisée est inférieure à `MIN_ANNUALIZED_VOLATILITY` = 1e-4 (série quasi plate, p. ex.
+  monétaire) : le ratio serait un nombre sans signification. `rolling_sharpe` met une valeur
+  ABSENTE (NaN) pour toute fenêtre dont la volatilité annualisée est sous ce seuil.
+  `SORTINO_MIN_VOLATILITY` reste un alias de l'ancien nom.
+* H6 : `calmar_ratio` lève `DegenerateSeriesError` si |perte maximale| < `MIN_ABS_DRAWDOWN` = 1e-6
+  (une perte de l'ordre de 1e-12, bruit flottant, donnerait un ratio absurde).
 * H4 : `rolling_sharpe` est exprimé en unités journalières comme dans la formule du papier ;
   `annualize=True` le multiplie par sqrt(252).
 
@@ -46,11 +53,18 @@ from amundi_agentic.tools.base import (
     known_before,
     make_meta,
     sample_std,
+    series_label,
     simple_returns,
     trailing_prices,
 )
 
 DEFAULT_WINDOW = TRADING_DAYS
+# H5 : en dessous de cette volatilité annualisée (1 point de base), le Sortino est refusé : sur un
+# monétaire plat avec R_f > 0, le semi-écart est ~ R_f,j et le ratio (~ -16) est défini mais ne veut rien dire.
+MIN_ANNUALIZED_VOLATILITY = 1e-4
+SORTINO_MIN_VOLATILITY = MIN_ANNUALIZED_VOLATILITY  # alias de l'ancien nom
+# H6 : perte maximale minimale (valeur absolue, 0,01 %) pour le Calmar ; en dessous, ratio refusé.
+MIN_ABS_DRAWDOWN = 1e-6
 
 
 def daily_rf(rf_annual: float) -> float:
@@ -73,7 +87,10 @@ def cumulative_return(
 ) -> ToolResult[float]:
     w = trailing_prices(prices, as_of, window)
     return ToolResult(
-        _cum(w), make_meta("cumulative_return", as_of, w.index, len(w), window=window)
+        _cum(w),
+        make_meta(
+            "cumulative_return", as_of, w.index, len(w), window=window, series=series_label(prices)
+        ),
     )
 
 
@@ -84,7 +101,9 @@ def annualized_return(
     w = trailing_prices(prices, as_of, window)
     return ToolResult(
         _ann(_cum(w), window),
-        make_meta("annualized_return", as_of, w.index, len(w), window=window),
+        make_meta(
+            "annualized_return", as_of, w.index, len(w), window=window, series=series_label(prices)
+        ),
     )
 
 
@@ -96,7 +115,14 @@ def annualized_volatility(
     sigma = sample_std(simple_returns(w).to_numpy())
     return ToolResult(
         float(sigma * np.sqrt(TRADING_DAYS)),
-        make_meta("annualized_volatility", as_of, w.index, len(w), window=window),
+        make_meta(
+            "annualized_volatility",
+            as_of,
+            w.index,
+            len(w),
+            window=window,
+            series=series_label(prices),
+        ),
     )
 
 
@@ -106,12 +132,22 @@ def sharpe_ratio(
     """S = (R_annualisé - R_f) / sigma_annualisée. Volatilité nulle -> erreur."""
     w = trailing_prices(prices, as_of, window)
     sigma = sample_std(simple_returns(w).to_numpy()) * np.sqrt(TRADING_DAYS)
-    if sigma == 0.0:
-        raise DegenerateSeriesError("Sharpe non défini : volatilité nulle sur la fenêtre")
+    if sigma < MIN_ANNUALIZED_VOLATILITY:
+        raise DegenerateSeriesError(
+            f"Sharpe non défini : volatilité annualisée {sigma:.3g} < {MIN_ANNUALIZED_VOLATILITY:g}"
+        )
     valeur = (_ann(_cum(w), window) - rf_annual) / sigma
     return ToolResult(
         float(valeur),
-        make_meta("sharpe_ratio", as_of, w.index, len(w), window=window, rf_annual=rf_annual),
+        make_meta(
+            "sharpe_ratio",
+            as_of,
+            w.index,
+            len(w),
+            window=window,
+            rf_annual=rf_annual,
+            series=series_label(prices),
+        ),
     )
 
 
@@ -139,7 +175,7 @@ def rolling_sharpe(
     r = p / p.shift(1) - 1.0
     moyenne = r.rolling(window, min_periods=window).mean()
     ecart = r.rolling(window, min_periods=window).std(ddof=1)
-    ecart = ecart.where(ecart > 0)
+    ecart = ecart.where(ecart * np.sqrt(TRADING_DAYS) >= MIN_ANNUALIZED_VOLATILITY)
     s = (moyenne - daily_rf(rf_annual)) / ecart
     if annualize:
         s = s * np.sqrt(TRADING_DAYS)
@@ -154,6 +190,7 @@ def rolling_sharpe(
             window=window,
             rf_annual=rf_annual,
             annualize=annualize,
+            series=series_label(prices),
         ),
     )
 
@@ -164,6 +201,12 @@ def sortino_ratio(
     """Sortino : (R_annualisé - R_f) / semi-écart annualisé (MAR = R_f,j, H3)."""
     w = trailing_prices(prices, as_of, window)
     r = simple_returns(w).to_numpy()
+    vol = sample_std(r) * np.sqrt(TRADING_DAYS)
+    if vol < MIN_ANNUALIZED_VOLATILITY:
+        raise DegenerateSeriesError(
+            f"Sortino non défini : volatilité annualisée {vol:.3g} < {MIN_ANNUALIZED_VOLATILITY:g} "
+            "(série quasi plate : le ratio ne mesurerait que R_f - rendement divisé par du bruit)"
+        )
     manque = np.minimum(r - daily_rf(rf_annual), 0.0)
     dd = float(np.sqrt(np.mean(manque**2)) * np.sqrt(TRADING_DAYS))
     if dd == 0.0:
@@ -171,7 +214,15 @@ def sortino_ratio(
     valeur = (_ann(_cum(w), window) - rf_annual) / dd
     return ToolResult(
         float(valeur),
-        make_meta("sortino_ratio", as_of, w.index, len(w), window=window, rf_annual=rf_annual),
+        make_meta(
+            "sortino_ratio",
+            as_of,
+            w.index,
+            len(w),
+            window=window,
+            rf_annual=rf_annual,
+            series=series_label(prices),
+        ),
     )
 
 
@@ -192,7 +243,9 @@ def max_drawdown(
     valeur, pic, creux = _mdd(w)
     return ToolResult(
         {"max_drawdown": valeur, "peak_date": pic.date(), "trough_date": creux.date()},
-        make_meta("max_drawdown", as_of, w.index, len(w), window=window),
+        make_meta(
+            "max_drawdown", as_of, w.index, len(w), window=window, series=series_label(prices)
+        ),
     )
 
 
@@ -203,7 +256,9 @@ def current_drawdown(
     w = trailing_prices(prices, as_of, window)
     return ToolResult(
         float(w.iloc[-1] / w.max() - 1.0),
-        make_meta("current_drawdown", as_of, w.index, len(w), window=window),
+        make_meta(
+            "current_drawdown", as_of, w.index, len(w), window=window, series=series_label(prices)
+        ),
     )
 
 
@@ -211,9 +266,13 @@ def calmar_ratio(prices: pd.Series, as_of: date, window: int = DEFAULT_WINDOW) -
     """Calmar = R_annualisé / |perte maximale| sur la même fenêtre. Aucune baisse -> erreur."""
     w = trailing_prices(prices, as_of, window)
     mdd, _, _ = _mdd(w)
-    if mdd == 0.0:
-        raise DegenerateSeriesError("Calmar non défini : aucune perte sur la fenêtre")
+    if abs(mdd) < MIN_ABS_DRAWDOWN:
+        raise DegenerateSeriesError(
+            f"Calmar non défini : perte maximale {abs(mdd):.3g} < {MIN_ABS_DRAWDOWN:g}"
+        )
     return ToolResult(
         float(_ann(_cum(w), window) / abs(mdd)),
-        make_meta("calmar_ratio", as_of, w.index, len(w), window=window),
+        make_meta(
+            "calmar_ratio", as_of, w.index, len(w), window=window, series=series_label(prices)
+        ),
     )

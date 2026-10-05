@@ -192,7 +192,9 @@ REF = [0.01, 0.02, 0.03, 0.04]  # distribution de référence : centile 50 = 0,0
 
 def test_regime_haut_au_dessus_du_centile_80():
     p = prix_regime(0.05, REF)
-    res = risk.volatility_regime(p, apres(p), **PARAMS).value
+    t = apres(p)
+    # replay_weeks=0 : aucun rejeu, aucun état (comportement d'origine du test)
+    res = risk.volatility_regime(p, t, replay_weeks=0, **PARAMS).value
     assert res.regime == "haut"
     assert res.volatility == pytest.approx(0.05 * SQ252, rel=1e-9)
     assert res.p_low == pytest.approx(0.025 * SQ252, rel=1e-9)  # numpy, interpolation linéaire
@@ -200,6 +202,14 @@ def test_regime_haut_au_dessus_du_centile_80():
     assert res.percentile_rank == 1.0
     assert res.n_weeks == 4
     assert res.changed is None  # pas de régime précédent
+    assert res.origine == "sans_etat" and res.replay_steps_computed == 0
+    # repli par défaut (rejeu de 52 semaines, H) : mêmes indicateurs, origine « rejeu », et le
+    # régime courant « haut » ne dépend pas de l'état (volatilité > centile 80)
+    defaut = risk.volatility_regime(p, t, **PARAMS).value
+    assert defaut.regime == "haut" and defaut.origine == "rejeu"
+    assert defaut.replay_weeks_requested == risk.DEFAULT_REPLAY_WEEKS == 52
+    assert defaut.replay_steps_computed >= 1 and defaut.changed is not None
+    assert defaut.volatility == res.volatility and defaut.p_high == res.p_high
 
 
 def test_regime_zone_intermediaire_hysteresis():
@@ -223,9 +233,19 @@ def test_regime_rejeu_reproduit_l_etat_sans_etat_externe():
     # cette semaine : 0,031 entre les deux centiles de (0,06 ; 0,01 ; 0,02 ; 0,03) -> reste haut
     p = prix_regime(0.031, [0.06, 0.01, 0.02, 0.03, 0.04], n_prices=40)
     t = apres(p)
-    assert risk.volatility_regime(p, t, **PARAMS).value.regime == "normal"
+    # replay_weeks=0 explicite : aucun rejeu, zone intermédiaire = « normal » (test d'origine)
+    zero = risk.volatility_regime(p, t, replay_weeks=0, **PARAMS).value
+    assert zero.regime == "normal" and zero.origine == "sans_etat"
     rejeu = risk.volatility_regime(p, t, replay_weeks=1, **PARAMS).value
-    assert rejeu.regime == "haut" and rejeu.changed is False
+    assert rejeu.regime == "haut" and rejeu.changed is False and rejeu.origine == "rejeu"
+    # repli par défaut (52 semaines) : même résultat que le rejeu d'une semaine ici, car
+    # l'historique ne permet qu'un seul pas de rejeu utile avant la semaine courante
+    defaut = risk.volatility_regime(p, t, **PARAMS).value
+    assert defaut.regime == "haut" and defaut.origine == "rejeu"
+    assert defaut.replay_steps_computed >= 1
+    # état fourni : même régime que le rejeu, origine « etat_fourni »
+    fourni = risk.volatility_regime(p, t, previous="haut", **PARAMS).value
+    assert fourni.regime == "haut" and fourni.origine == "etat_fourni"
     with pytest.raises(ValueError):
         risk.volatility_regime(p, t, previous="haut", replay_weeks=1, **PARAMS)
 

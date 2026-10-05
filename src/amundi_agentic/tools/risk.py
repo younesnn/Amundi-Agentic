@@ -26,10 +26,25 @@ Hypothèses (H) :
   104 valeurs sont exigées (sinon `InsufficientDataError`). Régime « haut » si volatilité
   courante > centile 80 ; retour à « normal » si < centile 50 ; entre les deux, le régime
   précédent est conservé (hystérésis). Sans régime précédent connu, la zone intermédiaire donne
-  « normal ». `replay_weeks` rejoue la machine à états sur les dernières semaines pour obtenir un
-  régime reproductible sans état externe (le résultat dépend alors de cette profondeur de rejeu).
+  « normal ». Le régime est une MACHINE À ÉTATS : l'état précédent est porté explicitement par
+  l'appelant (`previous`), que le backtest et le live persistent date après date et journalisent
+  (aucun état caché dans l'outil). Repli sans état fourni : rejeu de la machine sur les
+  `DEFAULT_REPLAY_WEEKS` = 52 dernières semaines (H, à geler dans `config/debate.yaml`) ; le résultat
+  dépend alors de cette profondeur (constat du reviewer : à t fixé, rejeu 0 et rejeu >= 4 peuvent
+  différer). Chaque sortie dit d'où vient le régime : `VolRegime.origine` = « etat_fourni »,
+  « rejeu » ou « sans_etat » (aucun état ni rejeu possible), avec la profondeur demandée et le
+  nombre de pas réellement calculés ; ces valeurs sont aussi dans `ToolMeta.params`.
+  `replay_weeks=0` explicite force « sans_etat ».
 * H4 : seuils d'alerte par défaut de `RiskThresholds` : hypothèses de conception, à fixer dans
-  `config/debate.yaml` (aucune valeur n'est une mesure).
+  `config/debate.yaml` (aucune valeur n'est une mesure). Un seuil est atteint dès que la valeur
+  + `THRESHOLD_TOLERANCE` (1e-9, H) est >= au seuil, pour absorber l'erreur flottante
+  (90/100 - 1 = -0,09999999999999998 doit déclencher le seuil de 10 %) ; valable pour le creux, le
+  rang de volatilité et le VIX.
+* H6 : `risk_report.sources` contient une `ToolMeta` par série effectivement utilisée (actif,
+  benchmark pour le régime, VIX), avec sa fenêtre réelle et son nombre d'observations ; la méta
+  globale couvre du début de la plus ancienne fenêtre à la dernière donnée la plus récente
+  (`n_obs` = somme des observations des sources). `aggregate_alerts_by_class` donne la pire
+  alerte par classe (L1 §6.4) à partir d'une correspondance actif -> classe fournie par l'appelant.
 * H5 : le rang centile d'une volatilité est le rang « moyen » dans la distribution de référence :
   (nombre de valeurs strictement inférieures + moitié des valeurs égales) / effectif. Une série
   plate (volatilité nulle partout) a donc le rang 0,5 et non 1. Limite : un actif quasi sans
@@ -43,7 +58,7 @@ Dans `risk_report`, un actif dont un indicateur ne peut être calculé est list�
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from dataclasses import asdict, dataclass, field
 from datetime import date
 from typing import Any, Literal
@@ -58,16 +73,20 @@ from amundi_agentic.tools.base import (
     InsufficientDataError,
     MissingDataError,
     ToolError,
+    ToolMeta,
     ToolResult,
     known_before,
     known_macro,
     make_meta,
     sample_std,
+    series_label,
     simple_returns,
     trailing_prices,
 )
 
 SESSIONS_PER_WEEK = 5
+THRESHOLD_TOLERANCE = 1e-9  # H : tolérance flottante des seuils d'alerte
+DEFAULT_REPLAY_WEEKS = 52  # H : profondeur du rejeu de repli du régime (gelée en configuration)
 Alert = Literal["aucune", "moderee", "elevee"]
 Regime = Literal["normal", "haut"]
 _ORDRE: dict[str, int] = {"aucune": 0, "moderee": 1, "elevee": 2}
@@ -82,7 +101,15 @@ def realized_volatility(prices: pd.Series, as_of: date, window: int = 21) -> Too
     w = trailing_prices(prices, as_of, window)
     vol = sample_std(simple_returns(w).to_numpy()) * np.sqrt(TRADING_DAYS)
     return ToolResult(
-        float(vol), make_meta("realized_volatility", as_of, w.index, len(w), window=window)
+        float(vol),
+        make_meta(
+            "realized_volatility",
+            as_of,
+            w.index,
+            len(w),
+            window=window,
+            series=series_label(prices),
+        ),
     )
 
 
@@ -127,6 +154,7 @@ def ewma_volatility(
             len(w),
             half_life_weeks=half_life_weeks,
             max_weeks=max_weeks,
+            series=series_label(prices),
         ),
     )
 
@@ -150,7 +178,16 @@ def historical_var(
     """
     w, _, q = _tail(prices, as_of, window, level)
     return ToolResult(
-        -q, make_meta("historical_var", as_of, w.index, len(w), window=window, level=level)
+        -q,
+        make_meta(
+            "historical_var",
+            as_of,
+            w.index,
+            len(w),
+            window=window,
+            level=level,
+            series=series_label(prices),
+        ),
     )
 
 
@@ -161,7 +198,15 @@ def historical_cvar(
     w, r, q = _tail(prices, as_of, window, level)
     return ToolResult(
         float(-np.mean(r[r <= q])),
-        make_meta("historical_cvar", as_of, w.index, len(w), window=window, level=level),
+        make_meta(
+            "historical_cvar",
+            as_of,
+            w.index,
+            len(w),
+            window=window,
+            level=level,
+            series=series_label(prices),
+        ),
     )
 
 
@@ -204,7 +249,15 @@ def correlation_matrix(
     out = pd.DataFrame(c, index=w.columns, columns=w.columns)
     return ToolResult(
         out,
-        make_meta("correlation_matrix", as_of, w.index, len(w), window=window, frequency=frequency),
+        make_meta(
+            "correlation_matrix",
+            as_of,
+            w.index,
+            len(w),
+            window=window,
+            frequency=frequency,
+            series=series_label(prices),
+        ),
     )
 
 
@@ -218,6 +271,9 @@ class VolRegime:
     percentile_rank: float  # H5
     n_weeks: int  # taille de la distribution de référence
     changed: bool | None  # vs régime précédent ; None si aucun précédent
+    origine: Literal["etat_fourni", "rejeu", "sans_etat"] = "sans_etat"  # d'où vient l'état
+    replay_weeks_requested: int = 0  # profondeur de rejeu demandée (0 si état fourni)
+    replay_steps_computed: int = 0  # pas de rejeu réellement calculés (historique suffisant)
 
 
 def _vol_distribution(
@@ -274,14 +330,26 @@ def volatility_regime(
     min_weeks: int = 104,
     low_pct: float = 50.0,
     high_pct: float = 80.0,
-    replay_weeks: int = 0,
+    replay_weeks: int | None = None,
 ) -> ToolResult[VolRegime]:
-    """Régime de volatilité de la série (le benchmark) à t, règle de L1 §10.1 (H3)."""
+    """Régime de volatilité de la série (le benchmark) à t, règle de L1 §10.1 (H3).
+
+    Machine à états : `previous` (régime à la date de contrôle précédente) est porté par l'appelant.
+    Sans `previous`, repli : rejeu sur `replay_weeks` semaines (None -> `DEFAULT_REPLAY_WEEKS`, H ;
+    0 -> aucun rejeu, zone intermédiaire = « normal »). `previous` fourni avec `replay_weeks` > 0
+    est refusé. La provenance de l'état est dans `VolRegime.origine` et `ToolMeta.params`.
+    """
     if not 0 < low_pct < high_pct < 100:
         raise ValueError("centiles : 0 < bas < haut < 100")
-    if replay_weeks < 0 or (replay_weeks > 0 and previous is not None):
+    if replay_weeks is not None and (
+        replay_weeks < 0 or (replay_weeks > 0 and previous is not None)
+    ):
         raise ValueError("replay_weeks > 0 exige previous=None (le rejeu part sans état)")
-    n_obs = (history_weeks + replay_weeks) * SESSIONS_PER_WEEK + vol_window + 2
+    if previous is not None:
+        profondeur = 0
+    else:
+        profondeur = DEFAULT_REPLAY_WEEKS if replay_weeks is None else replay_weeks
+    n_obs = (history_weeks + profondeur) * SESSIONS_PER_WEEK + vol_window + 2
     tail = _clean_tail(prices, as_of, n_obs)
     c = tail.to_numpy()
 
@@ -294,15 +362,29 @@ def volatility_regime(
         return _next_regime(v, lo, hi, prev), v, lo, hi, rang, len(dist)
 
     prev = previous
-    for m in range(replay_weeks, 0, -1):  # rejeu : semaines t-m, ..., t-1 (positions par 5 séances)
+    pas = 0
+    for m in range(profondeur, 0, -1):  # rejeu : semaines t-m, ..., t-1 (positions par 5 séances)
         fin = len(c) - SESSIONS_PER_WEEK * m
         try:
             prev = etat(c[:fin], prev)[0]
+            pas += 1
         except InsufficientDataError:
             continue  # pas assez d'historique à cette date : la machine démarre plus tard
     regime, v, lo, hi, rang, n = etat(c, prev)
+    origine = "etat_fourni" if previous is not None else ("rejeu" if pas > 0 else "sans_etat")
     return ToolResult(
-        VolRegime(regime, v, lo, hi, rang, n, None if prev is None else regime != prev),
+        VolRegime(
+            regime,
+            v,
+            lo,
+            hi,
+            rang,
+            n,
+            None if prev is None else regime != prev,
+            origine,
+            profondeur,
+            pas,
+        ),  # fmt: skip
         make_meta(
             "volatility_regime",
             as_of,
@@ -312,8 +394,11 @@ def volatility_regime(
             history_weeks=history_weeks,
             low_pct=low_pct,
             high_pct=high_pct,
-            replay_weeks=replay_weeks,
+            replay_weeks=profondeur,
+            replay_steps=pas,
+            origine=origine,
             previous=previous,
+            series=series_label(prices),
         ),
     )
 
@@ -366,13 +451,20 @@ class RiskReport:
     indicateurs: dict[str, float]
     seuils: dict[str, float]
     alerte_marche: Alert | None = None
-    sources: list[str] = field(default_factory=list)
+    sources: list[ToolMeta] = field(default_factory=list)  # une par série utilisée (H6)
+    # `indisponibles` (interface historique, conservée) = actifs ET clés techniques (`__regime__`,
+    # `__vix__`) -> raison. Séparation propre : `actifs_indisponibles` (noms d'actifs seulement, à
+    # passer tel quel à `aggregate_alerts_by_class`) et `indisponibles_techniques` (clés techniques).
+    actifs_indisponibles: list[str] = field(default_factory=list)
+    indisponibles_techniques: dict[str, str] = field(default_factory=dict)
 
 
 def _niveau(valeur: float, modere: float, eleve: float) -> Alert:
-    if valeur >= eleve:
+    """Niveau d'alerte ; un seuil est atteint si valeur + tolérance >= seuil (H4)."""
+    v = valeur + THRESHOLD_TOLERANCE
+    if v >= eleve:
         return "elevee"
-    if valeur >= modere:
+    if v >= modere:
         return "moderee"
     return "aucune"
 
@@ -388,22 +480,25 @@ def risk_report(
     thresholds: RiskThresholds | None = None,
     previous_regime: Regime | None = None,
     vix: pd.DataFrame | None = None,
-    replay_weeks: int = 0,
+    replay_weeks: int | None = None,
 ) -> ToolResult[RiskReport]:
     """Alertes par actif, régime de volatilité du benchmark, VIX (facultatif).
 
     Alerte d'un actif = niveau le plus grave parmi (a) rang centile de sa volatilité 21 séances dans
     sa propre distribution sur 156 semaines, (b) son creux courant sur 252 séances (H4). `vix` suit
     le format `DataView.macro_long` ; son niveau est évalué séparément (`alerte_marche`), il n'est
-    pas fondu dans les alertes d'actifs (choix à confirmer, voir rapport).
+    pas fondu dans les alertes d'actifs. `previous_regime` / `replay_weeks` : voir `volatility_regime`.
+    `RiskReport.sources` : une `ToolMeta` par série utilisée (H6).
     """
     th = thresholds or RiskThresholds()
     connu = known_before(prices, as_of, "prix")
     alertes: dict[str, Alert] = {}
     indisp: dict[str, str] = {}
+    actifs_indispo: list[str] = []
+    techniques: dict[str, str] = {}
     ind: dict[str, float] = {}
     n_obs = (th.history_weeks) * SESSIONS_PER_WEEK + th.vol_window + 2
-    derniere: list[pd.Timestamp] = []
+    sources: list[ToolMeta] = []
 
     for col in connu.columns:
         nom = str(col)
@@ -419,6 +514,7 @@ def risk_report(
             creux = float(fen.iloc[-1] / fen.max() - 1.0)
         except ToolError as e:
             indisp[nom] = f"{type(e).__name__} : {e}"
+            actifs_indispo.append(nom)
             continue
         ind[f"vol{th.vol_window}:{nom}"] = v
         ind[f"vol_rang:{nom}"] = rang
@@ -427,11 +523,24 @@ def risk_report(
             _niveau(rang, th.vol_rank_moderate, th.vol_rank_high),
             _niveau(-creux, th.drawdown_moderate, th.drawdown_high),
         )
-        derniere.append(tail.index[-1])
+        # fenêtre réellement utilisée pour cet actif : l'union des fenêtres de volatilité et de creux
+        sources.append(
+            make_meta(
+                "risk_report",
+                as_of,
+                tail.index,
+                len(tail),
+                series=nom,
+                unit="alerte (aucune/moderee/elevee) ; vol. décimal par an ; creux décimal",
+                vol_window=th.vol_window,
+                history_weeks=th.history_weeks,
+                drawdown_window=th.drawdown_window,
+            )
+        )
 
     regime: Regime | None = None
     try:
-        rg = volatility_regime(
+        res_rg = volatility_regime(
             benchmark,
             as_of,
             previous=previous_regime,
@@ -441,13 +550,15 @@ def risk_report(
             low_pct=th.regime_low_pct,
             high_pct=th.regime_high_pct,
             replay_weeks=replay_weeks,
-        ).value
+        )
+        rg = res_rg.value
         regime = rg.regime
         ind["vol_benchmark"] = rg.volatility
         ind["vol_benchmark_p_bas"] = rg.p_low
         ind["vol_benchmark_p_haut"] = rg.p_high
+        sources.append(res_rg.meta)
     except ToolError as e:
-        indisp["__regime__"] = f"{type(e).__name__} : {e}"
+        indisp["__regime__"] = techniques["__regime__"] = f"{type(e).__name__} : {e}"
 
     marche: Alert | None = None
     if vix is not None:
@@ -457,20 +568,80 @@ def risk_report(
             niveau = float(k["value"].iloc[-1])
             ind["vix"] = niveau
             marche = _niveau(niveau, th.vix_moderate, th.vix_high)
-            derniere.append(k["date"].iloc[-1])
+            sources.append(
+                make_meta(
+                    "risk_report",
+                    as_of,
+                    k["date"].iloc[-1:],
+                    1,
+                    series="vix",
+                    unit="points d'indice",
+                )
+            )
         else:
-            indisp["__vix__"] = "VIX absent ou plus ancien que le délai maximal"
+            indisp["__vix__"] = techniques["__vix__"] = (
+                "VIX absent ou plus ancien que le délai maximal"
+            )
 
+    bornes = [pd.Timestamp(x) for m in sources for x in (m.window_start, m.last_data_date) if x]
     return ToolResult(
-        RiskReport(alertes, indisp, regime, ind, th.to_dict(), marche),
+        RiskReport(
+            alertes, indisp, regime, ind, th.to_dict(), marche, sources, actifs_indispo, techniques
+        ),
         make_meta(
             "risk_report",
             as_of,
-            pd.DatetimeIndex(derniere) if derniere else None,
-            len(connu),
+            pd.DatetimeIndex(bornes) if bornes else None,
+            sum(m.n_obs for m in sources),
             previous_regime=previous_regime,
+            replay_weeks=replay_weeks,
+            series=series_label(prices),
         ),
     )
+
+
+# ------------------------------------------------------------------------------ alertes par classe
+@dataclass(frozen=True)
+class ClassAlert:
+    """Pire alerte d'une classe d'actifs (L1 §6.4) et actifs qui la causent."""
+
+    alerte: Alert | None  # None : aucun actif de la classe n'a d'alerte calculable
+    responsables: tuple[str, ...]  # actifs au niveau le plus grave (vide si « aucune » ou None)
+    actifs: tuple[str, ...]  # tous les actifs de la classe avec une alerte
+    indisponibles: tuple[str, ...]  # actifs de la classe dont l'alerte n'a pas pu être calculée
+
+
+def aggregate_alerts_by_class(
+    alertes: Mapping[str, str],
+    asset_class: Mapping[str, str],
+    indisponibles: Iterable[str] = (),
+) -> dict[str, ClassAlert]:
+    """Pire alerte par classe d'actifs (primaire et proxys d'une classe : L1 §6.4).
+
+    `asset_class` (actif -> classe) est fourni par l'appelant, jamais codé en dur. Fonction pure et
+    déterministe (classes et actifs triés). Un actif alerté ou indisponible absent de `asset_class`,
+    ou un niveau d'alerte inconnu, lève `ToolError` : aucun actif n'est écarté en silence. Un actif
+    indisponible n'abaisse pas l'alerte de sa classe, mais est listé ; une classe sans aucune
+    alerte calculable a `alerte=None`.
+    """
+    indispo = sorted(set(indisponibles))
+    for a in list(alertes) + indispo:
+        if a not in asset_class:
+            raise ToolError(f"actif sans classe dans la correspondance : {a!r}")
+    for a, niveau in alertes.items():
+        if niveau not in _ORDRE:
+            raise ToolError(f"niveau d'alerte inconnu pour {a!r} : {niveau!r}")
+    sortie: dict[str, ClassAlert] = {}
+    for classe in sorted(set(asset_class[a] for a in list(alertes) + indispo)):
+        membres = sorted(a for a in alertes if asset_class[a] == classe)
+        manquants = tuple(a for a in indispo if asset_class[a] == classe)
+        if not membres:
+            sortie[classe] = ClassAlert(None, (), (), manquants)
+            continue
+        pire = max((alertes[a] for a in membres), key=lambda n: _ORDRE[n])
+        resp = tuple(a for a in membres if alertes[a] == pire) if pire != "aucune" else ()
+        sortie[classe] = ClassAlert(pire, resp, tuple(membres), manquants)  # type: ignore[arg-type]
+    return sortie
 
 
 def confidence_factor_h(alert: str, mapping: Mapping[str, float] | None = None) -> float:

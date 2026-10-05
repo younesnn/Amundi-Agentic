@@ -18,8 +18,10 @@ dernière date utilisée) qui permet de construire une `Source` citable.
 
 from __future__ import annotations
 
+import hashlib
+import json
 from dataclasses import dataclass, field
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from typing import Any, Generic, TypeVar
 
 import numpy as np
@@ -48,6 +50,44 @@ class DegenerateSeriesError(ToolError):
     """Quantité non définie sur cette série (volatilité nulle, aucune baisse, prix non positif)."""
 
 
+_SAFE = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-")
+
+
+def _escape_series(nom: str) -> str:
+    return "".join(c if c in _SAFE else "".join(f"%{b:02X}" for b in c.encode()) for c in nom)
+
+
+def _norm(v: Any) -> Any:
+    """Valeur normalisée, sérialisable en JSON, indépendante du type numpy ou python d'origine."""
+    if v is None or isinstance(v, str):
+        return v
+    if isinstance(v, bool | np.bool_):
+        return bool(v)
+    if isinstance(v, int | np.integer):
+        return int(v)
+    if isinstance(v, float | np.floating):
+        f = float(v)
+        if f != f:
+            return {"__float__": "nan"}
+        if f in (float("inf"), float("-inf")):
+            return {"__float__": "inf" if f > 0 else "-inf"}
+        return f
+    if isinstance(v, pd.Timestamp | datetime | date):
+        return v.isoformat()
+    if isinstance(v, dict):
+        return {str(k): _norm(x) for k, x in sorted(v.items(), key=lambda kv: str(kv[0]))}
+    if isinstance(v, list | tuple | np.ndarray | pd.Index):
+        return [_norm(x) for x in list(v)]
+    if isinstance(v, set | frozenset):
+        return sorted((_norm(x) for x in v), key=lambda x: json.dumps(x, sort_keys=True))
+    return str(v)
+
+
+def canonical_params(params: dict[str, Any]) -> str:
+    """JSON canonique (clés triées, séparateurs fixes, ASCII) des paramètres normalisés."""
+    return json.dumps(_norm(params), sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+
+
 @dataclass(frozen=True)
 class ToolMeta:
     """Métadonnées pour citer la sortie d'un outil (EX-O1-03)."""
@@ -59,6 +99,35 @@ class ToolMeta:
     last_data_date: date | None
     n_obs: int
     params: dict[str, Any] = field(default_factory=dict)
+    series: str | None = None  # série (ou actif) sur laquelle porte le calcul, si elle est nommée
+    unit: str | None = None  # unité de la valeur (« décimal », « décimal par an », « sans unité »…)
+
+    @property
+    def source_id(self) -> str:
+        """Identifiant stable et déterministe : outil, série, fenêtre, version + empreinte des
+        paramètres (deux appels de mêmes dates mais de paramètres différents, p. ex. un autre
+        taux sans risque, n'ont pas le même identifiant). Aucune horloge, aucun aléa.
+
+        Nom de série : chaque caractère hors [A-Za-z0-9_.-] (dont « : », « # », l'espace et « % »)
+        est remplacé par %XX sur ses octets UTF-8 : codage injectif, donc identifiant non ambigu ;
+        l'absence de série s'écrit « ~ » (jamais produit par le codage, « ~ » est lui-même
+        échappé). Empreinte : sha256 (8 premiers hex) du JSON canonique des paramètres normalisés
+        (`canonical_params`), identique entre processus et versions de numpy."""
+        debut = self.window_start.isoformat() if self.window_start else "na"
+        fin = self.last_data_date.isoformat() if self.last_data_date else "na"
+        empreinte = hashlib.sha256(canonical_params(self.params).encode()).hexdigest()[:8]
+        serie = "~" if self.series is None else _escape_series(self.series)
+        return f"{self.tool}:{serie}:{debut}:{fin}:v{self.version}#{empreinte}"
+
+    @property
+    def data_instant(self) -> datetime | None:
+        """Instant UTC AWARE de la dernière donnée utilisée : minuit UTC de sa date (la date de
+        séance ou d'observation n'a pas d'heure ; ce choix est sans effet sur la coupure PIT, qui
+        est faite en amont). None si aucune donnée n'a été utilisée."""
+        if self.last_data_date is None:
+            return None
+        d = self.last_data_date
+        return datetime(d.year, d.month, d.day, tzinfo=UTC)
 
     def citation(self) -> str:
         debut = self.window_start.isoformat() if self.window_start else "n/a"
@@ -77,6 +146,9 @@ class ToolMeta:
             "last_data_date": self.last_data_date.isoformat() if self.last_data_date else None,
             "n_obs": self.n_obs,
             "params": dict(self.params),
+            "series": self.series,
+            "unit": self.unit,
+            "source_id": self.source_id,
         }
 
 
@@ -86,6 +158,70 @@ class ToolResult(Generic[T]):
 
     value: T
     meta: ToolMeta
+
+    @property
+    def extrait(self) -> str:
+        """Résumé lisible du calcul (outil, fenêtre, valeur, unité), 500 caractères au plus.
+
+        Destiné au champ `extrait` d'une `Source` (L1 §5.3) ; les agents font la correspondance,
+        `tools/` n'importe pas `schemas.py`.
+        """
+        unite = f" {self.meta.unit}" if self.meta.unit else ""
+        texte = f"{self.meta.citation()} ; valeur = {_resume(self.value)}{unite}"
+        return texte if len(texte) <= EXTRAIT_MAX else texte[: EXTRAIT_MAX - 1] + "…"
+
+
+EXTRAIT_MAX = 500
+
+
+def _resume(v: Any) -> str:
+    """Résumé court et déterministe d'une valeur d'outil (nombres en 6 chiffres significatifs)."""
+    if isinstance(v, float | np.floating):
+        return f"{float(v):.6g}"
+    if isinstance(v, pd.Series):
+        return f"série de {len(v)} valeurs, dernière = {_resume(v.iloc[-1]) if len(v) else 'n/a'}"
+    if isinstance(v, pd.DataFrame):
+        return f"tableau {v.shape[0]} x {v.shape[1]}"
+    if isinstance(v, dict):
+        return "{" + ", ".join(f"{k}: {_resume(x)}" for k, x in list(v.items())[:12]) + "}"
+    if hasattr(v, "__dataclass_fields__"):
+        return _resume({k: getattr(v, k) for k in v.__dataclass_fields__})
+    if isinstance(v, list | tuple):
+        return "[" + ", ".join(_resume(x) for x in v[:12]) + "]"
+    return str(v)
+
+
+def series_label(s: Any) -> str | None:
+    """Nom de la série d'entrée s'il existe (pour citer la source), sinon None."""
+    nom = getattr(s, "name", None)
+    return None if nom is None else str(nom)
+
+
+# Unité de la valeur de chaque outil (documentation de la sortie, jamais utilisée pour calculer)
+UNITS: dict[str, str] = {
+    "cumulative_return": "décimal",
+    "annualized_return": "décimal par an",
+    "annualized_volatility": "décimal par an",
+    "sharpe_ratio": "sans unité",
+    "rolling_sharpe": "sans unité (journalier sauf annualize)",
+    "sortino_ratio": "sans unité",
+    "max_drawdown": "décimal (<= 0)",
+    "current_drawdown": "décimal (<= 0)",
+    "calmar_ratio": "sans unité",
+    "momentum": "décimal",
+    "momentum_12_1": "décimal",
+    "trend_vs_sma": "décimal (écart à la moyenne mobile)",
+    "valuation_summary": "décimal (voir clés)",
+    "realized_volatility": "décimal par an",
+    "ewma_volatility": "décimal par an",
+    "historical_var": "perte, décimal",
+    "historical_cvar": "perte, décimal",
+    "correlation_matrix": "corrélation [-1, 1]",
+    "volatility_regime": "régime (normal/haut) et volatilité en décimal par an",
+    "risk_report": "alertes (aucune/moderee/elevee)",
+    "macro_regime": "décimal (taux en décimal, VIX en points)",
+    "risk_free_annual": "décimal par an",
+}
 
 
 def check_as_of(as_of: date) -> pd.Timestamp:
@@ -164,10 +300,15 @@ def make_meta(
     as_of: date,
     index: pd.Index | None,
     n_obs: int,
+    *,
+    series: str | None = None,
+    unit: str | None = None,
     **params: Any,
 ) -> ToolMeta:
     debut = fin = None
     if index is not None and len(index):
         debut = pd.Timestamp(index.min()).date()
         fin = pd.Timestamp(index.max()).date()
-    return ToolMeta(tool, TOOL_VERSION, as_of, debut, fin, n_obs, params)
+    return ToolMeta(
+        tool, TOOL_VERSION, as_of, debut, fin, n_obs, params, series, unit or UNITS.get(tool)
+    )

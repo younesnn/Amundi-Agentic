@@ -35,6 +35,7 @@ from amundi_agentic.tools.base import (
     ToolResult,
     known_before,
     make_meta,
+    series_label,
     trailing_prices,
 )
 
@@ -66,7 +67,9 @@ def momentum(prices: pd.Series, as_of: date, months: int) -> ToolResult[float]:
     pts = _borne(prices, as_of, (0, n))
     return ToolResult(
         float(pts.iloc[0] / pts.iloc[1] - 1.0),
-        make_meta("momentum", as_of, pts.index, 2, months=months, sessions=n),
+        make_meta(
+            "momentum", as_of, pts.index, 2, months=months, sessions=n, series=series_label(prices)
+        ),
     )
 
 
@@ -75,7 +78,7 @@ def momentum_12_1(prices: pd.Series, as_of: date) -> ToolResult[float]:
     pts = _borne(prices, as_of, (MONTH_TRADING_DAYS, 12 * MONTH_TRADING_DAYS))
     return ToolResult(
         float(pts.iloc[0] / pts.iloc[1] - 1.0),
-        make_meta("momentum_12_1", as_of, pts.index, 2),
+        make_meta("momentum_12_1", as_of, pts.index, 2, series=series_label(prices)),
     )
 
 
@@ -87,7 +90,9 @@ def trend_vs_sma(prices: pd.Series, as_of: date, window: int = 200) -> ToolResul
     sens = "haussiere" if ecart > 0 else "baissiere" if ecart < 0 else "neutre"
     return ToolResult(
         {"ecart_sma": ecart, "sma": sma, "tendance": sens},
-        make_meta("trend_vs_sma", as_of, w.index, len(w), window=window),
+        make_meta(
+            "trend_vs_sma", as_of, w.index, len(w), window=window, series=series_label(prices)
+        ),
     )
 
 
@@ -144,5 +149,6 @@ def valuation_summary(
             min(len(connu), window + 1),
             window=window,
             rf_annual=rf_annual,
+            series=series_label(prices),
         ),
     )
