@@ -16,6 +16,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
+import yaml
 
 from amundi_agentic.data.analysis import (
     DETERMINE,
@@ -591,11 +592,13 @@ class Report:
 
         try:
             src = load_for_universe()
-        except (OSError, EsgSourceError) as exc:
-            self.data["esg_etf_sources"] = {"statut": "indisponible", "erreur": str(exc)[:300]}
+        except (OSError, EsgSourceError, yaml.YAMLError, KeyError, ValueError, TypeError) as exc:
+            motif = str(exc).replace("\n", " ")[:300]
+            self.data["esg_etf_sources"] = {"statut": "indisponible", "erreur": motif}
             return None, (
                 "Source ESG manuelle par ETF (D-048) : **indisponible** "
-                f"({type(exc).__name__}) ; la matrice ETF reste celle de la méthodologie déclarée.\n\n"
+                f"({type(exc).__name__} : {motif}) ; la matrice ETF reste celle de la méthodologie "
+                "déclarée.\n\n"
             )
         t = datetime.now(UTC).date() + timedelta(
             days=1
@@ -611,7 +614,13 @@ class Report:
             f"entrées, état connu au {t.isoformat()} 00:00 Paris (sha256 `{str(src.file_sha256)[:12]}`). "
             "`determine_par_donnee` pour un ETF = un document de la gestionnaire prouve l'exclusion "
             "(indice ou portefeuille en réplication directe) ; SFDR classe des produits, ce n'est pas "
-            "un score ESG ; un article 8 n'implique pas ces exclusions.\n\n"
+            "un score ESG ; un article 8 n'implique pas ces exclusions. **Limites** : les exclusions "
+            "« déterminées » de CRP.PA et AHYE.PA reposent sur des seuils de revenus ou des critères MSCI "
+            "ESG Research non relevés ici, ce ne sont pas des exclusions absolues ; une exclusion portée "
+            "seulement par les titres détenus d'un fonds à swap n'est pas comptée. Toutes les saisies "
+            "datent du 2026-10-03 : en mode strict rien n'est servi avant le 2026-10-04, **aucun "
+            "backtest ne voit l'ESG des ETF** (seul le mode `non_pit`, marqué, ou le live test les "
+            "utilisent). Colonnes `sfdr` et `caractere_indice` : valeur documentée ou `inconnu`.\n\n"
         )
 
     def esg(self) -> None:

@@ -29,9 +29,8 @@ Une entrée existante n'est jamais modifiée ni supprimée. Une correction AJOUT
 `verify_and_snapshot` compare le fichier aux instantanés datés déjà écrits dans
 `.cache/data/snapshots/esg_etf_sources/` (même mécanisme que `ParquetStore.snapshot`) et refuse toute
 entrée altérée ou disparue (`RetroactiveModificationError`). Les instantanés entrent dans le manifeste
-`data_manifest.json` comme les autres jeux (SHA-256). Le fichier lui-même n'est PAS ajouté à
-`CONFIGS` de `manifest.py` (le test existant impose l'ensemble exact des trois configurations) :
-`EtfSources.file_sha256` est enregistré dans chaque instantané.
+`data_manifest.json` comme les autres jeux (SHA-256), et `EtfSources.file_sha256` est enregistré dans chaque
+instantané. Les entrées nouvelles sont soumises à la règle anti-antidatage décrite ci-dessous.
 
 Point-in-time (D-031)
 ---------------------
@@ -43,8 +42,42 @@ ignorée (le document était public) mais les deux autres bornes restent ; toute
 postérieure à t porte `non_point_in_time=True`. Entre plusieurs entrées connues, on sert celle de
 `date_effet` la plus récente, puis de `date_saisie` la plus récente, puis la dernière du fichier.
 
+Registre d'empreintes versionné (garantie hors du cache)
+--------------------------------------------------------
+Les instantanés vivent dans `.cache/` (non versionné) : sur un clone neuf le contrôle serait vide. Le registre
+`config/esg_etf_sources.lock.json` (versionné avec la saisie) porte, pour chaque entrée, son identifiant, le
+SHA-256 de son contenu canonique ET de sa position dans la liste de l'ETF (réordonner deux entrées de même
+date change la valeur servie : c'est donc refusé), sa `date_saisie` et son `corrige`. `check_lock` refuse toute
+entrée modifiée, redatée, déplacée ou supprimée. Une entrée nouvelle n'entre au registre que par la commande
+explicite `... esg_etf_sources lock` (ou `snapshot`), qui exige `date_saisie` == jour réel de la commande :
+ni antidatée (fuite du futur), ni future. Le premier registre est un amorçage. Le fichier de saisie et le
+registre figurent dans le manifeste (`manifest.py`, `CONFIGS`).
+
+Procédé de collecte et preuves
+------------------------------
+- Documents : PDF publics du site amundietf.fr (KID, prospectus, documents SFDR, avis aux actionnaires),
+  téléchargés par curl avec TLS actif, une requête par document, pause de 3 s ; `robots.txt` ne les interdit pas.
+  Leurs URL ne sont pas garanties pérennes : le SHA-256 saisi (`source.sha256`) est le garant.
+- Fiche produit : la page est rendue côté client ; les valeurs viennent de l'API de son widget, non documentée
+  publiquement (stabilité non garantie, risque de 400 ou de réponse vide si le corps change). Requête exacte :
+  `POST https://www.amundietf.fr/mapi/ProductAPI/getProductsData`, en-têtes `Content-Type: application/json` et
+  un `User-Agent` de navigateur, corps JSON `{"characteristics": [...], "filters": [{"filterType":
+  "CHARACTERISTICS", "fieldName": "ISIN", "queryOperation": "IN", "valid": true, "values": ["<ISIN>"]}],
+  "context": {pays FRA, langue fr, profil INSTIT, domaine www.amundietf.fr}, "metrics": [], "historics": []}`.
+  Le corps complet est consigné dans `config/esg_etf_sources_archive/MANIFEST.json`. La réponse brute de chaque
+  ISIN est archivée dans le même dossier (`<ISIN>.json`) avec son SHA-256 et la date de consultation ; les entrées
+  concernées ont `type_document: fiche_produit_archivee` et `source.archive`. Le chargeur vérifie que chaque
+  archive existe avec le bon SHA-256. Une fiche non archivée est refusée (sauf PDF daté avec `sha256`).
+- Le rattachement ticker -> ISIN repose sur le mnémonique et la cotation Euronext Paris de la fiche (voir la
+  `note` de chaque ETF, par exemple l'écart de nom d'AHYE.PA).
+
 Limites (à répéter dans tout rapport)
 -------------------------------------
+- Aucun backtest ne voit l'ESG des ETF : toutes les saisies datent du 2026-10-03, donc en mode `strict`
+  rien n'est servi avant le 2026-10-04. Seuls le mode `non_pit` (marqué `non_point_in_time`, analyse de
+  sensibilité) et le live test utilisent ces valeurs.
+- Les exclusions « déterminées » de CRP.PA et AHYE.PA reposent sur des seuils de revenus ou des critères MSCI
+  ESG Research non relevés ici : ce ne sont pas des exclusions absolues de toute exposition.
 - SFDR classe des produits : ce n'est pas un score ESG. Un article 8 n'implique pas l'exclusion des armes
   controversées, du tabac ou du charbon thermique ; seule une entrée `exclusions` appuyée sur un document
   le prouve, et elle reste soumise aux seuils de la méthodologie.
@@ -80,8 +113,12 @@ CHAMPS = ("sfdr", "indice", "caractere_indice", "exclusions")
 SFDR_VALEURS = frozenset({"article_6", "article_8", "article_9", "non_applicable"})
 CARACTERES = frozenset({"esg", "pab", "ctb", "standard"})
 TYPES_DOCUMENT = frozenset(
-    {"prospectus", "dic_kid", "fiche_produit", "page_indice", "document_sfdr", "avis_actionnaires"}
-)
+    {
+        "prospectus", "dic_kid", "fiche_produit", "fiche_produit_archivee", "page_indice",
+        "document_sfdr", "avis_actionnaires",
+    }
+)  # fmt: skip
+LOCK_FILE = "esg_etf_sources.lock.json"
 EMETTEURS = frozenset({"gestionnaire_fonds", "administrateur_indice"})
 PORTEES = frozenset({"indice", "portefeuille_replication_directe", "titres_detenus_hors_swap"})
 PORTEES_COMPTEES = frozenset({"indice", "portefeuille_replication_directe"})
@@ -90,6 +127,7 @@ MODES = ("strict", "non_pit")
 SNAPSHOT_SOURCE = "esg_etf_sources"
 DEFAULT_FILE = "esg_etf_sources.yaml"
 _ISIN = re.compile(r"^[A-Z]{2}[A-Z0-9]{9}[0-9]$")
+_SHA = re.compile(r"^[0-9a-f]{64}$")
 
 
 class EsgSourceError(ValueError):
@@ -240,6 +278,23 @@ def _valider_source(src: Any, ctx: str, erreurs: list[str], date_obligatoire: bo
     url = str(src.get("url") or "")
     if not url.startswith("https://"):
         erreurs.append(f"{ctx}: source.url obligatoire et en https (reçu {url!r})")
+    typ = src.get("type_document")
+    sha = str(src.get("sha256") or "")
+    if typ == "fiche_produit" and not _SHA.match(sha):
+        erreurs.append(
+            f"{ctx}: une fiche produit non archivée exige `sha256` du document ; "
+            "sinon utiliser `fiche_produit_archivee` avec `archive`"
+        )
+    if typ == "fiche_produit_archivee":
+        arc = src.get("archive")
+        if (
+            not isinstance(arc, Mapping)
+            or not str(arc.get("chemin") or "").strip()
+            or not _SHA.match(str(arc.get("sha256") or ""))
+        ):
+            erreurs.append(
+                f"{ctx}: fiche_produit_archivee exige `archive` (chemin, sha256 de 64 hex)"
+            )
     if date_obligatoire:
         _date(src.get("date_document"), "source.date_document", erreurs, ctx)
 
@@ -307,12 +362,31 @@ def _parse_entry(
         date_document=d_doc, date_effet=d_eff, effet_documente=effet_doc,
         date_consultation=d_cons, date_saisie=saisie, corrige=corrige,
         extrait=brut.get("extrait"), raison=brut.get("raison"), note=brut.get("note"),
-        ordre=ordre, sha256=hashlib.sha256(_canon(brut).encode("utf-8")).hexdigest(), brut=dict(brut),
+        ordre=ordre, sha256=_empreinte(brut, ordre), brut=dict(brut),
     )  # fmt: skip
+
+
+def _empreinte(brut: Mapping[str, Any], ordre: int) -> str:
+    """SHA-256 du contenu canonique ET de la position dans la liste de l'ETF (l'ordre tranche les égalités)."""
+    return hashlib.sha256(f"{ordre}|{_canon(brut)}".encode()).hexdigest()
 
 
 def sha256_file(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def _verifier_archives(e: Entry, base: Path, erreurs: list[str]) -> None:
+    for src in [e.source or {}, *(e.brut.get("sources_complementaires") or [])]:
+        arc = src.get("archive") if isinstance(src, Mapping) else None
+        if not isinstance(arc, Mapping):
+            continue
+        f = base / str(arc.get("chemin", ""))
+        if not f.is_file():
+            erreurs.append(f"{e.id}: archive introuvable : {arc.get('chemin')}")
+        elif sha256_file(f) != arc.get("sha256"):
+            erreurs.append(
+                f"{e.id}: SHA-256 de l'archive {arc.get('chemin')} différent de celui saisi"
+            )
 
 
 class EtfSources:
@@ -343,8 +417,12 @@ def parse_sources(
     criteres: set[str] | None = None,
     today: date | None = None,
     file_sha256: str | None = None,
+    base_dir: Path | None = None,
 ) -> EtfSources:
-    """Validation stricte ; lève `EsgSourceError` avec toutes les erreurs."""
+    """Validation stricte ; lève `EsgSourceError` avec toutes les erreurs.
+
+    `base_dir` : si fourni, les archives référencées (`source.archive.chemin`) doivent exister sous ce
+    dossier avec le SHA-256 déclaré."""
     erreurs: list[str] = []
     if not isinstance(data, Mapping) or data.get("version") != 1:
         raise EsgSourceError("fichier invalide : `version: 1` attendue")
@@ -380,6 +458,8 @@ def parse_sources(
             e = _parse_entry(ticker, brut, i, crit, today, erreurs)
             if e is None:
                 continue
+            if base_dir is not None:
+                _verifier_archives(e, Path(base_dir), erreurs)
             if e.id in ids:
                 erreurs.append(f"{ticker}: id dupliqué {e.id}")
                 continue
@@ -426,7 +506,7 @@ def load_etf_sources(
     data = yaml.safe_load(p.read_text(encoding="utf-8"))
     return parse_sources(
         data, universe_tickers=universe_tickers, criteres=criteres, today=today,
-        file_sha256=sha256_file(p),
+        file_sha256=sha256_file(p), base_dir=p.parent,
     )  # fmt: skip
 
 
@@ -457,6 +537,10 @@ class EtfEsgView:
             for e in self._s.entries.get(ticker, ())
             if e.champ == champ and not e.est_marqueur and self._connue(e)
         ]
+        # une entrée visée par le `corrige` d'une entrée déjà connue (même mode) n'est plus servie,
+        # quelle que soit sa date d'effet
+        corriges = {c.corrige for c in candidates if c.corrige}
+        candidates = [c for c in candidates if c.id not in corriges]
         if not candidates:
             return Resolved(ticker, champ, INCONNU, None, None, None, None, False)
         e = max(candidates, key=lambda x: (x.date_effet or date.min, x.date_saisie, x.ordre))
@@ -510,9 +594,74 @@ def check_append_only(sources: EtfSources, store: ParquetStore) -> list[str]:
     return violations
 
 
-def verify_and_snapshot(sources: EtfSources, store: ParquetStore) -> Path | None:
-    """Refuse toute modification rétroactive, puis écrit l'instantané daté du jour (idempotent)."""
+def lock_records(sources: EtfSources) -> list[dict[str, Any]]:
+    """Registre d'empreintes : une ligne par entrée (id, empreinte, date de saisie, `corrige`, position)."""
+    return [
+        {"id": e.id, "sha256": e.sha256, "date_saisie": e.date_saisie.isoformat(),
+         "corrige": e.corrige, "ordre": e.ordre}
+        for e in sources.all_entries()
+    ]  # fmt: skip
+
+
+def read_lock(lock_path: Path) -> dict[str, dict[str, Any]]:
+    p = Path(lock_path)
+    if not p.is_file():
+        return {}
+    data = json.loads(p.read_text(encoding="utf-8"))
+    return {r["id"]: r for r in data.get("entries", [])}
+
+
+def check_lock(sources: EtfSources, lock_path: Path) -> list[str]:
+    """Violations par rapport au registre versionné : entrée modifiée, redatée, réordonnée ou supprimée."""
+    verrou = read_lock(lock_path)
+    actuel = {e.id: e for e in sources.all_entries()}
+    violations = []
+    for ident, r in verrou.items():
+        e = actuel.get(ident)
+        if e is None:
+            violations.append(f"entrée supprimée : {ident} (registre {Path(lock_path).name})")
+        elif e.sha256 != r["sha256"]:
+            violations.append(
+                f"entrée modifiée, redatée ou déplacée : {ident} (registre {Path(lock_path).name}) ; "
+                "ajouter une entrée `corrige` au lieu de modifier"
+            )
+    return violations
+
+
+def _verifier_nouvelles(sources: EtfSources, connus: set[str], today: date) -> list[str]:
+    """Toute entrée servie absente de l'état verrouillé doit être saisie aujourd'hui (ni antidatée, ni future).
+
+    Les marqueurs `inconnu` sans `corrige` ne sont jamais servis : leur date ne peut rien faire fuiter."""
+    return [
+        f"entrée nouvelle {e.id} : date_saisie {e.date_saisie} différente du jour de vérification "
+        f"{today} (antidatage ou saisie future refusés)"
+        for e in sources.all_entries()
+        if e.id not in connus and not e.est_marqueur and e.date_saisie != today
+    ]
+
+
+def verify_and_snapshot(
+    sources: EtfSources,
+    store: ParquetStore,
+    *,
+    lock_path: Path | None = None,
+    today: date | None = None,
+) -> Path | None:
+    """Refuse toute modification rétroactive et tout antidatage, puis écrit l'instantané du jour (idempotent).
+
+    État verrouillé = instantanés locaux ET registre `lock_path` (si fourni). Une entrée absente de cet état
+    doit avoir `date_saisie` == `today` (par défaut le jour de l'horloge du stockage) ; le tout premier état
+    (rien de verrouillé) est accepté tel quel (amorçage). Le registre n'est écrit que par `write_lock`."""
+    jour = today or store._clock().date()
     violations = check_append_only(sources, store)
+    if lock_path is not None:
+        violations += check_lock(sources, lock_path)
+    passe = store.read_snapshots(SNAPSHOT_SOURCE, "entries")
+    connus = set() if passe.empty else set(passe["id"])
+    if lock_path is not None:
+        connus |= set(read_lock(lock_path))
+    if connus:
+        violations += _verifier_nouvelles(sources, connus, jour)
     if violations:
         raise RetroactiveModificationError("\n".join(f"- {v}" for v in violations))
     return store.snapshot(
@@ -521,6 +670,36 @@ def verify_and_snapshot(sources: EtfSources, store: ParquetStore) -> Path | None
         entries_frame(sources),
         note="saisie manuelle D-048 (append-only)",
     )
+
+
+def write_lock(sources: EtfSources, lock_path: Path, *, today: date | None = None) -> Path:
+    """Ajoute au registre versionné les entrées nouvelles (commande explicite `lock` ou `snapshot`).
+
+    Refuse toute entrée existante modifiée, redatée, réordonnée ou supprimée, et toute entrée nouvelle dont
+    `date_saisie` n'est pas `today` (par défaut le jour réel) ; le premier registre (inexistant) est un
+    amorçage accepté tel quel. Le registre existant n'est jamais réécrit : on n'y ajoute que des lignes."""
+    jour = today or date.today()
+    p = Path(lock_path)
+    verrou = read_lock(p)
+    violations = check_lock(sources, p)
+    if verrou:
+        violations += _verifier_nouvelles(sources, set(verrou), jour)
+    if violations:
+        raise RetroactiveModificationError("\n".join(f"- {v}" for v in violations))
+    fusion = dict(verrou)
+    for r in lock_records(sources):
+        fusion.setdefault(r["id"], r)
+    contenu = {
+        "version": 1,
+        "description": (
+            "Registre d'empreintes append-only de config/esg_etf_sources.yaml (D-048, D-043). "
+            "SHA-256 de chaque entrée (contenu canonique + position). Ne jamais éditer à la main : "
+            "`python -m amundi_agentic.data.connectors.esg_etf_sources lock`."
+        ),
+        "entries": [fusion[k] for k in sorted(fusion, key=lambda k: (fusion[k]["date_saisie"], k))],
+    }
+    p.write_text(json.dumps(contenu, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return p
 
 
 def load_for_universe(path: Path | None = None) -> EtfSources:
@@ -542,14 +721,20 @@ def main(argv: list[str] | None = None) -> int:
     from amundi_agentic.data.settings import DataSettings
 
     args = list(sys.argv[1:] if argv is None else argv)
-    src = load_etf_sources()
+    src = load_for_universe()
+    verrou = CONFIG_DIR / LOCK_FILE
     print(
         f"{len(src.all_entries())} entrées valides, {len(src.tickers)} ETF, sha256 {src.file_sha256}"
     )
-    if args[:1] == ["snapshot"]:
+    if args[:1] == ["lock"]:
+        print(f"registre : {write_lock(src, verrou)}")
+    elif args[:1] == ["snapshot"]:
         s = DataSettings.load()
-        chemin = verify_and_snapshot(src, ParquetStore(s.store_dir, s.snapshot_dir))
+        chemin = verify_and_snapshot(
+            src, ParquetStore(s.store_dir, s.snapshot_dir), lock_path=verrou
+        )
         print(f"instantané : {chemin}")
+        print(f"registre : {write_lock(src, verrou)}")
     return 0
 
 

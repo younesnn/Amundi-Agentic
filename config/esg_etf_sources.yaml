@@ -20,11 +20,14 @@ etfs:
       valeur: article_6
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi S&P 500 Swap UCITS ETF EUR Acc » (LU1681048804), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi S&P 500 Swap UCITS ETF EUR Acc » (LU1681048804), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-sp-500-swap-ucits-etf-eur-acc/lu1681048804
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681048804, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
-          datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681048804 ; caractéristique utilisée : FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non datée,
+          d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1681048804.json
+          sha256: d45661de9413343298e7cd924b56793ec47da8ac883e23a0b654e28f13fb7468
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -48,10 +51,13 @@ etfs:
       date_saisie: '2026-10-03'
       extrait: 'Indice S&P 500 … Indice de rendement total net ; fiche produit : « S&P 500 Net Total Return Index »'
       sources_complementaires:
-      - type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi S&P 500 Swap UCITS ETF EUR Acc » (LU1681048804), données de la page produit
+      - type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi S&P 500 Swap UCITS ETF EUR Acc » (LU1681048804), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-sp-500-swap-ucits-etf-eur-acc/lu1681048804
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681048804, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681048804 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1681048804.json
+          sha256: d45661de9413343298e7cd924b56793ec47da8ac883e23a0b654e28f13fb7468
         date_document: '2026-10-03'
     - id: 500.PA:exclusions:001
       champ: exclusions
@@ -86,11 +92,14 @@ etfs:
       valeur: article_6
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi MSCI Europe UCITS ETF Acc » (FR0010261198), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi MSCI Europe UCITS ETF Acc » (FR0010261198), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-europe-ucits-etf-acc/fr0010261198
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010261198, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
-          datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010261198 ; caractéristique utilisée : FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non datée,
+          d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/FR0010261198.json
+          sha256: 5466cc31a3a6c23d43c6ffecaa92c9e6a2cdbf8e526dacd8a873dbeed512ca4b
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -114,10 +123,13 @@ etfs:
       date_saisie: '2026-10-03'
       extrait: indice MSCI Europe Net Total Return Index (dividendes nets réinvestis)
       sources_complementaires:
-      - type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi MSCI Europe UCITS ETF Acc » (FR0010261198), données de la page produit
+      - type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi MSCI Europe UCITS ETF Acc » (FR0010261198), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-europe-ucits-etf-acc/fr0010261198
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010261198, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010261198 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/FR0010261198.json
+          sha256: 5466cc31a3a6c23d43c6ffecaa92c9e6a2cdbf8e526dacd8a873dbeed512ca4b
         date_document: '2026-10-03'
     - id: MEU.PA:caractere_indice:001
       champ: caractere_indice
@@ -140,11 +152,14 @@ etfs:
       valeur: article_6
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Japan TOPIX II UCITS ETF EUR Dist » (FR0010245514), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Japan TOPIX II UCITS ETF EUR Dist » (FR0010245514), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-japan-topix-ii-ucits-etf-eur-dist/fr0010245514
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010245514, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
-          datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010245514 ; caractéristique utilisée : FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non datée,
+          d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/FR0010245514.json
+          sha256: f20160a8ccefdfa991ccecf20e8f65f13dd3459c4e2841c93cd7af0aa7a1f5b9
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -168,10 +183,13 @@ etfs:
       date_saisie: '2026-10-03'
       extrait: l'Indice TOPIX® Gross Total Return (dividendes bruts réinvestis), libellé en Yen japonais (JPY)
       sources_complementaires:
-      - type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Japan TOPIX II UCITS ETF EUR Dist » (FR0010245514), données de la page produit
+      - type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Japan TOPIX II UCITS ETF EUR Dist » (FR0010245514), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-japan-topix-ii-ucits-etf-eur-dist/fr0010245514
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010245514, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010245514 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/FR0010245514.json
+          sha256: f20160a8ccefdfa991ccecf20e8f65f13dd3459c4e2841c93cd7af0aa7a1f5b9
         date_document: '2026-10-03'
     - id: JPN.PA:caractere_indice:001
       champ: caractere_indice
@@ -194,11 +212,14 @@ etfs:
       valeur: article_6
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi MSCI Emerging Markets Swap UCITS ETF EUR Acc » (LU1681045370), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi MSCI Emerging Markets Swap UCITS ETF EUR Acc » (LU1681045370), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-emerging-markets-swap-ucits-etf-eur-acc/lu1681045370
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681045370, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
-          datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681045370 ; caractéristique utilisée : FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non datée,
+          d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1681045370.json
+          sha256: 8ed03cb4934bc3a425752a08c5821b72518d1b22388b9e8835e93d2203b0e5c7
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -222,10 +243,13 @@ etfs:
       date_saisie: '2026-10-03'
       extrait: l'Indice MSCI Emerging Markets … Indice de rendement total net
       sources_complementaires:
-      - type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi MSCI Emerging Markets Swap UCITS ETF EUR Acc » (LU1681045370), données de la page produit
+      - type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi MSCI Emerging Markets Swap UCITS ETF EUR Acc » (LU1681045370), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-emerging-markets-swap-ucits-etf-eur-acc/lu1681045370
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681045370, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681045370 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1681045370.json
+          sha256: 8ed03cb4934bc3a425752a08c5821b72518d1b22388b9e8835e93d2203b0e5c7
         date_document: '2026-10-03'
     - id: AEEM.PA:exclusions:001
       champ: exclusions
@@ -260,11 +284,14 @@ etfs:
       valeur: article_6
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 7-10Y UCITS ETF Acc » (LU1287023185), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 7-10Y UCITS ETF Acc » (LU1287023185), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-euro-government-bond-710y-ucits-etf-acc/lu1287023185
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1287023185, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
-          datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1287023185 ; caractéristique utilisée : FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non datée,
+          d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1287023185.json
+          sha256: 2125c71c08ce6ba5fa0d39059a48b61c7c124afd13e9f51254cfaedc1745d07a
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -289,10 +316,13 @@ etfs:
       extrait: 'l''Indice Bloomberg Barclays Euro Treasury 50bn 7-10 Year Bond ; fiche produit : « Bloomberg Euro Treasury 50bn 7-10 Year Bond Index » (libellé de marque différent, même indice présumé :
         non vérifié)'
       sources_complementaires:
-      - type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 7-10Y UCITS ETF Acc » (LU1287023185), données de la page produit
+      - type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 7-10Y UCITS ETF Acc » (LU1287023185), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-euro-government-bond-710y-ucits-etf-acc/lu1287023185
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1287023185, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1287023185 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1287023185.json
+          sha256: 2125c71c08ce6ba5fa0d39059a48b61c7c124afd13e9f51254cfaedc1745d07a
         date_document: '2026-10-03'
       note: 'Absorption du FCP « Amundi ETF Govt Bond Euro Broad Investment Grade 7-10 UCITS ETF DR » par ce compartiment (avis du 2024-04-29) : caractéristiques du fonds absorbant inchangées d''après l''avis.
         Libellé du KID : « Bloomberg Barclays » ; fiche : « Bloomberg » : non vérifié si même indice.'
@@ -399,10 +429,13 @@ etfs:
           PAB Select Index »'
         url: https://www.amundietf.fr/pdfDocuments/download/c9c17419-4c53-4123-8535-ab23cb10991a/PSC_1_UM94506_fra_FRA_20260730_20260730.pdf
         date_document: '2026-07-30'
-      - type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi EUR Corporate Bond Climate Paris Aligned UCITS ETF Acc » (LU1829219127), données de la page produit
+      - type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi EUR Corporate Bond Climate Paris Aligned UCITS ETF Acc » (LU1829219127), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-eur-corporate-bond-climate-paris-aligned-ucits-etf-acc/lu1829219127
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1829219127, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1829219127 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1829219127.json
+          sha256: 85f78a5590ff2d30d0a885e5c66132cf44b07a0fda966a1437fcc1fc7925e5ff
         date_document: '2026-10-03'
       note: 'Libellé différent de celui du document du 2025-01-21 (« Paris Aligned Green Tilted »). Renommage ou changement d''indice : non documenté dans les documents consultés ; date de bascule inconnue
         entre 2025-01-21 et 2026-06-05. Entrée datée du premier document qui porte ce libellé.'
@@ -486,6 +519,9 @@ etfs:
   AHYE.PA:
     isin: LU1681040496
     nom_fiche_consultee: Amundi Euro High Yield Bond ESG UCITS ETF Acc
+    note: 'Écart de nom : config/universe.yaml attend « Amundi EURO High Yield Bond ESG UCITS ETF DR » ; la fiche consultée le 2026-10-03 porte « Amundi Euro High Yield Bond ESG UCITS ETF Acc » (ISIN LU1681040496,
+      mnémonique AHYE, cotation Euronext Paris en EUR). Le rattachement du ticker AHYE.PA à cet ISIN repose sur le mnémonique et la cotation, pas sur le nom : à confirmer (universe.yaml hors périmètre de
+      cette saisie).'
     entries:
     - id: AHYE.PA:sfdr:001
       champ: sfdr
@@ -605,11 +641,14 @@ etfs:
       valeur: non_applicable
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « AMUNDI PHYSICAL GOLD ETC (C) » (FR0013416716), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « AMUNDI PHYSICAL GOLD ETC (C) » (FR0013416716), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/commodities/amundi-physical-gold-etc-c/fr0013416716
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0013416716, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
-          datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0013416716 ; caractéristique utilisée : FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non datée,
+          d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/FR0013416716.json
+          sha256: c4c909482236a1dd58f0ec361f2944a7fba76f56618792a6c45115dfa76d1a2e
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -621,10 +660,13 @@ etfs:
       valeur: LBMA Gold Price PM USD
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « AMUNDI PHYSICAL GOLD ETC (C) » (FR0013416716), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « AMUNDI PHYSICAL GOLD ETC (C) » (FR0013416716), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/commodities/amundi-physical-gold-etc-c/fr0013416716
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0013416716, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0013416716 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/FR0013416716.json
+          sha256: c4c909482236a1dd58f0ec361f2944a7fba76f56618792a6c45115dfa76d1a2e
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -658,11 +700,14 @@ etfs:
       valeur: article_6
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Bloomberg Equal-weight Commodity ex-Agriculture UCITS ETF Acc » (LU1829218749), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Bloomberg Equal-weight Commodity ex-Agriculture UCITS ETF Acc » (LU1829218749), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/commodities/amundi-bloomberg-equalweight-commodity-exagriculture-ucits-etf-acc/lu1829218749
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1829218749, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
-          datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1829218749 ; caractéristique utilisée : FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non datée,
+          d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1829218749.json
+          sha256: 18797535e84bec679bf90076b2f65f87181a94687c1a04776025bc2c6d0fb158
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -686,10 +731,13 @@ etfs:
       date_saisie: '2026-10-03'
       extrait: 'l''Indice Bloomberg Energy & Metals Equal Weighted Total Return ; fiche produit : « Bloomberg Energy and Metals Equal-Weighted Total Return Index »'
       sources_complementaires:
-      - type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Bloomberg Equal-weight Commodity ex-Agriculture UCITS ETF Acc » (LU1829218749), données de la page produit
+      - type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Bloomberg Equal-weight Commodity ex-Agriculture UCITS ETF Acc » (LU1829218749), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/commodities/amundi-bloomberg-equalweight-commodity-exagriculture-ucits-etf-acc/lu1829218749
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1829218749, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1829218749 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1829218749.json
+          sha256: 18797535e84bec679bf90076b2f65f87181a94687c1a04776025bc2c6d0fb158
         date_document: '2026-10-03'
     - id: COMO.PA:exclusions:001
       champ: exclusions
@@ -723,11 +771,14 @@ etfs:
       valeur: article_6
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 0-6 M UCITS ETF Acc » (FR0010754200), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 0-6 M UCITS ETF Acc » (FR0010754200), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-euro-government-bond-06-m-ucits-etf-acc/fr0010754200
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010754200, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
-          datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010754200 ; caractéristique utilisée : FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non datée,
+          d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/FR0010754200.json
+          sha256: 6b2b098a8025830ee0ec5da64f25efa8b15e7c8568d26c80df6943365d006776
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -751,10 +802,13 @@ etfs:
       date_saisie: '2026-10-03'
       extrait: l'indice 100% FTSE EUROZONE GOVERNMENT BILL 0-6 MONTH CAPPED
       sources_complementaires:
-      - type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 0-6 M UCITS ETF Acc » (FR0010754200), données de la page produit
+      - type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Euro Government Bond 0-6 M UCITS ETF Acc » (FR0010754200), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-euro-government-bond-06-m-ucits-etf-acc/fr0010754200
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010754200, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=FR0010754200 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/FR0010754200.json
+          sha256: 6b2b098a8025830ee0ec5da64f25efa8b15e7c8568d26c80df6943365d006776
         date_document: '2026-10-03'
       note: Fonds renommé « Amundi Euro Government Bond 0-6 M » le 2025-09-11 (ancien nom « Amundi ETF Govies 0-6 Months Euro Investment Grade UCITS ETF DR », avis du 2025-08-28) ; l'indice avant le KID
         du 2026-04-28 n'est pas établi par les documents consultés (Q-21).
@@ -779,11 +833,14 @@ etfs:
       valeur: article_6
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi MSCI World Swap UCITS ETF EUR Acc » (LU1681043599), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi MSCI World Swap UCITS ETF EUR Acc » (LU1681043599), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-world-swap-ucits-etf-eur-acc/lu1681043599
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681043599, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
-          datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681043599 ; caractéristique utilisée : FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non datée,
+          d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1681043599.json
+          sha256: 4a35b2924e391cbf45cce58e504665706dcd460dcf0294f82b4d267d8a82a98a
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -796,10 +853,13 @@ etfs:
       valeur: MSCI Daily Net TR World Euro
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi MSCI World Swap UCITS ETF EUR Acc » (LU1681043599), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi MSCI World Swap UCITS ETF EUR Acc » (LU1681043599), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/equity/amundi-msci-world-swap-ucits-etf-eur-acc/lu1681043599
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681043599, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1681043599 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1681043599.json
+          sha256: 4a35b2924e391cbf45cce58e504665706dcd460dcf0294f82b4d267d8a82a98a
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -827,11 +887,14 @@ etfs:
       valeur: article_6
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Core Euro Government Bond UCITS ETF Acc » (LU1437018598), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Core Euro Government Bond UCITS ETF Acc » (LU1437018598), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-core-euro-government-bond-ucits-etf-acc/lu1437018598
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1437018598, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
-          datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1437018598 ; caractéristique utilisée : FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non datée,
+          d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1437018598.json
+          sha256: 3f1d124a97c84749f94feabf611da1d4ff0d4c6439124821cb2ccfd7228179b8
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -844,10 +907,13 @@ etfs:
       valeur: Bloomberg Euro Treasury 50bn Bond Index
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Core Euro Government Bond UCITS ETF Acc » (LU1437018598), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Core Euro Government Bond UCITS ETF Acc » (LU1437018598), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-core-euro-government-bond-ucits-etf-acc/lu1437018598
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1437018598, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1437018598 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1437018598.json
+          sha256: 3f1d124a97c84749f94feabf611da1d4ff0d4c6439124821cb2ccfd7228179b8
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -875,11 +941,14 @@ etfs:
       valeur: article_6
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Smart Overnight Return UCITS ETF Acc » (LU1190417599), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Smart Overnight Return UCITS ETF Acc » (LU1190417599), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-smart-overnight-return-ucits-etf-acc/lu1190417599
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1190417599, caractéristiques FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non
-          datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1190417599 ; caractéristique utilisée : FUND_SFDR_CLASSIFICATION ; consultée le 2026-10-03 ; page non datée,
+          d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1190417599.json
+          sha256: a27809ff4dcadb707934b7355895c9df059d5437954f578f65c48e773582e9aa
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false
@@ -892,10 +961,13 @@ etfs:
       valeur: ESTR Compounded Index
       emetteur: gestionnaire_fonds
       source:
-        type_document: fiche_produit
-        titre: Fiche produit Amundi ETF « Amundi Smart Overnight Return UCITS ETF Acc » (LU1190417599), données de la page produit
+        type_document: fiche_produit_archivee
+        titre: Fiche produit Amundi ETF « Amundi Smart Overnight Return UCITS ETF Acc » (LU1190417599), réponse brute de l'API de la page produit, archivée
         url: https://www.amundietf.fr/fr/professionnels/produits/fixed-income/amundi-smart-overnight-return-ucits-etf-acc/lu1190417599
-        reference: API de la page produit https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1190417599, caractéristiques BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée
+        reference: 'API https://www.amundietf.fr/mapi/ProductAPI/getProductsData, filtre ISIN=LU1190417599 ; caractéristique utilisée : BENCHMARK_NAME ; consultée le 2026-10-03 ; page non datée, d''où l''archive'
+        archive:
+          chemin: esg_etf_sources_archive/LU1190417599.json
+          sha256: a27809ff4dcadb707934b7355895c9df059d5437954f578f65c48e773582e9aa
       date_document: '2026-10-03'
       date_effet: '2026-10-03'
       effet_documente: false

@@ -1,0 +1,116 @@
+{
+ "consulte_le": "2026-10-03",
+ "methode": "POST",
+ "url": "https://www.amundietf.fr/mapi/ProductAPI/getProductsData",
+ "en_tetes": {
+  "Content-Type": "application/json",
+  "User-Agent": "Mozilla/5.0 (academic prototype, low volume)"
+ },
+ "corps_modele": {
+  "characteristics": [
+   "ISIN",
+   "SHARE_MARKETING_NAME",
+   "MNEMO",
+   "FUND_SFDR_CLASSIFICATION",
+   "BENCHMARK_NAME",
+   "LAUNCH_DATE",
+   "IS_ESG",
+   "ESG_SCOPE",
+   "FUND_ISR_LABEL",
+   "LISTINGS"
+  ],
+  "filters": [
+   {
+    "filterType": "CHARACTERISTICS",
+    "fieldName": "ISIN",
+    "queryOperation": "IN",
+    "valid": true,
+    "values": [
+     "<ISIN>"
+    ]
+   }
+  ],
+  "context": {
+   "countryCode": "FRA",
+   "countryName": "France",
+   "googleCountryCode": "FR",
+   "domainName": "www.amundietf.fr",
+   "bcp47Code": "fr-FR",
+   "languageName": "French",
+   "languageCode": "fr",
+   "userProfileName": "INSTIT",
+   "userProfileSlug": "instit",
+   "portalProfileName": null,
+   "portalProfileSlug": null
+  },
+  "metrics": [],
+  "historics": []
+ },
+ "fichiers": {
+  "LU1681048804": {
+   "ticker": "500.PA",
+   "sha256": "d45661de9413343298e7cd924b56793ec47da8ac883e23a0b654e28f13fb7468",
+   "octets": 1857
+  },
+  "FR0010261198": {
+   "ticker": "MEU.PA",
+   "sha256": "5466cc31a3a6c23d43c6ffecaa92c9e6a2cdbf8e526dacd8a873dbeed512ca4b",
+   "octets": 2380
+  },
+  "FR0010245514": {
+   "ticker": "JPN.PA",
+   "sha256": "f20160a8ccefdfa991ccecf20e8f65f13dd3459c4e2841c93cd7af0aa7a1f5b9",
+   "octets": 2381
+  },
+  "LU1681045370": {
+   "ticker": "AEEM.PA",
+   "sha256": "8ed03cb4934bc3a425752a08c5821b72518d1b22388b9e8835e93d2203b0e5c7",
+   "octets": 1894
+  },
+  "LU1287023185": {
+   "ticker": "MTD.PA",
+   "sha256": "2125c71c08ce6ba5fa0d39059a48b61c7c124afd13e9f51254cfaedc1745d07a",
+   "octets": 1873
+  },
+  "LU1829219127": {
+   "ticker": "CRP.PA",
+   "sha256": "85f78a5590ff2d30d0a885e5c66132cf44b07a0fda966a1437fcc1fc7925e5ff",
+   "octets": 2172
+  },
+  "LU1681040496": {
+   "ticker": "AHYE.PA",
+   "sha256": "59d68b543d330d1658e69be78fa8f29667ef0004f97b1cb9ffad13660211a158",
+   "octets": 1379
+  },
+  "FR0013416716": {
+   "ticker": "GOLD.PA",
+   "sha256": "c4c909482236a1dd58f0ec361f2944a7fba76f56618792a6c45115dfa76d1a2e",
+   "octets": 2381
+  },
+  "LU1829218749": {
+   "ticker": "COMO.PA",
+   "sha256": "18797535e84bec679bf90076b2f65f87181a94687c1a04776025bc2c6d0fb158",
+   "octets": 2703
+  },
+  "FR0010754200": {
+   "ticker": "C3M.PA",
+   "sha256": "6b2b098a8025830ee0ec5da64f25efa8b15e7c8568d26c80df6943365d006776",
+   "octets": 1366
+  },
+  "LU1681043599": {
+   "ticker": "CW8.PA",
+   "sha256": "4a35b2924e391cbf45cce58e504665706dcd460dcf0294f82b4d267d8a82a98a",
+   "octets": 2122
+  },
+  "LU1437018598": {
+   "ticker": "EGOV.PA",
+   "sha256": "3f1d124a97c84749f94feabf611da1d4ff0d4c6439124821cb2ccfd7228179b8",
+   "octets": 2147
+  },
+  "LU1190417599": {
+   "ticker": "CSH2.PA",
+   "sha256": "a27809ff4dcadb707934b7355895c9df059d5437954f578f65c48e773582e9aa",
+   "octets": 1339
+  }
+ }
+}

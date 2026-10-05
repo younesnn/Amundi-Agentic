@@ -118,7 +118,13 @@ def test_manifeste_deterministe_et_sensible_a_un_octet(tmp_path):
     assert kinds == {"derive", "snapshot"}
     d = next(d for d in m1["datasets"] if d["kind"] == "derive")
     assert d["rows"] == 5 and d["date_min"] and len(d["sha256"]) == 64
-    assert set(m1["config_sha256"]) == {"data.yaml", "universe.yaml", "esg.yaml"}
+    assert set(m1["config_sha256"]) == {
+        "data.yaml",
+        "universe.yaml",
+        "esg.yaml",
+        "esg_etf_sources.yaml",
+        "esg_etf_sources.lock.json",
+    }
     assert {"python", "pandas", "pyarrow", "yfinance", "requests"} <= set(m1["versions"])
 
 

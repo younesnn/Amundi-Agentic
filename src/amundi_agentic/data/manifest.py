@@ -21,7 +21,13 @@ from amundi_agentic.data.store import ParquetStore
 
 LIBS = ("pandas", "pyarrow", "yfinance", "requests", "feedparser")
 DATE_COLS = ("date", "published_at", "accepted_utc", "observed_at", "filed", "week_start")
-CONFIGS = ("data.yaml", "universe.yaml", "esg.yaml")
+CONFIGS = (
+    "data.yaml",
+    "universe.yaml",
+    "esg.yaml",
+    "esg_etf_sources.yaml",
+    "esg_etf_sources.lock.json",
+)
 
 
 def sha256_file(p: Path) -> str:
