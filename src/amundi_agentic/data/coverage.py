@@ -12,10 +12,11 @@ from __future__ import annotations
 import argparse
 import json
 from collections import Counter
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
+import yaml
 
 from amundi_agentic.data.analysis import (
     DETERMINE,
@@ -585,6 +586,43 @@ class Report:
         self.sections.append(s)
 
     # ------------------------------------------------------------------ ESG
+    def _etf_sources_view(self):
+        """Vue point-in-time de la source ESG manuelle par ETF (D-048), état connu à la fin du jour."""
+        from amundi_agentic.data.connectors.esg_etf_sources import EsgSourceError, load_for_universe
+
+        try:
+            src = load_for_universe()
+        except (OSError, EsgSourceError, yaml.YAMLError, KeyError, ValueError, TypeError) as exc:
+            motif = str(exc).replace("\n", " ")[:300]
+            self.data["esg_etf_sources"] = {"statut": "indisponible", "erreur": motif}
+            return None, (
+                "Source ESG manuelle par ETF (D-048) : **indisponible** "
+                f"({type(exc).__name__} : {motif}) ; la matrice ETF reste celle de la méthodologie "
+                "déclarée.\n\n"
+            )
+        t = datetime.now(UTC).date() + timedelta(
+            days=1
+        )  # coupure t 00:00 Paris : inclut la saisie du jour
+        vue = src.as_of(t)
+        self.data["esg_etf_sources"] = {
+            "statut": "ok", "as_of": t.isoformat(), "file_sha256": src.file_sha256,
+            "etfs": {tk: {c: (r.valeur if c != "exclusions" else dict(r.valeur) if r.valeur != "inconnu" else r.valeur)
+                          for c, r in vue.state(tk).items()} for tk in src.tickers},
+        }  # fmt: skip
+        return vue, (
+            f"Source ESG manuelle par ETF (D-048) : {len(src.tickers)} ETF saisis, {len(src.all_entries())} "
+            f"entrées, état connu au {t.isoformat()} 00:00 Paris (sha256 `{str(src.file_sha256)[:12]}`). "
+            "`determine_par_donnee` pour un ETF = un document de la gestionnaire prouve l'exclusion "
+            "(indice ou portefeuille en réplication directe) ; SFDR classe des produits, ce n'est pas "
+            "un score ESG ; un article 8 n'implique pas ces exclusions. **Limites** : les exclusions "
+            "« déterminées » de CRP.PA et AHYE.PA reposent sur des seuils de revenus ou des critères MSCI "
+            "ESG Research non relevés ici, ce ne sont pas des exclusions absolues ; une exclusion portée "
+            "seulement par les titres détenus d'un fonds à swap n'est pas comptée. Toutes les saisies "
+            "datent du 2026-10-03 : en mode strict rien n'est servi avant le 2026-10-04, **aucun "
+            "backtest ne voit l'ESG des ETF** (seul le mode `non_pit`, marqué, ou le live test les "
+            "utilisent). Colonnes `sfdr` et `caractere_indice` : valeur documentée ou `inconnu`.\n\n"
+        )
+
     def esg(self) -> None:
         df = self.store.read("esg/records")
         s = "## 6. ESG\n\n"
@@ -603,8 +641,12 @@ class Report:
             "part_avec_determination": float(dernier["determined"].mean()),
             "avec_exclusion_detectee": int((dernier["exclusions"].fillna("") != "").sum()),
         }
+        etf_view, etf_note = self._etf_sources_view()
         lignes, totaux = esg_matrix(
-            df, self.esg_cfg["normative_exclusions"], self.esg_cfg["basis_definitions"]
+            df,
+            self.esg_cfg["normative_exclusions"],
+            self.esg_cfg["basis_definitions"],
+            etf_view=etf_view,
         )
         self.data["esg"] = {"global": glob, "matrice": lignes, "totaux": totaux}
         s += (
@@ -616,6 +658,7 @@ class Report:
             "nom, non vérifiée) ;\n"
             f"- `{INCONNU}` : aucune information.\n\n"
         )
+        s += etf_note
         s += md_table(lignes)
         crit = {"tobacco": "tabac", "thermal_coal": "charbon thermique",
                 "controversial_weapons": "armes controversées"}  # fmt: skip

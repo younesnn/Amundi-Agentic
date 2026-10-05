@@ -1,0 +1,412 @@
+{
+ "version": 1,
+ "description": "Registre d'empreintes append-only de config/esg_etf_sources.yaml (D-048, D-043). SHA-256 de chaque entrée (contenu canonique + position). Ne jamais éditer à la main : `python -m amundi_agentic.data.connectors.esg_etf_sources lock`.",
+ "entries": [
+  {
+   "id": "500.PA:caractere_indice:001",
+   "sha256": "25dbb091aed79f39bb597d5987dd4238cde9b23192a4c2ec7bae54b248dcddaf",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "500.PA:exclusions:001",
+   "sha256": "e0706ca616d2782116066b7801fef8e5c95719c8316579911e63eeaffe2a416a",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "500.PA:indice:001",
+   "sha256": "b4264de8397c205e0464afe99a5f2338debe0bdf5ab0d3f4c6a921380c734d0a",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "500.PA:sfdr:001",
+   "sha256": "c92b7354a80ddbbef18c4494b4651106943a82c9fa2ea56adfbeecc131e7da6a",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "AEEM.PA:caractere_indice:001",
+   "sha256": "56d3ee707e12cbab822bec3ff31d99ee5f44cd298f6b893fe46a9123493cb7f8",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "AEEM.PA:exclusions:001",
+   "sha256": "ba6ebd3c7a327b37012a2ca54951e5f8c93e031233b985e1b8c18864b26d10b4",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "AEEM.PA:indice:001",
+   "sha256": "140819dd1efa7836ce7ab1becacbd90e8db1723e567786425500cb360e87c5c9",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "AEEM.PA:sfdr:001",
+   "sha256": "12fab5527b50d3f192cf27b5f84bc73d502ea7d2c98b4f75ee949ae06d26c9ad",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "AHYE.PA:caractere_indice:001",
+   "sha256": "2741a9eba59be556d1c2ab1d60756ba03e2d855dbaf2487bb7ed4dcf11ee4170",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "AHYE.PA:exclusions:001",
+   "sha256": "24df67f5775a35599022e96cc78b650b27856d2cea918264c82c5cf232f1ed92",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "AHYE.PA:exclusions:002",
+   "sha256": "b190b3ac2198940a8b44b33f256992610c3a0a0a079f9c8020737dcd888e7e36",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 4
+  },
+  {
+   "id": "AHYE.PA:indice:001",
+   "sha256": "51649bc07f01fa1be9b28ae12a09f32a23b347031ebc26e9a7ce2ec452166d3a",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "AHYE.PA:sfdr:001",
+   "sha256": "9da7bfa1de4a1b7395ae22c182f688d4db5ae157e2b92c9770bdf4a16e9e77c1",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "C3M.PA:caractere_indice:001",
+   "sha256": "abc4b2b516755924b4256f70a083af9c0bae45eae3bc850f00917f90a6a3395e",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "C3M.PA:exclusions:001",
+   "sha256": "edb7c23489468537bc48288ca858fc29451ac2a12f76ff6a6c67035b76eb39bb",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "C3M.PA:indice:001",
+   "sha256": "ebad51145775344c083e39f96691d555b1b2d20cfccae1b68c8f3959a68c7510",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "C3M.PA:sfdr:001",
+   "sha256": "68d333ce7d3c2f63a5736b9e682267ac4479f00234a1845c32478bab801ee1c8",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "COMO.PA:caractere_indice:001",
+   "sha256": "2f24d6b0e74a9c508bfc6fc84aa24d94a561f89ad520095ba42ed0e21b529eec",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "COMO.PA:exclusions:001",
+   "sha256": "ae43a164d7c9d0251d838988123a2c7aa6d4367e3195f7976bb92f5b242b11a4",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "COMO.PA:indice:001",
+   "sha256": "8276d12c0725ab3108a8005e8b49a190b75ce4867ef970bad1b56837fda5f06a",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "COMO.PA:sfdr:001",
+   "sha256": "b4857886c885c8c56d2441d73abb9bbb97f21cea613d729b7196a2877fe992e6",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "CRP.PA:caractere_indice:001",
+   "sha256": "107994e872e09a1c07818d88f8519f4c3af41729278cb4675c7d1cb3505dded4",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 4
+  },
+  {
+   "id": "CRP.PA:caractere_indice:002",
+   "sha256": "86b88b87c6d90907eafa12d61df23cddedd19280b73355f9302e072f95a14e8b",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 5
+  },
+  {
+   "id": "CRP.PA:caractere_indice:003",
+   "sha256": "6bb4e7ad1ec190ce27b319b08de1b423eb18327aab9089c6acb7ef5cde09b6bb",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 6
+  },
+  {
+   "id": "CRP.PA:exclusions:001",
+   "sha256": "39b12eafbe58e890513cc047f4179c29a927315bb4c2fbba543005929f3334b9",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 7
+  },
+  {
+   "id": "CRP.PA:exclusions:002",
+   "sha256": "16a910b0015a21072882ad112aacd9582d81f7a71b83732c834757e5e590b019",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 8
+  },
+  {
+   "id": "CRP.PA:indice:001",
+   "sha256": "44aaff71aa71f069cdf9f5d5e828a49acdffa4a4e2549c4c16cbdc97bb6e64a5",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "CRP.PA:indice:002",
+   "sha256": "dffa1d5c68f0731d2cdb613e177c116cb8dfbcad284481d4f8f1392e28002689",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "CRP.PA:indice:003",
+   "sha256": "0be7a35767bb7d3e39ed2838b5c12e43ed027ba57a2feade1ad6e16ef6eb2ccb",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "CRP.PA:sfdr:001",
+   "sha256": "240191919649e94da71febd44f9869155f0dade3cb561387f6bfaf4475e8ad94",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "CSH2.PA:caractere_indice:001",
+   "sha256": "61adbc9d3173130e6fdf500570575faa589993035253bb79149e6ee29895be40",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "CSH2.PA:exclusions:001",
+   "sha256": "984de759a3722baf5b00a83fc8da5d937b28b6b918746acb941db0868709351f",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "CSH2.PA:indice:001",
+   "sha256": "cac22e610b0b99e56924d35c8405d8918e33d847999881bde186a3666a61e992",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "CSH2.PA:sfdr:001",
+   "sha256": "e51ac8a1c8600d51465cbcb2324fe5fc47be78009981ae7018c50c453d5766eb",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "CW8.PA:caractere_indice:001",
+   "sha256": "0794dfc45aef22c9d1da49238124d3fbd3304c3f730c613df58ce55d1f5102a5",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "CW8.PA:exclusions:001",
+   "sha256": "1628f3405018b581e84f588905cfe627af59520223e8ed3447345e72bf8f61c0",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "CW8.PA:indice:001",
+   "sha256": "d87bf08426d835f32b1c840ab3ead147c20d2af68d78033e7de8a55018cd1e9b",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "CW8.PA:sfdr:001",
+   "sha256": "b95d7a6f31bda4e40ad92955b777ad5890c90d5c233f006df5bea616003858c5",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "EGOV.PA:caractere_indice:001",
+   "sha256": "ddf61829e47a5396fd3db61cb0f09f8bf0f00e91e38a8ac584792fa7f307eb28",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "EGOV.PA:exclusions:001",
+   "sha256": "19862286f96a5acce0ef0c2a74bb6f8fcce15ff56e8efd6a7573fd30fd4dc403",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "EGOV.PA:indice:001",
+   "sha256": "2466ee2878bf1583faf56e9976b50c864caeb7a5b2fd97b9c1c565dcbfbaa880",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "EGOV.PA:sfdr:001",
+   "sha256": "b234a4f2bcd8a5cf54449a58d541944c5782986f6b4b4e82d094b90655a1c8b9",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "GOLD.PA:caractere_indice:001",
+   "sha256": "4e4d957a91b40719c6d6c06b70ae80d2c30c6f11155ce6672286ca5288f7ab5a",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "GOLD.PA:exclusions:001",
+   "sha256": "4775875bce64290734d5af904c9b8df88a3186bf2096e78ec22d370a08f99125",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "GOLD.PA:indice:001",
+   "sha256": "87410373911e4021b13e79eaf8df32d09ecc91aca01d9fcbf7878081a1f09dd9",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "GOLD.PA:sfdr:001",
+   "sha256": "d10915793b1eb3c640232ed176ad890537c622fbf30dd90be3e0ca81723a90ac",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "JPN.PA:caractere_indice:001",
+   "sha256": "a932d4bb61a66b242bbde0b401e95cc680f93b60e5790b762f3e3197bd89a071",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "JPN.PA:exclusions:001",
+   "sha256": "c8fdb9e639751ae781e97b1a1b81b52d485628bee27df4f68779d6720aca2203",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "JPN.PA:indice:001",
+   "sha256": "f09c2cec95f01b4d1d26d18621808ff2fcec22a13821f25228b09aea03d19b5d",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "JPN.PA:sfdr:001",
+   "sha256": "0ec80e2ffa0fc679ebf61b2436404948c904a8a1a511eca51349fb46aa558afc",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "MEU.PA:caractere_indice:001",
+   "sha256": "e10d674315378f95a7c9a8e4f33779f76d5bbeb0d5cfc2087d2f0623266f869e",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "MEU.PA:exclusions:001",
+   "sha256": "e690ede68360b98812968af5ee54aa21280d6adcab95c123f569af2a767ee82a",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "MEU.PA:indice:001",
+   "sha256": "a259d23cb72d27452e51b1dbe174cfa1f082695d80f083d20bca8706fc614712",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "MEU.PA:sfdr:001",
+   "sha256": "42adfd518d69e2905794d9fec60c9136ee4643906c6f65cdc2aa1f3a4ac2fe35",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  },
+  {
+   "id": "MTD.PA:caractere_indice:001",
+   "sha256": "977844bff10b0b2ff01f8524ae380fe4e2393dc25de321c6e86708178613c9f8",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 2
+  },
+  {
+   "id": "MTD.PA:exclusions:001",
+   "sha256": "eb67f0049e3d613521baa5f60e41bb2ebf9936b1953df3e72dd000e778836a95",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 3
+  },
+  {
+   "id": "MTD.PA:indice:001",
+   "sha256": "b0aa508a7c163474a9bffe0a2d0f7cb60f5fe4095f73bb492af3c921ce7eb87f",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 1
+  },
+  {
+   "id": "MTD.PA:sfdr:001",
+   "sha256": "92d55207a98927a32f6008a158155e279d7eb9eaed0c6ae39f3e2593c8bf7942",
+   "date_saisie": "2026-10-03",
+   "corrige": null,
+   "ordre": 0
+  }
+ ]
+}
