@@ -45,7 +45,7 @@ markers = [
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-extend-exclude = ["prompts", "fiches", "graphify-out", "PROMPT.md", "docs"]
+extend-exclude = ["prompts", "fiches", "graphify-out", "PROMPT.md", "docs", ".claude/worktrees"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "SIM", "N"]
