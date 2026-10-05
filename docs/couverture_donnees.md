@@ -1,6 +1,6 @@
 # Couverture des données (phase 2)
 
-Généré le 2026-10-02T14:08:08+00:00 par `python -m amundi_agentic.data.coverage`. **Ne pas éditer à la main** : chaque chiffre provient du stockage local. Une source absente est indiquée « indisponible ».
+Généré le 2026-10-05T22:33:44+00:00 par `python -m amundi_agentic.data.coverage`. **Ne pas éditer à la main** : chaque chiffre provient du stockage local. Une source absente est indiquée « indisponible ».
 
 ## 0. Statut des téléchargements (dernier événement par élément)
 
@@ -68,7 +68,7 @@ Généré le 2026-10-02T14:08:08+00:00 par `python -m amundi_agentic.data.covera
 | or | proxy | GLD | ok | USD | USD | 2004-11-18 | 2026-10-01 | 5501 | 1141 | 2009-11-12 | a_verifier | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | matieres_premieres | primary | COMO.PA | ok | EUR | EUR | 2008-01-02 | 2026-09-30 | 4797 | 978 | 2012-12-26 | acc | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
 | matieres_premieres | proxy | DBC | ok | USD | USD | 2006-02-06 | 2026-10-01 | 5196 | 1077 | 2011-01-31 | dist | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| monetaire_euro | primary | C3M.PA | ok | EUR | EUR | 2009-06-22 | 2026-09-30 | 4421 | 901 | 2014-06-16 | acc | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| monetaire_euro | primary | C3M.PA | ok | EUR | EUR | 2009-06-22 | 2026-09-30 | 4421 | 901 | 2014-06-16 | acc | 0 | 0 | 0 | 1 | 0 | 0 | 0 |
 | monetaire_euro | alternative | CSH2.PA | ok | EUR | EUR | 2025-03-17 | 2026-09-30 | 392 | 80 | 2030-03-11 | a_verifier | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | actions_monde | control | CW8.PA | ok | EUR | EUR | 2009-06-16 | 2026-09-30 | 4424 | 902 | 2014-06-10 | acc | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | actions_monde | proxy | URTH | ok | USD | USD | 2012-01-12 | 2026-10-01 | 3701 | 768 | 2017-01-05 | dist | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -317,44 +317,46 @@ Fenêtre de collecte : 2026-08-13 à 2026-10-02. Aucun article antérieur au pre
 - `suppose_par_regle` : déduit d'une règle (code SIC, méthodologie d'indice déclarée d'après le nom, non vérifiée) ;
 - `inconnu` : aucune information.
 
-| actif | type | tobacco | thermal_coal | controversial_weapons |
-| --- | --- | --- | --- | --- |
-| ZS | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| AAPL | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| MSFT | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| NVDA | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| AVGO | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| ORCL | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| CRM | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| ADBE | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| AMD | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| CSCO | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| INTC | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| QCOM | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| TXN | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| IBM | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| NOW | stock | suppose_par_regle | suppose_par_regle | inconnu |
-| 500.PA | etf | inconnu | inconnu | inconnu |
-| MEU.PA | etf | inconnu | inconnu | inconnu |
-| JPN.PA | etf | inconnu | inconnu | inconnu |
-| AEEM.PA | etf | inconnu | inconnu | inconnu |
-| MTD.PA | etf | inconnu | inconnu | inconnu |
-| EGOV.PA | etf | inconnu | inconnu | inconnu |
-| CRP.PA | etf | suppose_par_regle | suppose_par_regle | suppose_par_regle |
-| AHYE.PA | etf | inconnu | inconnu | inconnu |
-| GOLD.PA | etf | inconnu | inconnu | inconnu |
-| COMO.PA | etf | inconnu | inconnu | inconnu |
-| C3M.PA | etf | inconnu | inconnu | inconnu |
-| CSH2.PA | etf | inconnu | inconnu | inconnu |
-| CW8.PA | etf | inconnu | inconnu | inconnu |
+Source ESG manuelle par ETF (D-048) : 13 ETF saisis, 58 entrées, état connu au 2026-10-06 00:00 Paris (sha256 `bd23de50627a`). `determine_par_donnee` pour un ETF = un document de la gestionnaire prouve l'exclusion (indice ou portefeuille en réplication directe) ; SFDR classe des produits, ce n'est pas un score ESG ; un article 8 n'implique pas ces exclusions. **Limites** : les exclusions « déterminées » de CRP.PA et AHYE.PA reposent sur des seuils de revenus ou des critères MSCI ESG Research non relevés ici, ce ne sont pas des exclusions absolues ; une exclusion portée seulement par les titres détenus d'un fonds à swap n'est pas comptée. Toutes les saisies datent du 2026-10-03 : en mode strict rien n'est servi avant le 2026-10-04, **aucun backtest ne voit l'ESG des ETF** (seul le mode `non_pit`, marqué, ou le live test les utilisent). Colonnes `sfdr` et `caractere_indice` : valeur documentée ou `inconnu`.
+
+| actif | type | tobacco | thermal_coal | controversial_weapons | sfdr | caractere_indice |
+| --- | --- | --- | --- | --- | --- | --- |
+| ZS | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| AAPL | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| MSFT | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| NVDA | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| AVGO | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| ORCL | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| CRM | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| ADBE | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| AMD | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| CSCO | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| INTC | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| QCOM | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| TXN | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| IBM | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| NOW | stock | suppose_par_regle | suppose_par_regle | inconnu | sans objet | sans objet |
+| 500.PA | etf | inconnu | inconnu | inconnu | article_6 | inconnu |
+| MEU.PA | etf | inconnu | inconnu | inconnu | article_6 | inconnu |
+| JPN.PA | etf | inconnu | inconnu | inconnu | article_6 | inconnu |
+| AEEM.PA | etf | inconnu | inconnu | inconnu | article_6 | inconnu |
+| MTD.PA | etf | inconnu | inconnu | inconnu | article_6 | inconnu |
+| EGOV.PA | etf | inconnu | inconnu | inconnu | article_6 | inconnu |
+| CRP.PA | etf | determine_par_donnee | determine_par_donnee | determine_par_donnee | article_8 | pab |
+| AHYE.PA | etf | determine_par_donnee | determine_par_donnee | determine_par_donnee | article_8 | esg |
+| GOLD.PA | etf | inconnu | inconnu | inconnu | non_applicable | inconnu |
+| COMO.PA | etf | inconnu | inconnu | inconnu | article_6 | inconnu |
+| C3M.PA | etf | inconnu | inconnu | inconnu | article_6 | inconnu |
+| CSH2.PA | etf | inconnu | inconnu | inconnu | article_6 | inconnu |
+| CW8.PA | etf | inconnu | inconnu | inconnu | article_6 | inconnu |
 
 ### Totaux par critère
 
-- tabac : 0/28 déterminé par donnée, 16/28 supposé par règle, 12/28 inconnu.
-- charbon thermique : 0/28 déterminé par donnée, 16/28 supposé par règle, 12/28 inconnu.
-- armes controversées : 0/28 déterminé par donnée, 1/28 supposé par règle, 27/28 inconnu.
+- tabac : 2/28 déterminé par donnée, 15/28 supposé par règle, 11/28 inconnu.
+- charbon thermique : 2/28 déterminé par donnée, 15/28 supposé par règle, 11/28 inconnu.
+- armes controversées : 2/28 déterminé par donnée, 0/28 supposé par règle, 26/28 inconnu.
 
-**Tous critères (84 cellules) : 0 déterminé par donnée, 33 supposé par règle, 51 inconnu.** Actifs avec au moins une exclusion détectée : 1. L'ancien indicateur « exclusion déterminée » (57%) signifiait seulement « une règle a été appliquée » : il n'est plus présenté comme une couverture. « Sans exclusion détectée » n'est pas une preuve d'absence d'exposition (SIC approximatif ; aucune règle SIC pour les armes controversées ; contenu des ETF inconnu). Les instantanés ne sont pas historisés : en strict point-in-time ils ne sont servis qu'après leur date de collecte.
+**Tous critères (84 cellules) : 6 déterminé par donnée, 30 supposé par règle, 48 inconnu.** Actifs avec au moins une exclusion détectée : 1. L'ancien indicateur « exclusion déterminée » (57%) signifiait seulement « une règle a été appliquée » : il n'est plus présenté comme une couverture. « Sans exclusion détectée » n'est pas une preuve d'absence d'exposition (SIC approximatif ; aucune règle SIC pour les armes controversées ; contenu des ETF inconnu). Les instantanés ne sont pas historisés : en strict point-in-time ils ne sont servis qu'après leur date de collecte.
 
 ## 7. Contrôle qualité (signalements, aucune correction appliquée)
 
@@ -362,7 +364,7 @@ Fenêtre de collecte : 2026-08-13 à 2026-10-02. Aucun article antérieur au pre
 | --- | --- | --- | --- |
 | depuis 2013-01-01 (utile) | currency | warning | 1 |
 | depuis 2013-01-01 (utile) | distribution | info | 5 |
-| depuis 2013-01-01 (utile) | outlier | warning | 8 |
+| depuis 2013-01-01 (utile) | outlier | warning | 9 |
 | depuis 2013-01-01 (utile) | short_history | info | 8 |
 | depuis 2013-01-01 (utile) | short_history | warning | 1 |
 | depuis 2013-01-01 (utile) | split | info | 61 |
@@ -381,6 +383,7 @@ Faux positifs structurels déclarés (config) : C3M.PA (ETF monétaire : cours q
 | AEEM.PA | stale | warning | 1 | 2013-12-12 | 5 clôtures identiques consécutives |
 | GOLD.PA | currency | warning | 1 | n/d | devise Yahoo USD différente de la devise attendue EUR |
 | COMO.PA | stale | warning | 1 | 2023-08-30 | 10 clôtures identiques consécutives |
+| C3M.PA | outlier | warning | 1 | 2025-07-22 | rendement quotidien de -1.04% au-delà du plafond de classe de 1.0% (volume 31414) ; retour le lendemain (+0.71%) : écart de cotation probable |
 | ZS | outlier | warning | 1 | 2020-05-29 | rendement quotidien de +29.4% |
 | ZS | outlier | warning | 1 | 2020-12-03 | rendement quotidien de +26.4% |
 | ZS | outlier | warning | 1 | 2026-05-27 | rendement quotidien de -31.5% |

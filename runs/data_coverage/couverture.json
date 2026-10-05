@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-02T14:08:08+00:00",
+ "generated_at": "2026-10-05T22:33:44+00:00",
  "prices_etf": [
   {
    "classe": "actions_etats_unis",
@@ -384,7 +384,7 @@
    "trous": 0,
    "splits_declares": 0,
    "split_suspect": 0,
-   "aberrantes": 0,
+   "aberrantes": 1,
    "doublons": 0,
    "figees": 0,
    "devise_ecart": 0,
@@ -2010,6 +2010,105 @@
    }
   ]
  },
+ "esg_etf_sources": {
+  "statut": "ok",
+  "as_of": "2026-10-06",
+  "file_sha256": "bd23de50627a50e9e4a3afa8c8fb3e78337ec78fe6bff84e2fce0c52eeb0f110",
+  "etfs": {
+   "500.PA": {
+    "sfdr": "article_6",
+    "indice": "S&P 500 (indice de rendement total net)",
+    "caractere_indice": "inconnu",
+    "exclusions": {
+     "controversial_weapons": "titres_detenus_hors_swap"
+    }
+   },
+   "AEEM.PA": {
+    "sfdr": "article_6",
+    "indice": "MSCI Emerging Markets (indice de rendement total net)",
+    "caractere_indice": "inconnu",
+    "exclusions": {
+     "controversial_weapons": "titres_detenus_hors_swap"
+    }
+   },
+   "AHYE.PA": {
+    "sfdr": "article_8",
+    "indice": "iBoxx MSCI ESG EUR High Yield Corporates TCA Index",
+    "caractere_indice": "esg",
+    "exclusions": {
+     "controversial_weapons": "portefeuille_replication_directe",
+     "thermal_coal": "portefeuille_replication_directe",
+     "tobacco": "portefeuille_replication_directe"
+    }
+   },
+   "C3M.PA": {
+    "sfdr": "article_6",
+    "indice": "FTSE Eurozone Government Bill 0-6 Month Capped",
+    "caractere_indice": "inconnu",
+    "exclusions": "inconnu"
+   },
+   "COMO.PA": {
+    "sfdr": "article_6",
+    "indice": "Bloomberg Energy & Metals Equal Weighted Total Return",
+    "caractere_indice": "inconnu",
+    "exclusions": {
+     "controversial_weapons": "titres_detenus_hors_swap"
+    }
+   },
+   "CRP.PA": {
+    "sfdr": "article_8",
+    "indice": "Bloomberg MSCI EUR Corporate PAB Select",
+    "caractere_indice": "pab",
+    "exclusions": {
+     "controversial_weapons": "portefeuille_replication_directe",
+     "thermal_coal": "portefeuille_replication_directe",
+     "tobacco": "portefeuille_replication_directe"
+    }
+   },
+   "CSH2.PA": {
+    "sfdr": "article_6",
+    "indice": "ESTR Compounded Index",
+    "caractere_indice": "inconnu",
+    "exclusions": "inconnu"
+   },
+   "CW8.PA": {
+    "sfdr": "article_6",
+    "indice": "MSCI Daily Net TR World Euro",
+    "caractere_indice": "inconnu",
+    "exclusions": "inconnu"
+   },
+   "EGOV.PA": {
+    "sfdr": "article_6",
+    "indice": "Bloomberg Euro Treasury 50bn Bond Index",
+    "caractere_indice": "inconnu",
+    "exclusions": "inconnu"
+   },
+   "GOLD.PA": {
+    "sfdr": "non_applicable",
+    "indice": "LBMA Gold Price PM USD",
+    "caractere_indice": "inconnu",
+    "exclusions": "inconnu"
+   },
+   "JPN.PA": {
+    "sfdr": "article_6",
+    "indice": "TOPIX Gross Total Return Index (JPY)",
+    "caractere_indice": "inconnu",
+    "exclusions": "inconnu"
+   },
+   "MEU.PA": {
+    "sfdr": "article_6",
+    "indice": "MSCI Europe Net Total Return Index",
+    "caractere_indice": "inconnu",
+    "exclusions": "inconnu"
+   },
+   "MTD.PA": {
+    "sfdr": "article_6",
+    "indice": "Bloomberg Barclays Euro Treasury 50bn 7-10 Year Bond",
+    "caractere_indice": "inconnu",
+    "exclusions": "inconnu"
+   }
+  }
+ },
  "esg": {
   "global": {
    "actifs": 28,
@@ -2024,218 +2123,274 @@
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "AAPL",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "MSFT",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "NVDA",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "AVGO",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "ORCL",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "CRM",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "ADBE",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "AMD",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "CSCO",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "INTC",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "QCOM",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "TXN",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "IBM",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "NOW",
     "type": "stock",
     "tobacco": "suppose_par_regle",
     "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "sans objet",
+    "caractere_indice": "sans objet"
    },
    {
     "actif": "500.PA",
     "type": "etf",
     "tobacco": "inconnu",
     "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "article_6",
+    "caractere_indice": "inconnu"
    },
    {
     "actif": "MEU.PA",
     "type": "etf",
     "tobacco": "inconnu",
     "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "article_6",
+    "caractere_indice": "inconnu"
    },
    {
     "actif": "JPN.PA",
     "type": "etf",
     "tobacco": "inconnu",
     "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "article_6",
+    "caractere_indice": "inconnu"
    },
    {
     "actif": "AEEM.PA",
     "type": "etf",
     "tobacco": "inconnu",
     "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "article_6",
+    "caractere_indice": "inconnu"
    },
    {
     "actif": "MTD.PA",
     "type": "etf",
     "tobacco": "inconnu",
     "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "article_6",
+    "caractere_indice": "inconnu"
    },
    {
     "actif": "EGOV.PA",
     "type": "etf",
     "tobacco": "inconnu",
     "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "article_6",
+    "caractere_indice": "inconnu"
    },
    {
     "actif": "CRP.PA",
     "type": "etf",
-    "tobacco": "suppose_par_regle",
-    "thermal_coal": "suppose_par_regle",
-    "controversial_weapons": "suppose_par_regle"
+    "tobacco": "determine_par_donnee",
+    "thermal_coal": "determine_par_donnee",
+    "controversial_weapons": "determine_par_donnee",
+    "sfdr": "article_8",
+    "caractere_indice": "pab"
    },
    {
     "actif": "AHYE.PA",
     "type": "etf",
-    "tobacco": "inconnu",
-    "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "tobacco": "determine_par_donnee",
+    "thermal_coal": "determine_par_donnee",
+    "controversial_weapons": "determine_par_donnee",
+    "sfdr": "article_8",
+    "caractere_indice": "esg"
    },
    {
     "actif": "GOLD.PA",
     "type": "etf",
     "tobacco": "inconnu",
     "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "non_applicable",
+    "caractere_indice": "inconnu"
    },
    {
     "actif": "COMO.PA",
     "type": "etf",
     "tobacco": "inconnu",
     "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "article_6",
+    "caractere_indice": "inconnu"
    },
    {
     "actif": "C3M.PA",
     "type": "etf",
     "tobacco": "inconnu",
     "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "article_6",
+    "caractere_indice": "inconnu"
    },
    {
     "actif": "CSH2.PA",
     "type": "etf",
     "tobacco": "inconnu",
     "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "article_6",
+    "caractere_indice": "inconnu"
    },
    {
     "actif": "CW8.PA",
     "type": "etf",
     "tobacco": "inconnu",
     "thermal_coal": "inconnu",
-    "controversial_weapons": "inconnu"
+    "controversial_weapons": "inconnu",
+    "sfdr": "article_6",
+    "caractere_indice": "inconnu"
    }
   ],
   "totaux": {
    "tobacco": {
-    "determine_par_donnee": 0,
-    "suppose_par_regle": 16,
-    "inconnu": 12
+    "determine_par_donnee": 2,
+    "suppose_par_regle": 15,
+    "inconnu": 11
    },
    "thermal_coal": {
-    "determine_par_donnee": 0,
-    "suppose_par_regle": 16,
-    "inconnu": 12
+    "determine_par_donnee": 2,
+    "suppose_par_regle": 15,
+    "inconnu": 11
    },
    "controversial_weapons": {
-    "determine_par_donnee": 0,
-    "suppose_par_regle": 1,
-    "inconnu": 27
+    "determine_par_donnee": 2,
+    "suppose_par_regle": 0,
+    "inconnu": 26
    },
    "tous_criteres": {
-    "determine_par_donnee": 0,
-    "suppose_par_regle": 33,
-    "inconnu": 51
+    "determine_par_donnee": 6,
+    "suppose_par_regle": 30,
+    "inconnu": 48
    },
    "actifs": 28
   }
@@ -2258,7 +2413,7 @@
     "zone": "depuis 2013-01-01 (utile)",
     "type": "outlier",
     "gravite": "warning",
-    "nombre": 8
+    "nombre": 9
    },
    {
     "zone": "depuis 2013-01-01 (utile)",
@@ -2309,7 +2464,7 @@
     "nombre": 68
    }
   ],
-  "total": 187
+  "total": 188
  },
  "status": {
   "par_source": [

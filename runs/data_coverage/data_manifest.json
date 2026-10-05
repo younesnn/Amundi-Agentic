@@ -8,9 +8,11 @@
   "feedparser": "6.0.14"
  },
  "config_sha256": {
-  "data.yaml": "040f2ed24f657c4b799a6a48cb53a75deadf3de43baf43c1a16907a03ed33b32",
+  "data.yaml": "dcb00c2d6ca2113c77105c4113c152f1aa85e8d3607914a920a57df0201ebbb5",
   "universe.yaml": "3727bc342e2059b1458048fb3bd6ced8bfa2fd2366d0a7a1e5b41319e02c0a91",
-  "esg.yaml": "ba8bb8923b6543b32fbe04677fd15d3a81e497c22c38613253be332bde11bb33"
+  "esg.yaml": "ba8bb8923b6543b32fbe04677fd15d3a81e497c22c38613253be332bde11bb33",
+  "esg_etf_sources.yaml": "bd23de50627a50e9e4a3afa8c8fb3e78337ec78fe6bff84e2fce0c52eeb0f110",
+  "esg_etf_sources.lock.json": "03d0f35e038f317aa349bccb572aa715b33d4cd72d9a4173e3369e667e0eb479"
  },
  "datasets": [
   {
@@ -3643,6 +3645,6 @@
    "fetched_at": "2026-10-02"
   }
  ],
- "manifest_sha256": "9e72347596a2cbca916ecae714c63a872e7ef7eff919f6dbc3df2da6d62b7b69",
- "generated_at": "2026-10-02T14:08:08+00:00"
+ "manifest_sha256": "b7c76f8db75ca54ab9a0967d35656b3a9df5360214257f622dec44a1d85c6bf0",
+ "generated_at": "2026-10-05T22:33:45+00:00"
 }
