@@ -6,6 +6,7 @@ aucune alerte ni attente n'est alors possible, et le journal ne fait que compter
 
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
 import os
@@ -44,6 +45,24 @@ _REGISTRE: dict[str, _EtatVerrou] = {}
 _REGISTRE_LOCK = threading.Lock()
 
 
+def _reinitialiser_apres_fork() -> None:
+    """Dans le processus fils d'un `fork` : les verrous et le registre hérités peuvent être dans un
+    état « pris » par un thread qui n'existe plus dans le fils (blocage définitif) ; on repart d'un
+    registre vide. Un `flock` hérité appartient à la description de fichier partagée avec le père :
+    le descripteur du fils est fermé sans le libérer explicitement."""
+    global _REGISTRE_LOCK
+    for etat in _REGISTRE.values():
+        if etat.fd is not None:
+            with contextlib.suppress(OSError):
+                os.close(etat.fd)  # ferme la copie du fils ; le père garde son verrou
+    _REGISTRE.clear()
+    _REGISTRE_LOCK = threading.Lock()
+
+
+if hasattr(os, "register_at_fork"):  # absent sous Windows
+    os.register_at_fork(after_in_child=_reinitialiser_apres_fork)
+
+
 class QuotaJournal:
     """Compteurs persistants : {jour: {fournisseur: {requests, tokens_in, tokens_out, errors_429,
     alerts}}} et par modèle. Le fichier ne contient aucun secret."""
@@ -66,6 +85,7 @@ class QuotaJournal:
         self._sleep = sleep
         self._monotonic = monotonic
         self._lock = threading.RLock()
+        self._nettoyer_orphelins()
         self._fenetre: dict[str, deque[tuple[float, int]]] = {}  # modèle -> (instant, jetons)
         self.alertes: list[str] = []
 
@@ -88,6 +108,21 @@ class QuotaJournal:
             for jour, cles in brut.items()
             if isinstance(cles, dict)
         }
+
+    def _nettoyer_orphelins(self, age_min_s: float = 60.0) -> None:
+        """Supprime les `.tmp-*.json` laissés dans le dossier du journal par un processus tué entre
+        `mkstemp` et `os.replace`. Seuls les fichiers de plus de `age_min_s` secondes sont retirés :
+        un fichier récent peut appartenir à une écriture en cours d'un autre processus."""
+        try:
+            maintenant = time.time()
+            for f in self.path.parent.glob(".tmp-*.json"):
+                try:
+                    if maintenant - f.stat().st_mtime >= age_min_s:
+                        f.unlink(missing_ok=True)
+                except OSError:
+                    continue
+        except OSError:
+            return
 
     def _ecrire(self, data: dict) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
