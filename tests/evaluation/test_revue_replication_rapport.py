@@ -143,7 +143,7 @@ def test_limite_documentee_desaccord_nul_rend_la_condition_vide_cas_du_mock():
 
 
 # ============================================================ fréquence de « meilleur » sur du bruit pur
-def test_meilleur_sur_decisions_aleatoires_independantes_du_marche_est_tres_rare():
+def _frequence_meilleur(n_jeux, n_rep):
     """Simulation (12 jeux dans la suite ; 200 jeux lancés pendant la revue : 0/200 dans trois régimes
     de corrélation entre exécutions) : décisions tirées au hasard, indépendantes des prix."""
     import numpy as np
@@ -155,14 +155,14 @@ def test_meilleur_sur_decisions_aleatoires_independantes_du_marche_est_tres_rare
     cfg = charger_config(
         overrides={
             "tirage": {"n_titres": 14, "n_tirages_secondaires": 0},
-            "inference": {"bootstrap": {"n_reechantillonnages": 300}},
+            "inference": {"bootstrap": {"n_reechantillonnages": n_rep}},
         }
     )
     tit = ["ZS"] + [f"T{i:02d}" for i in range(14)]
     idx = pd.bdate_range("2024-02-01", "2024-05-31")
     execs = [e.nom for e in cfg.executions]
     meilleur = 0
-    for s in range(12):
+    for s in range(n_jeux):
         rng = np.random.default_rng(500 + s)
         r = rng.normal(0.0004, 0.015, (len(idx), len(tit)))
         r[0] = 0
@@ -207,7 +207,16 @@ def test_meilleur_sur_decisions_aleatoires_independantes_du_marche_est_tres_rare
             cfg, Src(), debats, {}, Tirage(tuple(tit[1:]), tuple(tit), tuple(tit[1:])), tit, execs
         )
         meilleur += rp.calculer_verdict(res, cfg).statut == "multi_agent_meilleur"
-    assert meilleur <= 1  # attendu 0 ; 0/200 mesuré pendant la revue
+    return meilleur
+
+
+def test_meilleur_sur_bruit_pur_rapide():
+    assert _frequence_meilleur(6, 200) == 0
+
+
+@pytest.mark.slow
+def test_meilleur_sur_bruit_pur_40_jeux():
+    assert _frequence_meilleur(40, 400) <= 1  # attendu 0 ; 0/200 mesuré pendant la revue
 
 
 # ============================================================ formulations interdites
@@ -356,14 +365,18 @@ def _args(out, **kw):
 def run_mock(tmp_path_factory):
     d = tmp_path_factory.mktemp("mock")
     assert commande.executer_replicate(_args(d / "a")) == 0
-    assert commande.executer_replicate(_args(d / "b")) == 0
     ra = next((d / "a").glob("*/"))
-    rb = next((d / "b").glob("*/"))
-    return d, ra, rb
+    return d, ra, None
 
 
-def test_deux_runs_mock_identiques_donnent_des_sorties_identiques_hors_horodatage(run_mock):
-    _, ra, rb = run_mock
+@pytest.mark.slow
+def test_deux_runs_mock_identiques_donnent_des_sorties_identiques_hors_horodatage(
+    run_mock, tmp_path
+):
+    """Second run complet (environ 8 s) : marqué `slow` (`uv run pytest -m slow`)."""
+    _, ra, _ = run_mock
+    assert commande.executer_replicate(_args(tmp_path / "b")) == 0
+    rb = next((tmp_path / "b").glob("*/"))
     for nom in (
         "rapport.md",
         "tableau_performance.csv",
