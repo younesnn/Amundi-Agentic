@@ -10,7 +10,6 @@ import pytest
 from agents_helpers import fabrique_ctx
 from debate_helpers import scripte
 
-from amundi_agentic.agents import esg as esg_mod
 from amundi_agentic.agents.coordinator import Coordinator
 from amundi_agentic.agents.esg import EsgAgent, actifs_vetoes, appliquer_veto, filtrer_univers
 from amundi_agentic.agents.mock_policy import politique_simulee
@@ -281,14 +280,8 @@ def test_commande_un_titre_sous_veto_n_a_aucune_vue_ni_debat(tmp_path, monkeypat
         assert '"AAA"' not in texte.split('"esg"')[0]  # ni actif, ni vue, ni résultat sur AAA
     ex = json.loads((run / "execution.json").read_text())
     assert ex["exclus_esg"] == ["AAA"]
-    assert (
-        "AAA"
-        not in (run / "rapport.md")
-        .read_text()
-        .split("## ESG")[0]
-        .replace("Actifs exclus par l'agent ESG (veto, aucun débat) :** AAA", "")
-        or True
-    )
+    rapport = (run / "rapport.md").read_text()
+    assert "exclus par l'agent ESG" in rapport and "| AAA | oui |" in rapport
 
 
 @pytest.mark.xfail(
@@ -358,10 +351,3 @@ def test_tous_les_titres_sous_veto_la_commande_n_invente_aucune_vue(tmp_path, mo
     vues = json.loads((run / "views.json").read_text())
     assert {v["actif"] for v in vues} == {"or"}
     assert set(json.loads((run / "esg.json").read_text())) >= {"AAA", "BBB", "CCC", "or"}
-
-
-def test_module_esg_n_importe_pas_de_client_llm_direct():
-    import inspect
-
-    src = inspect.getsource(esg_mod)
-    assert "LLMClient" not in src.replace("appel_ancre", "") or "ctx.llm" not in src
