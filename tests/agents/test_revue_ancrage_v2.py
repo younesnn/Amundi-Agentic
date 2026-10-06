@@ -68,30 +68,58 @@ def test_les_memes_textes_passent_si_la_valeur_est_ancree_dans_un_outil_ou_un_te
         "twelve and a half percent",
     ],
 )
-@pytest.mark.xfail(
-    strict=True,
-    reason="RESIDUEL (non bloquant) : fraction parlée « et demi » / « and a half » : 3,5 % inventé "
-    "accepté (la partie « demi » n'est pas lue comme décimale)",
-)
 def test_residuel_fractions_parlees_et_demi(texte):
     assert rejete(texte)
 
 
 @pytest.mark.parametrize(
-    "texte", ["rendement de seventeen", "hausse de quinze", "environ douze", "ratio de trois"]
-)
-def test_limite_assumee_mot_nombre_sans_unite_comme_entier_nu(texte):
-    """Cohérent avec la règle des entiers nus courts : un mot-nombre simple sans unité passe
-    (comme « 17 » sans unité). Restent contrôlés : composés (« dix-sept ») et avec unité."""
+    "texte",
+    [
+        "hausse de quinze", "environ douze", "ratio de trois", "rendement de douze",
+        "douze analystes", "gain de trois", "croissance de six", "un quart", "trois quarts",
+    ],
+)  # fmt: skip
+def test_limite_assumee_petit_mot_nombre_simple_sans_unite_comme_entier_nu(texte):
+    """Cohérent avec la règle des entiers nus courts : un petit mot-nombre simple sans unité passe,
+    même après un mot de contexte (comme « 12 » sans unité)."""
     assert not rejete(texte)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="INCOHERENCE (mineure) : « dix-sept » (trait d'union) est contrôlé, « seventeen » non",
-)
-def test_residuel_incoherence_dix_sept_seventeen():
-    assert rejete("rendement de seventeen") == rejete("rendement de dix-sept")
+@pytest.mark.parametrize(
+    "texte",
+    [
+        "rendement de seventeen", "rendement de twenty-four", "gain de twenty one",
+        "perte de vingt-deux", "rendement de dix-sept", "gain de cinq cent",
+        "ratio de quatre-vingt-dix",
+    ],
+)  # fmt: skip
+def test_mot_nombre_compose_apres_un_mot_de_contexte_financier_est_controle(texte):
+    assert rejete(texte), f"CONTOURNEMENT : {texte!r}"
+
+
+@pytest.mark.parametrize(
+    "texte",
+    [
+        "twenty-four hours", "twenty one", "mille et une nuits", "cinq cent", "seventeen",
+        "dix-sept", "twenty-two analysts", "cent entreprises", "quatre-vingt-dix jours",
+    ],
+)  # fmt: skip
+def test_meme_mot_nombre_compose_sans_contexte_financier_n_est_pas_rejete(texte):
+    assert not rejete(texte), f"FAUX REJET : {texte!r}"
+
+
+def test_contexte_financier_lu_dans_la_configuration_et_sensible_a_la_casse_et_aux_accents():
+    assert "rendement" in CFG.contexte_financier and "return" in CFG.contexte_financier
+    assert rejete("Rendement de twenty-four") and rejete("RENDEMENT DE TWENTY-FOUR")
+    assert rejete("Volatilité de vingt-deux") and rejete("Bénéfice de vingt-deux")
+    assert not rejete("les twenty-four hours du marché")  # contexte non adjacent
+
+
+def test_la_valeur_ancree_fait_passer_les_composes_apres_contexte():
+    ancres = [Ancre(17, "texte"), Ancre(0.24, "outil"), Ancre(0.22, "outil"), Ancre(500, "texte")]
+    for texte in ("rendement de seventeen", "rendement de dix-sept", "gain de vingt-deux %",
+                  "gain de cinq cent"):  # fmt: skip
+        assert not rejete(texte, ancres), texte
 
 
 # --------------------------------------------------------------------------- faux rejets
@@ -118,11 +146,6 @@ def test_taux_de_faux_rejets_sur_les_textes_legitimes():
     assert not faux and len(LEGITIMES) >= 55
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="FAUX REJETS CONNUS (mineurs) : mots-nombres composés sans unité qui ne sont pas des "
-    "quantités financières (« twenty-four hours », « mille et une », « cinq cent »)",
-)
 @pytest.mark.parametrize("texte", ["twenty-four hours", "mille et une nuits", "cinq cent"])
 def test_faux_rejets_connus_de_mots_nombres_composes(texte):
     assert not rejete(texte)
@@ -274,12 +297,15 @@ def test_la_valeur_d_un_pair_sur_a_ne_sert_pas_de_justificatif_au_tour_zero(tmp_
     assert MacroAgent().analyse(ctx, [A]).turn.vues == []
 
 
-def test_limite_constatee_une_source_d_un_autre_actif_reste_citable(tmp_path):
-    """Seuls les CHIFFRES sont limités à l'actif ; les sources du tour sont communes. Une vue sur
-    A peut donc citer la source de B (provenance trompeuse, aucun chiffre inventé)."""
+def _vues(r):
+    return {v.actif for v in r.turn.vues}
+
+
+def test_une_vue_sur_a_ne_peut_pas_citer_la_source_de_b(tmp_path):
     ctx0 = fabrique_ctx(tmp_path / "s")
     ev = ValuationAgent("allocation").evidence(ctx0, [A, B])
     sid_b = next(e.source_id for e in ev.items if e.actif == B and e.source_id)
+    sid_a = next(e.source_id for e in ev.items if e.actif == A and e.source_id)
 
     def handler(model, messages):
         out = json.loads(politique_simulee(model, messages))
@@ -290,5 +316,44 @@ def test_limite_constatee_une_source_d_un_autre_actif_reste_citable(tmp_path):
 
     ctx = fabrique_ctx(tmp_path / "x", handler=handler)
     r = ValuationAgent("allocation").analyse(ctx, [A, B])
-    vue_a = next(v for v in r.turn.vues if v.actif == A)
-    assert [s.source_id for s in vue_a.sources] == [sid_b]  # source de B pour une vue sur A
+    assert _vues(r) == {B}  # A rejetée : source de B
+    assert any(rej.actifs == [A] and "source_id" in rej.motif for rej in r.rejets)
+    # sa propre source reste citable
+    ctx2 = fabrique_ctx(tmp_path / "y")
+    r2 = ValuationAgent("allocation").analyse(ctx2, [A, B])
+    assert {s.source_id for v in r2.turn.vues if v.actif == A for s in v.sources} == {sid_a}
+
+
+def test_les_sources_transversales_sont_citables_pour_tous_les_actifs(tmp_path):
+    ctx0 = fabrique_ctx(tmp_path / "m")
+    ev = MacroAgent().evidence(ctx0, [A, B])
+    transversales = [e.source_id for e in ev.items if e.actif is None and e.source_id]
+    assert transversales
+    ctx = fabrique_ctx(tmp_path / "x")
+    r = MacroAgent().analyse(ctx, [A, B])
+    assert _vues(r) == {A, B}
+    for v in r.turn.vues:
+        assert {s.source_id for s in v.sources} <= set(transversales)
+
+
+def test_la_source_d_un_pair_est_citable_pour_l_actif_concerne_seulement(tmp_path):
+    ctx0 = fabrique_ctx(tmp_path / "s")
+    sid_a = next(
+        e.source_id
+        for e in ValuationAgent("allocation").evidence(ctx0, [A, B]).items
+        if e.actif == A and e.source_id
+    )
+
+    def handler(model, messages):
+        out = json.loads(politique_simulee(model, messages))
+        if "Agent Macro" in messages[0]["content"] and "Tour de débat" in messages[0]["content"]:
+            for v in out["vues"]:
+                v["source_ids"] = [sid_a]  # source du pair Valuation sur A, citée sur A et sur B
+        return json.dumps(out)
+
+    ctx = fabrique_ctx(tmp_path / "x", handler=handler)
+    val = ValuationAgent("allocation").analyse(ctx, [A, B])
+    assert _vues(val) == {A, B}
+    res = MacroAgent().revise(ctx, [A, B], [val.turn], {A: 0, B: 0}, tour=1, devil=False)
+    assert _vues(res) == {A}  # acceptée pour A, rejetée pour B
+    assert any(r.actifs == [B] and "source_id" in r.motif for r in res.rejets)

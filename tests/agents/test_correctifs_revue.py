@@ -29,7 +29,7 @@ def refuse(texte, *valeurs):
         "twelve percent",
         "twelve point seven percent",
         "vingt et un pour cent",
-        "twenty one",
+        "gain de twenty one",  # avec mot de contexte financier (sans contexte : accepté, cf. v2)
         "quatre-vingt-dix points de base",
         "ratio de 12 virgule 7",
         "ratio de 12 point 7",

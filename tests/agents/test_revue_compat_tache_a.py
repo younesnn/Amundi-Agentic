@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-import pytest
 from agents_helpers import T, fabrique_ctx
 
 from amundi_agentic.agents.fundamental import FundamentalAgent
@@ -41,12 +40,6 @@ def test_les_ports_acceptent_les_signatures_du_vrai_rag_et_du_vrai_resume():
     assert isinstance(FakeRagTool(), RagTool) and isinstance(FakeNewsSummaryTool(), NewsSummaryTool)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="A FAIRE A LA FUSION (important, non bloquant) : l'agent Fundamental ne lit ni "
-    "`RagResult.section_fallback` ni `fallback_accessions` : un découpage en repli n'est ni signalé "
-    "dans le prompt, ni dans les données manquantes, ni dans la vue",
-)
 def test_fundamental_signale_un_decoupage_en_repli(tmp_path):
     ctx = fabrique_ctx(tmp_path)
     ctx.rag = RagEnRepli(rag_synthetique(T, ("AAA",)))

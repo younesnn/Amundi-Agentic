@@ -133,13 +133,6 @@ def test_tous_donne_le_hash_de_chaque_fichier():
     assert {n: tous[n] for n in ATTENDUS} == {n: _sha(n) for n in ATTENDUS}
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="BLOQUANT A LA FUSION : `PromptLibrary.tous()` lève PromptError sur tout `*_v1.md` sans "
-    "en-tête d'agent (prompts de la tâche A : rag_*, summary_*, sur `main`) ; la commande `views` "
-    "(execution.json) et 41 tests échouent après fusion. Correction : ignorer ou charger "
-    "séparément les fichiers sans en-tête",
-)
 def test_tous_ignore_les_prompts_sans_en_tete_d_agent_d_autres_outils(tmp_path):
     import shutil
 
