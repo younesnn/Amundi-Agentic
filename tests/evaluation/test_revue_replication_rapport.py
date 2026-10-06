@@ -525,10 +525,33 @@ _ = (subprocess, date)
 def test_comparaison_avec_le_papier_qualitative_aucun_chiffre_du_papier(run_mock):
     texte = (run_mock[1] / "rapport.md").read_text(encoding="utf-8")
     bloc = texte.split("## Comparaison qualitative avec le papier")[1].split("## Limites")[0]
-    lignes = [l for l in bloc.splitlines() if l.startswith("|") and not set(l) <= set("|- ")][1:]
+    lignes = [x for x in bloc.splitlines() if x.startswith("|") and not set(x) <= set("|- ")][1:]
     assert lignes, "tableau qualitatif absent"
-    for l in lignes:
-        col_papier, col_observe, col_lecture = (c.strip() for c in l.strip("|").split("|"))
+    for ligne in lignes:
+        col_papier, col_observe, col_lecture = (c.strip() for c in ligne.strip("|").split("|"))
         assert not re.search(r"\d", col_papier), col_papier  # aucune valeur attribuée au papier
         assert col_lecture in {"cohérent", "différent", "indéterminé"}
     assert "aucun chiffre du papier" in texte.lower()
+
+
+def _res_meta(run_mock):
+    contenu = json.loads((run_mock[1] / "resultats.json").read_text(encoding="utf-8"))
+    res = contenu["resultats"]
+    meta = {**contenu["meta"], "qualitatif": [tuple(x) for x in contenu["qualitatif"]]}
+    meta["etiquettes"] = [tuple(x) for x in meta["etiquettes"]]
+    v = rp.calculer_verdict(res, CFG)
+    return res, v, meta
+
+
+def test_rendre_rapport_refuse_d_ecrire_un_texte_avec_formulation_interdite(run_mock):
+    res, v, meta = _res_meta(run_mock)
+    assert rp.rendre_rapport(CFG, res, v, meta)  # le rapport normal passe
+    for piege in (
+        "un résultat robuste",
+        "le multi-agent bat les agents seuls",
+        "un alpha positif",
+        "résultat hors échantillon pour Gemini",
+    ):
+        meta2 = {**meta, "qualitatif": [*meta["qualitatif"], (piege, "x", "cohérent")]}
+        with pytest.raises(rp.RapportInterdit):
+            rp.rendre_rapport(CFG, res, v, meta2)
