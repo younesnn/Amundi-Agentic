@@ -506,3 +506,67 @@ def test_ruff_e501_toleres_seulement_pour_agents_et_debate():
         "src/amundi_agentic/agents/**", "src/amundi_agentic/debate/**",
         "tests/agents/**", "tests/debate/**", "tests/**",
     } | {t for t in toleres if t.startswith(("tests/", "src/amundi_agentic/data", "src/amundi_agentic/tools"))}  # fmt: skip
+
+
+# --------------------------------------------------------------------------- 2e passe : code 2 propre
+REFUS = [
+    (["--mode", "evaluation", "--preregistration-sha256", PREREG], None, "prod"),
+    (["--mode", "evaluation", "--preregistration-sha256", PREREG], "dev", "prod"),
+    (["--assets", "classe_inconnue"], "dev", "classe_inconnue"),
+    (["--assets", "monetaire_euro", "--stocks", ""], "dev", "monétaire"),
+    (["--llm-config", "/inexistant/llm.yaml"], "dev", "llm"),
+    (["--stocks", "AAA,AAA"], "dev", "double"),
+]
+
+
+@pytest.mark.parametrize("extra,profil,mot", REFUS)
+def test_refus_code_2_message_lisible_sans_trace_ni_dossier_de_run_ni_appel(
+    tmp_path, capsys, extra, profil, mot
+):
+    code, run = lancer(tmp_path, *extra, llm_profile=profil)
+    sortie = capsys.readouterr()
+    assert code == 2
+    assert sortie.err.startswith("erreur :") and "Traceback" not in sortie.err + sortie.out
+    assert mot.lower() in sortie.err.lower()
+    assert run is None or not list(run.glob("*"))  # aucun dossier de run (ni journal, ni appel)
+    assert not list((tmp_path / "runs").glob("*/calls.jsonl"))
+
+
+def test_date_invalide_donne_le_code_2_sans_trace(tmp_path, capsys):
+    code, run = lancer(tmp_path, date_="2024-13-45")
+    err = capsys.readouterr().err
+    assert code == 2 and "Traceback" not in err and err.startswith("erreur")
+    assert run is None
+
+
+def test_refus_avant_toute_ecriture_dans_le_dossier_de_sortie(tmp_path):
+    for extra, profil, _ in REFUS:
+        lancer(tmp_path, *extra, llm_profile=profil)
+    assert not (tmp_path / "runs").exists() or not any((tmp_path / "runs").iterdir())
+
+
+def _commande_avec_handler(tmp_path, monkeypatch, handler, *extra):
+    from amundi_agentic.debate import commande
+
+    monkeypatch.setattr(commande, "politique_simulee", handler)
+    return lancer(tmp_path, *extra)
+
+
+def test_code_1_si_un_debat_echoue_et_code_3_si_le_quota_est_epuise(tmp_path, monkeypatch):
+    from amundi_agentic.agents.mock_policy import politique_simulee
+    from amundi_agentic.llm.types import ProviderError
+
+    def panne_fundamental(model, messages):
+        if "Agent Fundamental" in messages[0]["content"]:
+            raise ProviderError("bad_request", "panne simulée")
+        return politique_simulee(model, messages)
+
+    code, run = _commande_avec_handler(tmp_path / "a", monkeypatch, panne_fundamental)
+    assert code == 1 and (run / "views.json").is_file()
+
+    def quota(model, messages):
+        raise ProviderError("quota", "429", 429)
+
+    code, run = _commande_avec_handler(tmp_path / "b", monkeypatch, quota)
+    assert code == 3 and (run / "rapport.md").is_file()
+    assert "relancer la même commande" in (run / "rapport.md").read_text()
