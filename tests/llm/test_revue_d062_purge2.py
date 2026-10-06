@@ -46,7 +46,7 @@ def restants(c):
     return sorted(p.parent.name + "/" + p.name[:6] for p in c.glob("??/*.json"))
 
 
-# --------------------------------------------------------------------------- liens symboliques
+# ---------------------------------------- liens symboliques
 def test_lien_de_fichier_ni_suivi_ni_supprime_ni_sa_cible(cache, tmp_path):
     cible = tmp_path / "cible.json"
     cible.write_text(entree("ollama"))
@@ -86,7 +86,7 @@ def test_lien_vers_un_dossier_etranger_a_la_racine_est_toleré_jamais_suivi(cach
     assert (hors / "x.json").exists()
 
 
-# --------------------------------------------------------------------------- noms et contenus trompeurs
+# ---------------------------------------- noms et contenus trompeurs
 @pytest.mark.parametrize(
     "dossier,nom",
     [
@@ -147,7 +147,7 @@ def test_fichier_geant_ignore(cache, monkeypatch):
     assert f.exists()
 
 
-# --------------------------------------------------------------------------- garde --dir
+# ---------------------------------------- garde --dir
 def test_dossier_avec_un_fichier_etranger_a_la_racine_refuse_rien_supprime(cache, capsys):
     (cache / "readme.txt").write_text("à moi")
     assert main(["purge-cache", "--all", "--dir", str(cache)]) == 3
@@ -215,7 +215,7 @@ def test_le_dossier_de_cache_par_defaut_du_depot_est_accepte(tmp_path):
     assert DiskCache(c).refus_purge() is None
 
 
-# --------------------------------------------------------------------------- idempotence, concurrence
+# ---------------------------------------- idempotence, concurrence
 def test_idempotence_et_ecriture_concurrente_de_cache(cache):
     ecrit = []
     stop = threading.Event()
