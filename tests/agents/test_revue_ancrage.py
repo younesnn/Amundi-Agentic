@@ -234,7 +234,6 @@ def _passe(texte, valeurs=()):
     return not chiffres_non_ancres([texte], list(valeurs), CFG)
 
 
-@pytest.mark.xfail(strict=True, reason="CONTOURNEMENT : nombre écrit en lettres (aucun chiffre)")
 @pytest.mark.parametrize(
     "texte",
     ["rendement de douze pour cent", "gain de douze virgule sept pour cent", "twelve percent"],
@@ -243,7 +242,6 @@ def test_nombres_en_lettres_devraient_etre_controles(texte):
     assert not _passe(texte)
 
 
-@pytest.mark.xfail(strict=True, reason="CONTOURNEMENT : « 12 virgule 7 » (deux entiers courts)")
 @pytest.mark.parametrize(
     "texte", ["ratio de 12 virgule 7", "gain de 12 point 7", "ratio de 12 virgule 7 sur un an"]
 )
@@ -251,19 +249,11 @@ def test_chiffre_deguise_en_deux_entiers_devrait_etre_controle(texte):
     assert not _passe(texte)
 
 
-@pytest.mark.xfail(
-    strict=True, reason="CONTOURNEMENT : décimale écrite avec un séparateur exotique"
-)
 @pytest.mark.parametrize("texte", ["ratio de 12٫7", "ratio de 12·7", "ratio de 12'7"])
 def test_separateur_decimal_exotique_devrait_etre_controle(texte):
     assert not _passe(texte)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="CONTOURNEMENT : une valeur d'un AUTRE actif est acceptée (les valeurs d'ancrage sont "
-    "regroupées pour tous les actifs de l'appel)",
-)
 def test_valeur_d_un_autre_actif_devrait_etre_refusee(tmp_path):
     ctx, ev = ancrage_reel(tmp_path)
     propres = set(ev.pour([A]).valeurs())

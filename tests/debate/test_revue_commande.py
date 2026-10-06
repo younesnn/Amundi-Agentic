@@ -226,12 +226,6 @@ def test_codes_de_sortie_0_et_2(tmp_path, capsys):
     assert lancer(tmp_path / "b", "--stocks", ",".join(f"T{i}" for i in range(16)))[0] == 2
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="DEFAUT (important, non bloquant) : des entrées invalides font remonter une exception "
-    "(code 1, trace) au lieu d'un code 2 et d'un message : mode évaluation + profil dev, "
-    "`--assets` inconnue ou `monetaire_euro` seule, `--llm-config` introuvable, titres en double",
-)
 @pytest.mark.parametrize(
     "extra,profil",
     [
@@ -300,11 +294,6 @@ def test_mock_n_ecrit_rien_dans_le_depot_ni_hors_du_dossier_de_sortie_sauf_le_ca
     assert [p for p in tmp_sys.iterdir() if p.name.startswith("amundi-llm-mock-")]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="MINEUR : `--mock` laisse un dossier `amundi-llm-mock-*` (cache et quotas du LLM simulé) "
-    "dans le répertoire temporaire du système : écrit hors du dossier de sortie et jamais nettoyé",
-)
 def test_mock_n_ecrit_rien_hors_du_dossier_de_sortie(tmp_path, monkeypatch):
     tmp_sys = tmp_path / "systmp"
     tmp_sys.mkdir()

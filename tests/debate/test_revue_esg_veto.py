@@ -227,12 +227,6 @@ def test_le_rapport_signale_les_limites_esg_et_les_vetos(tmp_path):
     assert re.search(r"\| AAA \| oui \|", r) and re.search(r"\| BBB \| non \|", r)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="NON BLOQUANT : le rapport ne dit pas qu'aucun critère n'est REQUIS pour les ETF "
-    "(`esg.etf_criteres_requis` vide) donc qu'aucun ETF ne peut être exclu ; un lecteur pourrait "
-    "croire que les ETF ont été contrôlés (D-035, D-048)",
-)
 def test_le_rapport_dit_explicitement_qu_aucun_etf_n_est_exclu_faute_de_critere_requis(tmp_path):
     ctx = fabrique_ctx(tmp_path, handler=scripte(lambda r, t, a: 1))
     r = executer(ctx, classes=CLASSES, titres=[], live=False).rapport_md.lower()
@@ -284,12 +278,6 @@ def test_commande_un_titre_sous_veto_n_a_aucune_vue_ni_debat(tmp_path, monkeypat
     assert "exclus par l'agent ESG" in rapport and "| AAA | oui |" in rapport
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="DEFAUT (important, latent) : si TOUS les actifs d'allocation sont sous veto, "
-    "`executer` laisse remonter ValueError (run_debate) : la commande plante sans journal et "
-    "sans traiter les titres. Possible dès que `esg.etf_criteres_requis` est renseigné.",
-)
 def test_commande_assets_tous_vetoed_ne_plante_pas_et_ne_produit_aucune_vue(tmp_path, monkeypatch):
     code, run = _commande(
         tmp_path,
@@ -306,10 +294,6 @@ def test_commande_assets_tous_vetoed_ne_plante_pas_et_ne_produit_aucune_vue(tmp_
     assert all(v["actif"] not in ("or", "souverain_euro") for v in vues)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="DEFAUT (important, latent) : `executer` n'écarte pas un allocation entièrement vetoed",
-)
 def test_executer_allocation_entierement_vetoed_ne_leve_pas(tmp_path):
     ctx = fabrique_ctx(tmp_path, settings_overrides={"esg": {"etf_criteres_requis": ["tobacco"]}})
     sortie = executer(ctx, classes=CLASSES, titres=["BBB"], live=False)

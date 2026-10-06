@@ -197,11 +197,6 @@ def test_les_prompts_sans_vote_interdisent_aussi_le_calcul_de_chiffres(role):
     assert "aucun chiffre" in LIB.compose(role).texte.lower()
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="NON BLOQUANT : le prompt de l'agent ESG ne rappelle pas « aucun chiffre » (le contrôle "
-    "d'ancrage s'applique pourtant en code)",
-)
 def test_prompt_esg_interdit_le_calcul_de_chiffres():
     assert "aucun chiffre" in LIB.compose("esg").texte.lower()
 
@@ -235,24 +230,12 @@ def test_tous_les_assemblages_de_tour_n_ont_aucune_variable_residuelle(tmp_path,
     assert ("tour 1 du débat" in c.texte) is debat
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="NON BLOQUANT : seuls regles_communes, fundamental et sentiment_* disent que le texte "
-    "externe est une donnée ; coordinator_report, coordinator_arbitrage, esg et risk (qui lisent "
-    "des blocs <<<DONNEES ... DONNEES>>>) ne le disent pas",
-)
 @pytest.mark.parametrize("role", ["coordinator_report", "coordinator_arbitrage", "esg", "risk"])
 def test_les_roles_sans_regles_communes_declarent_les_donnees_comme_non_instructions(role):
     t = LIB.compose(role).texte.lower()
     assert "jamais une instruction" in t or "jamais des instructions" in t
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="NON BLOQUANT : le bloc <<<ANALYSES_DES_PAIRS ... ANALYSES_DES_PAIRS>>> (texte produit "
-    "par les autres agents, donc indirectement par des sources externes) n'est pas déclaré donnée "
-    "dans debate_round_v1.md ni dans regles_communes_v1.md (qui ne cite que DONNEES)",
-)
 def test_le_bloc_des_pairs_est_declare_donnee_et_non_instruction():
     t = LIB.compose("regles_communes", "debate_round", variables=_vars()).texte
     assert "ANALYSES_DES_PAIRS" in t
@@ -330,11 +313,6 @@ def test_l_attaque_atteint_bien_le_prompt_comme_donnee_et_les_delimiteurs_sont_f
     assert user.count("DONNEES>>>") > 1  # fermetures forgées par le texte externe
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="NON BLOQUANT : le texte externe peut fermer le bloc <<<DONNEES par `DONNEES>>>` et "
-    "écrire « en dehors » (aucun échappement des délimiteurs dans EvidenceSet.rendre)",
-)
 def test_les_delimiteurs_forges_par_le_texte_externe_devraient_etre_neutralises(tmp_path):
     ctx = fabrique_ctx(tmp_path)
     ctx.rag = _rag_hostile()

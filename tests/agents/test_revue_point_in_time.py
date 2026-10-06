@@ -337,11 +337,6 @@ def test_une_vue_dont_une_source_est_postérieure_est_rejetee_meme_si_l_outil_la
     assert any("coupure" in x.motif or "invalide" in x.motif for x in r.rejets)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="CEINTURE MANQUANTE (non bloquant) : l'agent ESG ne contrôle pas `observed_at` < t ; "
-    "il s'en remet à la vue `as_of(t)` de la couche data/ (contrat du DataProvider)",
-)
 def test_esg_observe_apres_t_ne_declenche_pas_de_veto(tmp_path):
     """Un enregistrement ESG daté après t ne doit pas fonder un veto (information du futur)."""
 
