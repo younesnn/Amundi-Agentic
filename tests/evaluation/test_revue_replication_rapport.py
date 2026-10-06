@@ -278,13 +278,75 @@ def test_formulation_interdite_detectee_casse_accents_pluriels(texte):
     assert rp.formulations_interdites(texte), texte
 
 
-def test_limite_variantes_non_detectees_liste_explicite_a_completer():
-    """LIMITE (non bloquante) : balayage par expressions régulières françaises ; des variantes
-    anglaises, des traits d'union insécables et des paraphrases passent. Le texte du rapport étant
-    produit par un gabarit sans texte libre de LLM, le risque est faible ; si un jour une variante
-    est ajoutée à `FORMULATIONS_INTERDITES`, mettre à jour cette liste."""
-    passent = [t for t in NON_DETECTEES_LIMITE if not rp.formulations_interdites(t)]
-    assert passent == NON_DETECTEES_LIMITE
+NOUVELLES_VARIANTES = [
+    "Le MULTI AGENT BAT les agents seuls",
+    "multi\u2010agent bat",
+    "multi\u2013agent   bat",
+    "multi\u00a0agent bat",
+    "the multi-agent beats single agents",
+    "multi-agent outperformed",
+    "Outperformance du multi-agent",
+    "A ROBUST result",
+    "robustness",
+    "résultats validés",
+    "has been validated",
+    "un Alpha net",
+    "génère de l\u2019alpha",
+    "ESG compliant",
+    "ESG\u2011compliant",
+    "analyse FONDAMENTALE",
+    "fundamental analyses",
+    "Out\u2011of\u2011Sample",
+    "hors\u2011échantillon",
+    "Hors   Echantillon",
+    "calibrated confidence",
+    "confiance CALIBRÉE",
+    "success probability",
+    "probabilité de réussite",
+    "group-think reduced",
+    "réduit les biais de groupe",
+    "surperformance nette",
+]
+
+
+@pytest.mark.parametrize("texte", NON_DETECTEES_LIMITE + NOUVELLES_VARIANTES)
+def test_variantes_precedemment_non_detectees_et_nouvelles_variantes_adverses_detectees(texte):
+    assert rp.formulations_interdites(texte), texte
+
+
+@pytest.mark.parametrize(
+    "texte",
+    [
+        "Verdict : non concluant. L'intervalle de la différence contient 0.",
+        "AlphaAgents est le papier de référence ; réplication qualitative.",
+        "lecture qualitative de dépôts par un LLM",
+        "alphabet, alphanumérique, validité du fichier, valider la config n'est pas interdit hors du mot validé",
+        "Le multi-agent est plus conservateur à deux votants.",
+        "robot de collecte",
+        "bateau",
+        "battement",
+        "alphabétique",
+    ],
+)
+def test_pas_de_faux_positif_sur_du_texte_legitime(texte):
+    assert not rp.formulations_interdites(texte), texte
+
+
+def test_la_liste_des_motifs_est_lue_dans_la_config_et_non_codee_dans_le_module(monkeypatch):
+    assert len(CFG.rapport_interdit.motifs) >= 20
+    assert rp.formulations_interdites("un résultat robuste")
+    vide = charger_config(overrides={"rapport_interdit": {"motifs": ["zzzjamaisecrit"]}})
+    monkeypatch.setattr(rp, "charger_config", lambda *a, **k: vide)
+    rp._regles.cache_clear()
+    try:
+        assert (
+            rp.formulations_interdites("un résultat robuste") == []
+        )  # la liste vient de la config
+        assert rp.formulations_interdites("zzzjamaisecrit")
+    finally:
+        monkeypatch.undo()
+        rp._regles.cache_clear()
+    assert rp.formulations_interdites("un résultat robuste")
 
 
 def test_hors_echantillon_autorise_seulement_dans_la_formule_exacte():
@@ -311,9 +373,9 @@ def test_rapport_interdit_leve_avant_ecriture_pour_formulation_et_pour_sharpe_sa
 @pytest.mark.parametrize(
     "servi,attendu",
     [
-        ("ollama/llama3.1:8b", CFG.modele.etiquette_hors_echantillon),
-        ("llama3.1:8b", CFG.modele.etiquette_hors_echantillon),
-        ("ollama_chat/llama3.1:8b", CFG.modele.etiquette_hors_echantillon),
+        ("ollama/llama3.1:8b", CFG.modele.etiquette_marge),
+        ("llama3.1:8b", CFG.modele.etiquette_marge),
+        ("ollama_chat/llama3.1:8b", CFG.modele.etiquette_marge),
         ("gemini/gemini-3.8-flash", CFG.modele.etiquette_contamine),
         ("gemini/gemini-3.5-flash-lite", CFG.modele.etiquette_contamine),
         ("groq/openai/gpt-oss-120b", CFG.modele.etiquette_contamine),
@@ -326,15 +388,58 @@ def test_etiquette_lue_dans_le_vrai_training_cutoff_prefixe_ou_non(servi, attend
     assert dict(rp.etiquette_modele([servi], cut, CFG, simule=False))[servi] == attendu
 
 
-def test_marge_de_contamination_de_la_config_n_est_lue_par_aucun_code_limite():
-    """LIMITE (non bloquante) : `modele.marge_contamination_mois` (3) est validée mais jamais
-    utilisée : l'étiquette ne dépend que de `cut >= date_decision`. Avec la marge, llama3.1:8b
-    (2023-12-31 + 3 mois = 2024-03-31) serait « contaminé » à la date de décision."""
-    src = "\n".join(
-        p.read_text(encoding="utf-8")
-        for p in (ROOT / "src" / "amundi_agentic" / "evaluation").glob("*.py")
+def test_etiquette_apres_la_marge_hors_echantillon_sous_reserve_avec_une_decision_plus_tardive():
+    """Même modèle (fin d'entraînement 2023-12-31), décision au-delà de la marge de 3 mois."""
+    cfg_tard = charger_config(
+        overrides={
+            "cible": {
+                "date_decision": "2024-06-03",
+                "fin_suivi": "2024-09-30",
+                "as_of_performance": "2024-10-01",
+            }
+        }
     )
-    assert src.count("marge_contamination") == 1  # seule la déclaration du champ
+    cut = load_config().training_cutoff
+    assert (
+        dict(rp.etiquette_modele(["ollama/llama3.1:8b"], cut, cfg_tard, simule=False))[
+            "ollama/llama3.1:8b"
+        ]
+        == CFG.modele.etiquette_hors_echantillon
+    )
+
+
+@pytest.mark.parametrize(
+    "fin_entrainement,attendu",
+    [
+        (
+            date(2024, 2, 1),
+            CFG.modele.etiquette_contamine,
+        ),  # fin d'entraînement = décision : contaminé
+        (date(2025, 6, 30), CFG.modele.etiquette_contamine),  # après la décision : contaminé
+        (date(2024, 1, 31), CFG.modele.etiquette_marge),  # juste avant la décision : dans la marge
+        (
+            date(2023, 12, 31),
+            CFG.modele.etiquette_marge,
+        ),  # 2023-12-31 + 3 mois = 2024-03-31 >= décision
+        (date(2023, 11, 1), CFG.modele.etiquette_marge),  # +3 mois = 2024-02-01 : borne incluse
+        (
+            date(2023, 10, 31),
+            CFG.modele.etiquette_hors_echantillon,
+        ),  # +3 mois = 2024-01-31 < décision
+        (date(2023, 6, 30), CFG.modele.etiquette_hors_echantillon),
+    ],
+)
+def test_marge_de_contamination_trois_zones_et_bornes(fin_entrainement, attendu):
+    assert CFG.modele.marge_contamination_mois == 3 and CFG.cible.date_decision == date(2024, 2, 1)
+    assert (
+        dict(rp.etiquette_modele(["x/m"], {"m": fin_entrainement}, CFG, simule=False))["x/m"]
+        == attendu
+    )
+
+
+def test_formules_d_etiquette_non_signalees_comme_formulation_interdite():
+    for e in (CFG.modele.etiquette_hors_echantillon, CFG.modele.etiquette_marge):
+        assert rp.formulations_interdites(e) == [] and rp.formulations_interdites(e.upper()) == []
 
 
 # ============================================================ run simulé : bandeau, reproductibilité, écritures
@@ -398,25 +503,19 @@ def test_rapport_mock_contient_avertissement_verdict_en_tete_et_pas_de_formulati
     run_mock,
 ):
     texte = (run_mock[1] / "rapport.md").read_text(encoding="utf-8")
-    lignes = texte.splitlines()
-    assert (
-        lignes[2].startswith("> Prototype académique") and "conseil en investissement" in lignes[2]
-    )
-    assert lignes[4].startswith("## Verdict")
+    pos_titre = texte.index("# Réplication AlphaAgents")
+    pos_avert = texte.index("> Prototype académique")
+    pos_bandeau = texte.index("ESSAI DE MÉCANIQUE")
+    pos_verdict = texte.index("## Verdict")
+    # ordre : titre, avertissement, bandeau d'essai, verdict ; le tout avant toute autre section
+    assert pos_titre < pos_avert < pos_bandeau < pos_verdict
+    assert pos_verdict < texte.index("## Modèle et étiquette")
+    assert "conseil en investissement" in texte[pos_avert:pos_bandeau]
     assert rp.formulations_interdites(texte) == [] and rp.controler_sharpe_tableaux(texte) == []
-    assert (
-        "sharpe_glissant.csv" in texte and "n'a pas d'intervalle" in texte
-    )  # limite du Sharpe glissant signalée
+    assert "sharpe_glissant.csv" in texte and "n'a pas d'intervalle" in texte
     assert "(simulé)" in texte and rp.etiquette_modele([], {}, CFG, simule=True)[0][1] in texte
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="IMPORTANT (revue) : un rapport produit avec `--mock` n'a AUCUN bandeau en tête : le verdict "
-    "(« NON CONCLUANT » ou « multi-agent meilleur ») s'affiche comme pour un résultat réel, seule la ligne "
-    "« modèle servi (simulé) » plus bas le signale, et rien n'indique que kappa = 1 et le désaccord = 0 par "
-    "construction. Correction : bandeau obligatoire en tête (« ESSAI DE MÉCANIQUE : LLM simulé ... »).",
-)
 def test_rapport_mock_a_un_bandeau_obligatoire_en_tete_et_dit_kappa_et_desaccord(run_mock):
     entete = "\n".join(
         (run_mock[1] / "rapport.md").read_text(encoding="utf-8").splitlines()[:12]
@@ -511,13 +610,6 @@ def test_aucun_nom_de_modele_ni_cle_dans_le_code_du_harnais_et_la_config():
     assert not cles.search(yaml_txt) and not interdits.search(valeurs)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="NON BLOQUANT (revue) : `AMUNDI_DATA_DIR` (couche de données) et `AMUNDI_RAG_DIR` (sources.py) ne "
-    "sont expliquées ni dans README.md, config/README.md, docs/ ni .env.example (seulement dans un commentaire "
-    "de config/data.yaml). `AMUNDI_DATA_STORE` n'existe que pour les tests de revue (dossier store/ lui-même, "
-    "alors que `AMUNDI_DATA_DIR` désigne son parent contenant store/ et snapshots/) : source de confusion.",
-)
 def test_variables_d_environnement_des_donnees_documentees_et_distinguees():
     docs = "\n".join(
         p.read_text(encoding="utf-8")

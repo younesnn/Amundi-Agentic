@@ -331,14 +331,6 @@ def test_eligibilite_de_base_utilisable():
     assert src.eligibilite("A", cfg) == (True, "utilisable")
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="BLOQUANT (revue) : `sources.py` `_compte_suivi` et `eligibilite` (suivi_complet_requis) "
-    "lisent les prix POSTÉRIEURS à t (séances entre t et fin_suivi) pour exclure un titre du pool : "
-    "un titre radié, suspendu ou absorbé après t est écarté a posteriori, ce qui dépend du futur "
-    "(biais du survivant corrélé à la performance). Aucune VALEUR n'est lue, mais la disponibilité "
-    "après t décide de l'univers. Correction : retirer la règle ou la fonder sur des données < t.",
-)
 def test_eligibilite_ne_depend_d_aucune_donnee_posterieure_a_t():
     cfg = charger_config()
     trous = ["2024-03-14", "2024-03-15", "2024-04-02"]  # séances manquantes APRÈS t

@@ -477,18 +477,51 @@ def test_chaque_portefeuille_est_construit_depuis_le_bon_niveau_et_abstention_ex
     )  # ZS inclus dans `primaire` = 15 titres : voir ci-dessous
 
 
-def test_sensibilite_abstention_sell_ne_change_aucun_portefeuille_limite_documentee():
-    """LIMITE (non bloquante) : un portefeuille ne contient que des BUY ; lire une abstention comme
-    SELL ne peut donc rien changer à ses titres, ni à sa performance. La « sensibilité » du rapport
-    est vide d'information : elle ne s'écarte jamais du résultat principal."""
+def test_sensibilite_abstention_buy_inclut_les_abstenus_et_taux_d_abstention_par_agent():
+    """Nouvelle sensibilité : les titres abstenus (vote manquant, voix unique) sont INCLUS (BUY) ;
+    l'analyse principale les exclut. Le taux d'abstention est publié par agent, profil et exécution."""
     plan = {t: (1, 1, 1) for t in TIT}
-    plan["T00"] = (1, None, 1)
-    plan["T01"] = (None, None, None)
+    plan["T00"] = (1, None, 1)  # Fundamental s'abstient (voix unique)
+    plan["T01"] = (None, None, None)  # aucun vote, aucune décision finale
+    plan["T02"] = (-1, 1, -1)  # SELL du multi-agent : pas un abstenu
     res = _analyse(plan)
-    for nom, d in res["executions"]["baseline"]["risk_averse"]["portefeuilles"].items():
-        s = d["sensibilite_abstention_sell"]
-        assert s["titres"] == d["titres"], nom
-        assert s["cumul"] == d["cumul"], nom
+    bloc = res["executions"]["baseline"]["risk_averse"]["portefeuilles"]
+    # principal : T00 et T01 exclus du multi-agent ; sensibilité BUY : ils entrent
+    assert "T00" not in bloc["multi_agent"]["titres"] and "T01" not in bloc["multi_agent"]["titres"]
+    s = bloc["multi_agent"]["sensibilite_abstention_buy"]
+    assert {"T00", "T01"} <= set(s["titres"]) and "T02" not in s["titres"]
+    assert s["m"] == len(bloc["multi_agent"]["titres"]) + 2
+    # Valuation seul : T00 vote (BUY) ; T01 abstenu : entre seulement dans la sensibilité
+    assert (
+        "T01" not in bloc["valuation_seul"]["titres"]
+        and "T01" in bloc["valuation_seul"]["sensibilite_abstention_buy"]["titres"]
+    )
+    # Fundamental seul : T00 et T01 abstenus
+    assert {"T00", "T01"} <= set(bloc["fundamental_seul"]["sensibilite_abstention_buy"]["titres"])
+    assert "sensibilite_abstention_sell" not in bloc["multi_agent"]
+    # taux d'abstention : agent / profil / exécution, oracle à la main (15 débats ok)
+    ab = res["abstention_par_agent_profil"]["baseline"]["risk_averse"]
+    assert ab["valuation"] == {"n": 15, "sans_vote": 1, "taux": pytest.approx(1 / 15)}
+    assert ab["fundamental"] == {"n": 15, "sans_vote": 2, "taux": pytest.approx(2 / 15)}
+
+
+def test_sensibilite_abstention_buy_cumul_egal_a_l_oracle_et_decisions_des_votants_inchangees():
+    plan = {t: (1, 1, 1) for t in TIT}
+    plan["T03"] = (None, None, None)
+    src = _Src()
+    rel = src.p.iloc[-1] / src.p.iloc[0]
+    res = _analyse(plan)
+    s = res["executions"]["baseline"]["risk_averse"]["portefeuilles"]["multi_agent"][
+        "sensibilite_abstention_buy"
+    ]
+    attendu = rel[[t for t in TIT]].mean() - 1  # T03 inclus : les 15 titres (ZS compris) entrent
+    assert s["cumul"] == pytest.approx(attendu, rel=1e-12) and s["m"] == 15
+    # decisions() : l'option ne transforme que les None
+    d = decisions({"votes_tour0": {"valuation": -1}, "final": None}, 0, abstention_buy=True)
+    assert (
+        d["valuation_seul"] == "SELL"
+        and d["fundamental_seul"] == d["ET"] == d["OU"] == d["multi_agent"] == "BUY"
+    )
 
 
 def test_portefeuille_vide_en_tresorerie_compare_a_un_portefeuille_d_actions_artefact_signale():
