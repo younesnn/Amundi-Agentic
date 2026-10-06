@@ -1,0 +1,110 @@
+# Paramètres du débat et des agents (phase 3). Aucune valeur de ce fichier n'est une mesure : toutes
+# sont des hypothèses de conception (H), gelées par le pré-enregistrement (L1 §11.6) avant toute
+# évaluation. Le code n'en contient aucune par défaut (test_aucune_valeur_du_yaml_en_dur) : une clé
+# absente est une erreur. Source de chaque valeur : L1 (section citée) ou outil du quant (tools/).
+
+# --- Débat (L1 §6.1 à §6.3, D-016) ------------------------------------------------------------
+debate:
+  r_max: 2                      # H, L1 §6.1 : tours de débat après la collaboration (D-016)
+  graine_rotation: 0            # H, L1 §6.3 : h = hash(date, niveau, graine) pour l'avocat du diable
+  ordre_round_robin:            # L1 §6.1 : ordre fixe par niveau
+    allocation: [macro, valuation, sentiment]
+    titre: [fundamental, sentiment, valuation]
+  sentiment_vote_en_live_seulement: true   # D-044, EX-O1-17 : Sentiment absent du backtest
+  orchestrateur: langgraph      # D-009 : `langgraph` (ordonnanceur) ou `boucle` (même machine à états en Python)
+  max_titres: 15                # D-029, L1 EX-O1-02 : poche titres de 15 titres au plus (liste plus longue refusée)
+  horizon_mois: 3               # H, L1 §5.2 : horizon d'une vue (défaut de L1)
+  transmettre_voix_unique: false   # H (revue) : une vue à voix unique n'est pas transmise à BL par défaut
+  actif_neutre_transmis: false  # L1 §6.2 : une vue finale NEUTRE est journalisée, pas transmise à BL
+
+# --- Règle de consensus (L1 §6.2) ---------------------------------------------------------------
+consensus:
+  ecart_consensus_large: 1      # H, L1 §6.2 : max - min = 1 donne le statut `consensus` (médiane)
+  ecart_contestee_min: 2        # H, L1 §6.2 : max - min >= 2 après R_max tours donne `contestee`
+  min_votants_valides: 2        # H (décision du lead) : en dessous, statut `voix_unique` (jamais un consensus)
+  borne_contestee: 1            # H, L1 §6.2 : une vue contestée est bornée à [-1, +1]
+
+# --- Confiance (L1 §6.4, D-015) : c = clip(c_max . A . g . rho . h) -------------------------------
+confidence:
+  c_max: 0.8                    # H, L1 §6.4 : < 1 car une vue de LLM n'est pas calibrée
+  c_min: 0.05                   # H, L1 §6.4
+  g:                            # H, L1 §6.4 : statut du consensus (grille grossière)
+    unanime: 1.0
+    consensus: 0.75
+    contestee: 0.4
+  rho_par_tour: 0.1             # H, L1 §6.4 : rho = 1 - rho_par_tour . r_utilises
+  h:                            # H, L1 §6.4 et tools/risk.py (DEFAULT_H) : alerte de l'agent Risque
+    aucune: 1.0
+    moderee: 0.8
+    elevee: 0.6
+  plafond_voix_unique: 0.32     # H : plafond de confiance d'une vue à voix unique (= c_max x g contestee)
+  alerte_si_indisponible: moderee   # H : une alerte non calculable n'est jamais lue comme « aucune »
+
+# --- Agent Risque (L1 §4, §10.1, tools/risk.py H3 et H4) -------------------------------------------
+risk:
+  seuils:                       # H, tools/risk.py `RiskThresholds` (H4)
+    vol_rank_moderate: 0.80
+    vol_rank_high: 0.95
+    drawdown_moderate: 0.10
+    drawdown_high: 0.20
+    vix_moderate: 25.0
+    vix_high: 35.0
+    vol_window: 21
+    history_weeks: 156
+    min_weeks: 104
+    drawdown_window: 252
+    regime_low_pct: 50.0
+    regime_high_pct: 80.0
+    vix_max_age_days: 10
+  default_replay_weeks: 52      # H, tools/risk.py DEFAULT_REPLAY_WEEKS (H3) : rejeu du régime sans état fourni
+  regime_reference_class: actions_etats_unis   # H, provisoire : classe dont la volatilité sert de référence
+                                # de régime (le benchmark du profil n'existe qu'en phase 4, L1 §10.1)
+  vix_series: "fred:VIXCLS"     # config/data.yaml, tools/macro_regime.py DEFAULT_IDS
+  commenter_titres: false       # H : pas d'appel LLM de commentaire de risque par titre (budget, L1 §11.2)
+  alerte_titre: propre          # H : l'alerte d'un titre est la sienne (L1 §6.4 parle de la classe de l'actif)
+
+# --- Contrôle d'ancrage des chiffres (L1 EX-O1-04) ----------------------------------------------
+grounding:
+  max_retries: 2                # H : nouvelles demandes après une vue non ancrée, avant rejet motivé
+  facteurs_echelle: [1.0, 100.0, 0.01]   # un chiffre cité peut être en décimal, en pourcentage ou l'inverse
+  tolerance_relative_entiers: 0.01   # H : un entier cité est retrouvé à min(0,5 ; 1 % de sa valeur)
+  facteur_points_de_base: 10000.0        # chiffre suivi de « pb » ou « bps »
+  plage_annees: [1900, 2100]    # entiers de 4 chiffres lus comme des années, jamais contrôlés
+  unites_financieres: ["%", "pb", "bps", "$", "usd", "eur", "€", "millions", "milliards", "md", "m$"]
+
+# --- Agent Valuation / Momentum (L1 §4) ------------------------------------------------------
+valuation:
+  fenetre_seances: 252          # papier AlphaAgents : 252 séances par an (tools/finance.py DEFAULT_WINDOW)
+
+# --- Agent Fundamental : questions du papier (fiche AlphaAgents, section 2 ; L1 §4) -----------------
+fundamental:
+  rag_k: 5                      # H : passages retenus par question (RagTool.query)
+  max_caracteres_passage: 1500  # H : longueur d'un passage injecté dans le prompt
+  questions:
+    - "Flux de trésorerie et résultat net : évolution et qualité."
+    - "Exploitation et marge brute : évolution de la marge d'exploitation et de la marge brute."
+    - "Points d'inquiétude : risques, litiges, dépendances, facteurs défavorables mentionnés par la direction."
+    - "Progrès vers les objectifs : avancement des objectifs et perspectives annoncés par la direction."
+  concepts_xbrl_max: 12         # H : nombre maximal de concepts XBRL injectés
+
+# --- Agent Sentiment (L1 §4, EX-O1-15) ---------------------------------------------------------
+sentiment:
+  fenetre_jours: 30             # H : fenêtre des news lues (jours avant t)
+  max_articles: 25              # H : articles transmis à l'outil de résumé
+  reflexion_tours: 1            # H : tours de réflexion (résumer, critiquer, affiner), papier AlphaAgents
+  termes_allocation: ["inflation", "interest rate", "monetary policy", "growth", "recession", "economy"]   # H : filtre des news macro (flux RSS en anglais)
+  focus_allocation: "marché et macroéconomie : politique monétaire, croissance, inflation, risque"
+  focus_titre: "société : résultats, annonces, opérations d'initiés, événements 8-K"
+
+# --- Agent ESG (L1 §4, §9.4, D-035, D-048) ----------------------------------------------------
+esg:
+  etf_criteres_requis: []       # H : critères dont un ETF doit avoir une exclusion documentée ou supposée ;
+                                # vide = aucun veto ETF (L1 §9.4 : les exclusions normatives s'appliquent
+                                # pleinement à la poche titres ; « sans exclusion détectée » n'est pas une preuve)
+  etf_etats_acceptes: [determine_par_donnee, suppose_par_regle]   # états qui satisfont un critère requis
+  llm_explique_les_vetos: true  # le LLM (niveau light) ne fait que formuler l'explication d'un veto
+
+# --- Bornes de présentation et de sécurité (revue) ---------------------------------------------
+limites:
+  motif_max_caracteres: 300     # H : longueur maximale d'un motif de rejet ou d'erreur journalisé
+  marge_recursion: 10           # H : marge ajoutée à R_max pour la limite de récursion de l'ordonnanceur
