@@ -244,16 +244,138 @@ def test_config_text_tools_declaree_dans_le_readme_de_config():
     assert cfg.rag.max_filings >= 1 and cfg.summary.max_items >= 1
 
 
+# --------------------------------------------------------------------------- gros fichiers
+SEUIL_OCTETS = 300_000
+EXTENSIONS_INTERDITES = {".gz", ".parquet", ".npz", ".pdf", ".zip"}
+# Chemins gérés par des outils (hooks graphify, `uv lock`, rapport de couverture) : jamais jugés.
+CHEMINS_GERES = ("graphify-out/", "uv.lock", "docs/couverture_donnees.md", "runs/data_coverage/")
+
+
+def _git(*args: str) -> str | None:
+    """Sortie de `git <args>` ou None (git absent, pas un dépôt, référence inconnue)."""
+    try:
+        r = subprocess.run(["git", *args], cwd=RACINE, capture_output=True, text=True, check=False)
+    except FileNotFoundError:
+        return None
+    return r.stdout if r.returncode == 0 else None
+
+
+def _reference() -> str | None:
+    """Référence de comparaison, indépendante de l'état de l'arbre de travail : le merge-base avec
+    `origin/main` ; si on est déjà sur ce point (main fusionnée) ou si `origin/main` manque, le
+    commit précédent `HEAD~1`. None si aucune des deux n'existe (clone superficiel d'un commit)."""
+    tete = (_git("rev-parse", "HEAD") or "").strip()
+    base = (_git("merge-base", "HEAD", "origin/main") or "").strip()
+    if base and base != tete:
+        return base
+    parent = (_git("rev-parse", "--verify", "-q", "HEAD~1") or "").strip()
+    return parent or None
+
+
+def _gere(chemin: str) -> bool:
+    return (
+        chemin.startswith(CHEMINS_GERES[0])
+        or chemin in CHEMINS_GERES
+        or any(chemin.startswith(c) for c in CHEMINS_GERES if c.endswith("/"))
+    )
+
+
+def _fichiers_ajoutes() -> tuple[dict[str, int], str]:
+    """{chemin: taille en octets} des fichiers AJOUTÉS depuis la référence (committés ou non) et des
+    fichiers non suivis non ignorés ; + la description de la référence. Tailles lues dans Git
+    (`cat-file -s`) pour les fichiers committés, sur disque pour les non suivis."""
+    ref = _reference()
+    ajoutes: dict[str, int] = {}
+    if ref:
+        noms = (_git("diff", "--name-only", "--diff-filter=A", ref, "HEAD") or "").splitlines()
+        for nom in noms:
+            taille = (_git("cat-file", "-s", f"HEAD:{nom}") or "").strip()
+            if taille.isdigit():
+                ajoutes[nom] = int(taille)
+    for nom in (_git("diff", "--cached", "--name-only", "--diff-filter=A") or "").splitlines():
+        f = RACINE / nom
+        if f.is_file():
+            ajoutes[nom] = f.stat().st_size
+    for nom in (_git("ls-files", "--others", "--exclude-standard") or "").splitlines():
+        f = RACINE / nom
+        if f.is_file():
+            ajoutes[nom] = f.stat().st_size
+    return {k: v for k, v in sorted(ajoutes.items()) if not _gere(k)}, ref or "aucune"
+
+
 def test_aucun_gros_fichier_dans_les_ajouts():
-    sortie = subprocess.run(
-        ["git", "status", "--porcelain", "--untracked-files=all"],
-        cwd=RACINE,
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout
-    for ligne in sortie.splitlines():
-        chemin = RACINE / ligne[3:].strip().strip('"')
-        if chemin.is_file():
-            assert chemin.stat().st_size < 300_000, (chemin, chemin.stat().st_size)
-            assert chemin.suffix not in {".gz", ".parquet", ".npz", ".pdf", ".zip"}, chemin
+    """Empêche l'ajout de gros fichiers de données. Déterministe : compare à la référence Git
+    (merge-base avec origin/main, ou HEAD~1), pas à l'état de l'arbre de travail ; les modifications
+    de fichiers déjà suivis (graphify-out/...) ne comptent pas."""
+    if _git("rev-parse", "--git-dir") is None:
+        pytest.skip("pas de dépôt Git : contrôle des gros fichiers impossible")
+    ajoutes, ref = _fichiers_ajoutes()
+    if ref == "aucune" and not ajoutes:
+        pytest.skip("aucune référence Git (clone d'un seul commit) et aucun fichier non suivi")
+    for nom, taille in ajoutes.items():
+        assert taille < SEUIL_OCTETS, f"{nom} : {taille} octets (>= {SEUIL_OCTETS}), base {ref}"
+        assert Path(nom).suffix not in EXTENSIONS_INTERDITES, f"{nom} : extension interdite"
+
+
+def test_chemins_geres_par_des_outils_jamais_juges():
+    for chemin in (
+        "graphify-out/graph.json",
+        "graphify-out/x/y.json",
+        "uv.lock",
+        "docs/couverture_donnees.md",
+        "runs/data_coverage/a.json",
+    ):
+        assert _gere(chemin), chemin
+    for chemin in ("src/graphify-out/x", "data/gros.parquet", "docs/autre.md", "uv.lock.bak"):
+        assert not _gere(chemin), chemin
+
+
+def test_detection_d_un_gros_fichier_non_suivi_et_d_une_extension_interdite(tmp_path):
+    """Le contrôle détecte bien : dépôt Git jetable avec un commit puis un fichier de 400 000 octets
+    non suivi et un .parquet ; modifier un fichier suivi énorme ne déclenche rien."""
+
+    def git(*a):
+        subprocess.run(
+            ["git", *a],
+            cwd=tmp_path,
+            check=True,
+            capture_output=True,
+            env={
+                "GIT_AUTHOR_NAME": "t",
+                "GIT_AUTHOR_EMAIL": "t@t",
+                "GIT_COMMITTER_NAME": "t",
+                "GIT_COMMITTER_EMAIL": "t@t",
+                "PATH": "/usr/bin:/bin:/usr/local/bin:/opt/homebrew/bin",
+                "HOME": str(tmp_path),
+            },
+        )
+
+    git("init", "-q")
+    (tmp_path / "graphify-out").mkdir()
+    (tmp_path / "graphify-out" / "graph.json").write_text("{}")
+    (tmp_path / "a.txt").write_text("a")
+    git("add", "-A")
+    git("commit", "-qm", "un")
+    (tmp_path / "b.txt").write_text("b")
+    git("add", "-A")
+    git("commit", "-qm", "deux")
+    (tmp_path / "graphify-out" / "graph.json").write_text(
+        "x" * 2_000_000
+    )  # modifié, suivi : ignoré
+    (tmp_path / "gros.dat").write_bytes(b"x" * 400_000)
+    (tmp_path / "petit.parquet").write_bytes(b"x")
+    global RACINE
+    ancien = RACINE
+    RACINE = tmp_path
+    try:
+        ajoutes, ref = _fichiers_ajoutes()
+    finally:
+        RACINE = ancien
+    assert ref != "aucune"
+    assert "graphify-out/graph.json" not in ajoutes
+    assert ajoutes["gros.dat"] == 400_000 and ajoutes["b.txt"] == 1  # b.txt ajouté depuis HEAD~1
+    assert "a.txt" not in ajoutes
+    assert (
+        ajoutes["gros.dat"] >= SEUIL_OCTETS
+        and Path("petit.parquet").suffix in EXTENSIONS_INTERDITES
+    )
