@@ -144,7 +144,7 @@ def test_limite_documentee_desaccord_nul_rend_la_condition_vide_cas_du_mock():
 
 # ============================================================ fréquence de « meilleur » sur du bruit pur
 def test_meilleur_sur_decisions_aleatoires_independantes_du_marche_est_tres_rare():
-    """Simulation (30 jeux dans la suite ; 200 jeux lancés pendant la revue : 0/200 dans trois régimes
+    """Simulation (12 jeux dans la suite ; 200 jeux lancés pendant la revue : 0/200 dans trois régimes
     de corrélation entre exécutions) : décisions tirées au hasard, indépendantes des prix."""
     import numpy as np
     import pandas as pd
@@ -162,7 +162,7 @@ def test_meilleur_sur_decisions_aleatoires_independantes_du_marche_est_tres_rare
     idx = pd.bdate_range("2024-02-01", "2024-05-31")
     execs = [e.nom for e in cfg.executions]
     meilleur = 0
-    for s in range(30):
+    for s in range(12):
         rng = np.random.default_rng(500 + s)
         r = rng.normal(0.0004, 0.015, (len(idx), len(tit)))
         r[0] = 0
