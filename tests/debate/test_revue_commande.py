@@ -197,28 +197,22 @@ def test_evaluation_exige_le_preenregistrement_et_le_profil_prod(tmp_path, capsy
     }
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="DEFAUT (important, non bloquant) : `--mode evaluation` sans `--llm-profile` lève "
-    "ConfigurationError (commande.py : `args.llm_profile or config.default_mode` = dev) au lieu "
-    "d'utiliser le profil prod par défaut du client en évaluation ; échec sûr mais avec trace",
-)
-def test_evaluation_sans_profil_explicite_utilise_prod(tmp_path):
-    code, run = lancer(
-        tmp_path, "--mode", "evaluation", "--preregistration-sha256", PREREG, llm_profile=None
-    )
+def test_evaluation_sans_profil_prod_explicite_est_refusee_code_2_sans_trace(tmp_path, capsys):
+    """Décision du lead : l'évaluation exige `--llm-profile prod` EXPLICITE (jamais déduit)."""
+    for profil in (None, "dev"):
+        code, run = lancer(
+            tmp_path / str(profil),
+            "--mode", "evaluation", "--preregistration-sha256", PREREG,
+            llm_profile=profil,
+        )  # fmt: skip
+        err = capsys.readouterr().err
+        assert code == 2 and "prod" in err and "Traceback" not in err
+        assert run is None or not list(run.parent.glob("*/calls.jsonl"))  # aucun appel LLM
+    code, _ = lancer(
+        tmp_path / "ok", "--mode", "evaluation", "--preregistration-sha256", PREREG,
+        llm_profile="prod",
+    )  # fmt: skip
     assert code == 0
-    assert json.loads((run / "run.json").read_text())["profile"] == "prod"
-
-
-def test_evaluation_avec_profil_dev_est_refusee_jamais_executee_sur_le_modele_local(tmp_path):
-    from amundi_agentic.llm import ConfigurationError
-
-    with pytest.raises(ConfigurationError, match="prod"):
-        lancer(
-            tmp_path, "--mode", "evaluation", "--preregistration-sha256", PREREG, llm_profile="dev"
-        )
-    assert not any((tmp_path / "runs").glob("*/calls.jsonl"))  # aucun appel n'a eu lieu
 
 
 def test_codes_de_sortie_0_et_2(tmp_path, capsys):
@@ -277,9 +271,7 @@ def _arbre(racine):
     return sortie
 
 
-def test_mock_n_ecrit_rien_dans_le_depot_ni_hors_du_dossier_de_sortie_sauf_le_cache_temporaire(
-    tmp_path, monkeypatch
-):
+def test_mock_n_ecrit_rien_dans_le_depot_ni_hors_du_dossier_de_sortie(tmp_path, monkeypatch):
     avant = _arbre(ROOT)
     tmp_sys = tmp_path / "systmp"
     tmp_sys.mkdir()
@@ -290,8 +282,7 @@ def test_mock_n_ecrit_rien_dans_le_depot_ni_hors_du_dossier_de_sortie_sauf_le_ca
     assert (
         _arbre(ROOT) == avant
     )  # rien d'écrit dans le dépôt (cache .cache/, runs/, data/, config/)
-    # les seuls fichiers hors du dossier de sortie sont dans le répertoire temporaire du système
-    assert [p for p in tmp_sys.iterdir() if p.name.startswith("amundi-llm-mock-")]
+    assert list(tmp_sys.iterdir()) == []  # le cache temporaire du LLM simulé est nettoyé
 
 
 def test_mock_n_ecrit_rien_hors_du_dossier_de_sortie(tmp_path, monkeypatch):

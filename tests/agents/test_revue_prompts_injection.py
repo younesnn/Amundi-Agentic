@@ -302,15 +302,15 @@ def test_un_llm_jailbreake_ne_peut_imposer_ni_chiffre_ni_source_ni_rendement(tmp
     assert "forge:1" not in {s.source_id for v in r.turn.vues for s in v.sources}
 
 
-def test_l_attaque_atteint_bien_le_prompt_comme_donnee_et_les_delimiteurs_sont_forgeables(tmp_path):
-    """Constat : le texte du passage figure dans le bloc DONNEES ; il peut contenir `DONNEES>>>`
-    (fermeture forgée). Aucun échappement n'est fait."""
+def test_l_attaque_atteint_le_prompt_comme_donnee_inerte_delimiteurs_neutralises(tmp_path):
+    """Le texte hostile figure bien dans le bloc DONNEES (c'est une donnée), mais ses délimiteurs
+    forgés (`DONNEES>>>`, `<<<DONNEES`) sont neutralisés : un seul bloc, une seule fermeture."""
     ctx = fabrique_ctx(tmp_path)
     ctx.rag = _rag_hostile()
     FundamentalAgent().analyse(ctx, ["AAA"])
     user = ctx.appels[0].messages[1]["content"]
-    assert "NOUVELLES_INSTRUCTIONS" in user
-    assert user.count("DONNEES>>>") > 1  # fermetures forgées par le texte externe
+    assert "NOUVELLES_INSTRUCTIONS" in user  # la donnée est transmise, inerte
+    assert user.count("DONNEES>>>") == 1 and user.count("<<<DONNEES") == 1
 
 
 def test_les_delimiteurs_forges_par_le_texte_externe_devraient_etre_neutralises(tmp_path):

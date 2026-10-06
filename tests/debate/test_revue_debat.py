@@ -342,26 +342,31 @@ def test_arbitrage_un_seul_appel_meme_avec_cinq_actifs_contestes(tmp_path):
 
 
 # --------------------------------------------------------------------------- cas K = 1
-def test_k1_un_seul_agent_valide_donne_unanime_par_construction_avec_confiance_elevee(tmp_path):
-    """Constat : si les autres agents sont rejetés (ou en panne), la vue d'un seul agent est
-    `unanime` et reçoit c = c_max . g(unanime) . h : jusqu'à 0,8, comme trois agents d'accord.
-    Dangereux : une seule voix, non contredite, sans débat. Règle proposée (non codée) : exiger
-    K_valides >= 2, sinon plafonner la confiance (g effectif = g(consensus)) ou signaler le statut
-    `voix_unique` et ne pas le transmettre à Black-Litterman sans validation du gérant."""
+def test_k1_un_seul_agent_valide_donne_voix_unique_borne_plafonnee_non_transmise(tmp_path):
+    """K=1 : statut `voix_unique` (jamais `unanime` par construction), niveau borné à ±1,
+    confiance plafonnée, non transmis à Black-Litterman par défaut, journalisé."""
 
     def handler(model, messages):
         systeme = messages[0]["content"]
         if "Agent Valuation" in systeme and "Coordinateur" not in systeme:
             return "pas du json"  # Valuation rejetée à chaque tour
-        return scripte(lambda role, tour, actif: 1)(model, messages)
+        return scripte(lambda role, tour, actif: 2)(model, messages)
 
     ctx, res = lancer(tmp_path, handler=handler)
+    cfg = ctx.settings
     assert res.log.votants == ["macro"]
+    assert res.log.resultats
     for o in res.log.resultats:
-        assert o.statut == "unanime" and o.tours_utilises == 0
-        if o.alerte_risque == "aucune":
-            assert o.confiance_finale == pytest.approx(0.8)  # même confiance que 3 votants d'accord
-    assert {o.confiance_finale for o in res.log.resultats if o.alerte_risque == "aucune"} <= {0.8}
+        assert o.statut == "voix_unique"
+        assert abs(o.niveau_final) <= 1  # +2 voté, borné à +1
+        assert o.confiance_finale <= cfg.confidence.plafond_voix_unique
+    assert all(v.statut == "voix_unique" and abs(v.direction.n) <= 1 for v in res.vues_finales)
+    assert res.vues_finales and res.vues_transmises(True) == []  # pas transmis par défaut
+    assert len(res.vues_transmises(True, voix_unique_transmise=True)) == len(res.vues_finales)
+    assert cfg.debate.transmettre_voix_unique is False
+    from amundi_agentic.schemas import DebateLog
+
+    assert DebateLog.model_validate_json(res.log.model_dump_json()) == res.log  # schéma cohérent
 
 
 def test_aucun_agent_valide_aucune_decision_et_aucune_vue(tmp_path):
