@@ -102,7 +102,7 @@ def test_langgraph_interdit_hors_de_l_orchestrateur_paquet_par_paquet(paquet):
 
 
 def test_l_orchestrateur_n_utilise_langgraph_que_comme_ordonnanceur_pas_pour_appeler_un_llm():
-    """Aucun client de modèle (`langchain*`, `langgraph.prebuilt`, `ChatModel`, `create_react_agent`)
+    """Aucun client de modèle (`langchain*`, `langgraph.prebuilt`, `create_react_agent`)
     dans debate/ : les appels de modèle passent par `LLMClient` uniquement."""
     interdits_modules = ("langchain", "langgraph.prebuilt", "langgraph.func")
     interdits_noms = re.compile(
