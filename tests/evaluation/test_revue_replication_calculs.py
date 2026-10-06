@@ -473,7 +473,7 @@ def test_chaque_portefeuille_est_construit_depuis_le_bon_niveau_et_abstention_ex
     dec = res["executions"]["baseline"]["risk_averse"]["decompte"]["multi_agent"]["primaire"]
     assert dec["exclus"] == 2 and dec["BUY"] == 2  # T04 (vote manquant) et T06 (voix unique)
     assert (
-        dec["BUY"] + dec["SELL"] + dec["exclus"] == 14
+        dec["BUY"] + dec["SELL"] + dec["exclus"] == 15
     )  # ZS inclus dans `primaire` = 15 titres : voir ci-dessous
 
 
