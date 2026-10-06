@@ -62,10 +62,42 @@ def test_un_chiffre_exact_du_texte_est_accepte_sous_plusieurs_formats(texte_sour
         assert not rejete(f"valeur de {f}", a), (texte_source, f)
 
 
-def test_limite_constatee_changement_d_echelle_million_milliard_non_reconnu_pour_un_texte():
-    """Faux rejet conservateur (mineur) : « 12 700 million » du texte n'autorise pas « 12,7
-    milliards » ; l'agent doit reprendre la forme du texte (redemande bornée)."""
-    assert rejete("valeur de 12,7 milliards", ancres("net income 12 700 million", "texte"))
+def test_changement_d_echelle_exact_reconnu_sans_aucune_tolerance():
+    a = ancres("net income 12 700 million", "texte")
+    for ok in (
+        "12,7 milliards",
+        "12.7 billion",
+        "$12.7 billion",
+        "12 700 millions",
+        "12 700 thousand",
+    ):
+        assert not rejete(f"valeur de {ok}", a), ok
+    for refuse in (
+        "12,8 milliards",  # un dixième de trop
+        "12,71 milliards",
+        "12 701 millions",
+        "12 701",
+        "12,7",  # sans unité de grandeur : 12,7 n'est pas 12 700
+        "12 700 000 $",
+        "12700000000",
+        "12,69 milliards",
+    ):
+        assert rejete(f"valeur de {refuse}", a), refuse
+    # aucune tolérance : la conversion est exacte (Decimal), pas flottante
+    b = ancres("revenue 0.1 billion", "texte")
+    assert not rejete("revenu de 100 millions", b) and not rejete("revenu de 0,1 milliard", b)
+    assert rejete("revenu de 100,1 millions", b) and rejete("revenu de 99,9 millions", b)
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="NON BLOQUANT : l'ancrage d'un texte ne retient pas l'unité écrite (« 12 700 million ») : "
+    "toute conversion d'une puissance de 1000 est acceptée, dont une erreur d'unité de 1000 "
+    "(« 12,7 millions » accepté pour « 12 700 million »)",
+)
+def test_residuel_erreur_d_unite_d_un_facteur_mille_acceptee():
+    a = ancres("net income 12 700 million", "texte")
+    assert rejete("valeur de 12,7 millions", a)
 
 
 def test_tolerance_relative_seulement_pour_les_valeurs_d_outil():
@@ -184,13 +216,6 @@ def test_fundamental_dit_le_repli_aussi_via_un_passage_marque_seul(tmp_path):
     assert v.confiance <= 0.4 and any("repli" in x for x in v.arguments_contre)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="BLOQUANT (exigence du lead) : le plafond du repli (0,4) ne s'applique qu'à l'AUTO-"
-    "confiance de l'agent, qui n'entre jamais dans la confiance finale (L1 §6.4) : un titre dont "
-    "le découpage est en repli reçoit c = 0,8 (unanime) comme un autre ; la limite n'est visible "
-    "que dans les arguments « contre »",
-)
 def test_une_vue_en_repli_n_a_jamais_une_confiance_finale_superieure_au_plafond(tmp_path):
     ctx = fabrique_ctx(tmp_path, handler=scripte(lambda r, t, a: 1))
     ctx.rag = RagRepli()

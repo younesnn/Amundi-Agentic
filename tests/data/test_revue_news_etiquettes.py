@@ -52,12 +52,20 @@ def test_etiquette_sans_aucun_article_ne_leve_pas_et_renvoie_vide(tmp_path):
     assert vue.news(NewsQuery(tags=("AAPL",), start=T - timedelta(days=30))) == []
 
 
-def test_constat_etiquette_vide_dans_la_requete_attrape_les_articles_sans_etiquette(tmp_path):
-    """Quirk (mineur, sans fuite de futur) : `tags=("",)` correspond aux articles SANS étiquette
-    (chaîne vide scindée en {""}). Un appelant ne doit pas passer d'étiquette vide."""
+@pytest.mark.parametrize(
+    "tags", [("",), ("   ",), ("AAPL", ""), ("", "AAPL"), ("\t",), ("AAPL", "  ")]
+)
+def test_etiquette_vide_ou_blanche_est_refusee_avec_un_message_clair(tmp_path, tags):
     vue = _vue(tmp_path, [(_avant(days=1), "AAPL"), (_avant(days=2), "")])
-    assert [n.item_id for n in vue.news(NewsQuery(tags=("",)))] == ["i1"]
-    assert [n.tags for n in vue.news(NewsQuery(tags=("AAPL",)))] == [("AAPL",)]
+    with pytest.raises(ValueError, match="(?i)étiquette"):
+        vue.news(NewsQuery(tags=tags))
+
+
+def test_un_article_sans_etiquette_n_est_servi_que_sans_filtre_d_etiquette(tmp_path):
+    vue = _vue(tmp_path, [(_avant(days=1), "AAPL"), (_avant(days=2), ""), (_avant(days=3), None)])
+    assert sorted(n.item_id for n in vue.news(NewsQuery())) == ["i0", "i1", "i2"]
+    assert [n.item_id for n in vue.news(NewsQuery(tags=("AAPL",)))] == ["i0"]
+    assert vue.news(NewsQuery(tags=("ABSENT",))) == []
 
 
 def test_article_a_la_coupure_exacte_exclu_une_seconde_avant_inclus(tmp_path):
