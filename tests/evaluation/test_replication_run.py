@@ -100,6 +100,8 @@ def _rapport(cfg, src, ep, etat, dec, execs):
         "remplaces": dec.tirage.remplaces,
         "executions": execs,
         "modeles_servis": etat.donnees["modeles_servis"],
+        "simule": True,
+        "synthetique": True,
         "qualitatif": commande.observations_qualitatives(res, cfg),
     }
     return res, v, rapport.rendre_rapport(cfg, res, v, meta)
@@ -426,3 +428,56 @@ def test_run_reel_refuse_sans_preenregistrement(tmp_path, capsys):
     assert commande.executer_replicate(a) == 2
     assert "pré-enregistrement" in capsys.readouterr().err
     assert not [p for p in tmp_path.iterdir()]
+
+
+def test_bandeau_d_essai_en_tete_avant_le_verdict(run_ref):
+    cfg, src, ep, etat, dec, execs, _ = run_ref
+    _, _, texte = _rapport(cfg, src, ep, etat, dec, execs)
+    lignes = texte.splitlines()
+    i_band = next(i for i, x in enumerate(lignes) if "ESSAI DE MÉCANIQUE" in x)
+    assert i_band < next(i for i, x in enumerate(lignes) if x.startswith("## Verdict"))
+    assert "kappa = 1" in lignes[i_band].lower() and "aucune valeur d'évaluation" in lignes[i_band]
+
+
+def test_sensibilite_abstention_buy_inclut_les_abstenus_et_publie_les_taux(run_ref):
+    cfg, src, ep, etat, dec, execs, _ = run_ref
+    debats = {k: dict(d) for k, d in etat.debats.items()}
+    cible = next(
+        k for k in debats if k.startswith("baseline|risk_averse|") and dec.tirage.retenus[0] in k
+    )
+    debats[cible] = {**debats[cible], "votes_tour0": {"valuation": -1}, "final": None}
+    res = analyse.analyser(
+        cfg, src, debats, etat.donnees["caracteristiques"], dec.tirage, dec.evalues, execs
+    )
+    b = res["executions"]["baseline"]["risk_averse"]["portefeuilles"]
+    tk = cible.split("|")[2]
+    assert tk not in b["multi_agent"]["titres"]  # principal : abstention = exclu
+    assert tk in b["multi_agent"]["sensibilite_abstention_buy"]["titres"]  # sensibilité : inclus
+    assert "sensibilite_abstention_sell" not in b["multi_agent"]
+    ab = res["abstention_par_agent_profil"]["baseline"]["risk_averse"]["fundamental"]
+    assert ab["sans_vote"] >= 1 and ab["n"] > ab["sans_vote"] - 1
+
+
+def test_titre_dont_les_prix_s_arretent_reste_dans_l_univers_valeur_gelee(tmp_path):
+    cfg, _, _, settings, fab, _ = _monde(tmp_path)
+    src = SourceSynthetique(cfg, n_pool=9, sans_donnees=2, arrets={"SYN01": "2024-03-15"})
+    ep = etat_pool(src, cfg)
+    assert "SYN01" in ep.utilisables  # jamais exclu sur la disponibilité de prix après t
+    etat = Etat(tmp_path / "g.json", cfg.source_sha256 or "")
+    dec = produire_decisions(
+        cfg,
+        src,
+        ep,
+        settings,
+        etat,
+        fab,
+        executions=["baseline"],
+        univers="pool",
+        dossier_cache=None,
+    )
+    res = analyse.analyser(cfg, src, etat.debats, {}, dec.tirage, dec.evalues, ["baseline"])
+    info = res["prix_arretes_avant_la_fin"]["SYN01"]
+    assert info["derniere_cloture"] == "2024-03-15" and info["seances_gelees"] > 30
+    px = src.prix_suivi(["SYN01"], cfg)["SYN01"]
+    gele, _ = perf_mod.geler(src.prix_suivi(["SYN01", "ZS"], cfg))
+    assert gele["SYN01"].iloc[-1] == px.dropna().iloc[-1]

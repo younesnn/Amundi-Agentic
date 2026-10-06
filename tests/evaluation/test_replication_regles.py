@@ -130,13 +130,62 @@ def test_sharpe_sans_intervalle_refuse():
 
 
 def test_etiquettes_de_modele_lues_dans_training_cutoff():
-    cut = {"gemini-x": date(2026, 3, 31), "llama-y": date(2023, 12, 31)}
+    cut = {"gemini-x": date(2026, 3, 31), "llama-y": date(2023, 12, 31), "vieux": date(2023, 6, 30)}
     e = dict(
         rp.etiquette_modele(
             ["gemini/gemini-x", "ollama/llama-y", "ollama/inconnu"], cut, CFG, simule=False
         )
     )
     assert e["gemini/gemini-x"] == CFG.modele.etiquette_contamine
-    assert e["ollama/llama-y"] == CFG.modele.etiquette_hors_echantillon
+    # fin d'entraînement + 3 mois de marge (2024-03-31) >= décision (2024-02-01) : hors échantillon non garanti
+    assert e["ollama/llama-y"] == CFG.modele.etiquette_marge
+    assert dict(rp.etiquette_modele(["ollama/vieux"], cut, CFG, simule=False))["ollama/vieux"] == (
+        CFG.modele.etiquette_hors_echantillon
+    )
     assert e["ollama/inconnu"] == CFG.modele.etiquette_inconnue
     assert rp.etiquette_modele([], {}, CFG, simule=True)[0][1] == CFG.modele.etiquette_simule
+
+
+@pytest.mark.parametrize(
+    "texte",
+    [
+        "the multi-agent beats the single agents",
+        "le multi\u2011agent bat",
+        "Multi\u2013Agent   BAT les agents seuls",
+        "outperforms the benchmark",
+        "outperformance",
+        "validated",
+        "robust",
+        "this proves it",
+        "confirms AlphaAgents",
+        "confirme les résultats du papier",
+        "hors-échantillon",
+        "hors\u00a0échantillon",
+        "out-of-sample",
+        "out of sample",
+        "calibrated confidence",
+        "la confiance est calibrée",
+        "le multi-agent l'emporte sur les agents seuls",
+        "ESG-compliant",
+        "fundamental analysis",
+        "analyses fondamentales",
+        "sur performance",
+        "réduit les biais de groupe",
+    ],
+)
+def test_variantes_anglaises_tirets_et_paraphrases_detectees(texte):
+    assert rp.formulations_interdites(texte), texte
+
+
+def test_formules_d_etiquette_toujours_autorisees():
+    for e in (CFG.modele.etiquette_hors_echantillon, CFG.modele.etiquette_marge):
+        assert not rp.formulations_interdites(e), e
+        assert not rp.formulations_interdites(e.upper())
+    assert rp.formulations_interdites(CFG.modele.etiquette_marge + " donc hors échantillon")
+
+
+def test_liste_interdite_vit_dans_la_config():
+    import inspect
+
+    assert len(CFG.rapport_interdit.motifs) >= 20
+    assert "outperform" not in inspect.getsource(rp).split("def normaliser")[0]

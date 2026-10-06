@@ -14,6 +14,7 @@ from amundi_agentic.data.models import LookAheadError
 from amundi_agentic.evaluation import inference as inf
 from amundi_agentic.evaluation import perf
 from amundi_agentic.evaluation.portefeuilles import decisions
+from amundi_agentic.tools.base import MissingDataError
 from amundi_agentic.tools.finance import sharpe_ratio
 
 AS_OF = date(2024, 6, 1)
@@ -173,3 +174,16 @@ def test_sharpe_vectorise_egal_a_tools_finance():
         )
         is None
     )
+
+
+def test_geler_garde_la_derniere_cloture_et_liste_les_cas():
+    p = _prix(10)
+    p.loc[p.index[6:], "B"] = np.nan  # prix arrêtés
+    p.loc[p.index[:2], "C"] = np.nan  # pas de clôture à l'entrée
+    g, cas = perf.geler(p)
+    assert not g.isna().any().any()
+    assert (g["B"].iloc[6:] == p["B"].iloc[5]).all() and cas["B"]["seances_gelees"] == 4
+    assert cas["B"]["derniere_cloture"] == str(p.index[5].date())
+    assert g["C"].iloc[0] == p["C"].iloc[2] and "premiere_cloture" in cas["C"] and "A" not in cas
+    with pytest.raises(MissingDataError):
+        perf.geler(p.assign(D=np.nan))
