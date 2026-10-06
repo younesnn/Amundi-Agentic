@@ -35,6 +35,14 @@ def load_dotenv(path: os.PathLike[str] | str | None = None) -> None:
             os.environ.setdefault(cle.strip(), valeur)
 
 
+def _jetons(valeur: Any) -> int:
+    """Nombre de jetons d'un champ `usage` ; absent, non numérique, négatif ou NaN : 0
+    (« inconnu », jamais une exception brute ni une preuve de troncature, D-062)."""
+    if isinstance(valeur, bool) or not isinstance(valeur, int | float):
+        return 0
+    return int(valeur) if 0 <= valeur < 10**12 else 0
+
+
 def _classify(exc: BaseException) -> ProviderError:
     """Traduit une exception LiteLLM en `ProviderError` (statut HTTP d'abord, puis classe)."""
     nom = type(exc).__name__
@@ -108,6 +116,7 @@ class LiteLLMTransport(Transport):
         max_tokens: int | None,
         timeout: float,
         json_mode: bool,
+        extra_params: dict[str, Any] | None = None,
     ) -> RawCompletion:
         lib = self._lib()
         params: dict[str, Any] = {
@@ -119,6 +128,10 @@ class LiteLLMTransport(Transport):
             "num_retries": 0,  # les nouvelles tentatives sont gérées par LLMClient
             **self._credentials(model),
         }
+        # Paramètres propres au fournisseur (ex. `num_ctx` Ollama : LiteLLM le range dans
+        # `options` de la requête). Jamais écrasés par les paramètres communs.
+        for k, v in (extra_params or {}).items():
+            params.setdefault(k, v)
         if max_tokens is not None:
             params["max_tokens"] = max_tokens
         if json_mode:
@@ -133,8 +146,8 @@ class LiteLLMTransport(Transport):
             return RawCompletion(
                 text=texte,
                 model_served=str(getattr(reponse, "model", "") or ""),
-                tokens_in=int(getattr(usage, "prompt_tokens", 0) or 0),
-                tokens_out=int(getattr(usage, "completion_tokens", 0) or 0),
+                tokens_in=_jetons(getattr(usage, "prompt_tokens", None)),
+                tokens_out=_jetons(getattr(usage, "completion_tokens", None)),
             )
         except (AttributeError, IndexError, TypeError) as exc:
             raise ProviderError("other", redact(f"réponse inattendue : {exc}")) from None
@@ -153,7 +166,7 @@ class LiteLLMTransport(Transport):
             return RawEmbedding(
                 vectors=[list(map(float, d["embedding"])) for d in donnees],
                 model_served=str(getattr(reponse, "model", "") or ""),
-                tokens_in=int(getattr(usage, "prompt_tokens", 0) or 0),
+                tokens_in=_jetons(getattr(usage, "prompt_tokens", None)),
             )
         except (KeyError, TypeError, AttributeError) as exc:
             raise ProviderError("other", redact(f"réponse inattendue : {exc}")) from None

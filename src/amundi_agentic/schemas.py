@@ -383,6 +383,13 @@ class ExecutionRecord(_Modele):
     latence_ms: int = Field(ge=0)
     erreur: str | None = None
     date_donnees: date
+    # D-062 (facultatifs) : jetons du prompt réellement évalués par le serveur, estimation
+    # locale du prompt envoyé, et fenêtre de contexte demandée (Ollama).
+    prompt_tokens_evalues: int | None = Field(default=None, ge=0)
+    prompt_tokens_estimes: int | None = Field(default=None, ge=0)
+    num_ctx: int | None = Field(default=None, gt=0)
+    # Vrai quand le serveur n'a pas renvoyé le nombre de jetons du prompt : détection aveugle.
+    detection_aveugle: bool | None = None
 
     @field_validator("prompt_sha256", "cle_cache")
     @classmethod

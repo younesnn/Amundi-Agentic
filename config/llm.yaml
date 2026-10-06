@@ -47,11 +47,40 @@ defaults:
   # Sortie structurée invalide : nouvelles tentatives avec rappel des erreurs de validation.
   structured_retries: 2
 
-# Cache disque (EX-NF-04) : clé = SHA-256(modèle demandé, messages, schéma, paramètres,
-# date_donnees). Chemin relatif à la racine du dépôt (.cache/ est ignoré par Git).
+# Cache disque (EX-NF-04) : clé = SHA-256(version du schéma de clé, modèle demandé, messages,
+# schéma, paramètres dont num_ctx pour Ollama, date_donnees). La version du schéma de clé a été
+# incrémentée (D-062) : les caches produits avec le contexte tronqué par défaut ne sont plus lus.
+# Chemin relatif à la racine du dépôt (.cache/ est ignoré par Git).
 cache:
   enabled: true
   dir: .cache/llm
+
+# Ollama (D-062). Sans `num_ctx`, Ollama tronque EN SILENCE les prompts à environ 2 000 jetons
+# (mesuré : prompt de ~9 000 jetons -> 2 050 évalués). Valeur retenue (H) : 16 384, qui tient en
+# mémoire sur le Mac de développement de 16 Go avec llama3.1:8b. Pour la changer : modifier la
+# ligne ci-dessous (32768 si la mémoire le permet). Mesuré : 16 384 occupe 6,9 Go (100 % GPU) ;
+# 8 192 si contention mémoire (les prompts de débat mesurés dépassent déjà 5 000 jetons : vérifier
+# avant de réduire). Elle entre dans la clé de cache : changer la valeur recalcule les réponses,
+# jamais de réutilisation d'un autre contexte. Obligatoire dès qu'un modèle Ollama est configuré.
+ollama:
+  num_ctx: 16384
+
+# Détection de troncature silencieuse (D-062), pour les fournisseurs listés. Estimation prudente
+# du prompt : caractères / chars_per_token (4,5 : texte anglais ; le français et les nombres en
+# donnent plus de jetons, donc l'estimation reste basse). Contrôle seulement au-dessus de
+# min_estimated_tokens (pas de faux positif sur prompts courts). Si jetons évalués par le serveur
+# < min_ratio x estimation : PromptTronque, sans relais ni cache. Ratios et seuil : H.
+# Saturation : jetons évalués >= saturation_ratio x num_ctx (0,98, H) : PromptTronque (motif
+# saturation), car une troncature à num_ctx laisse un rapport proche de 1. Usage (jetons du prompt)
+# absent ou nul : détection « aveugle » (journalisée, avertissement unique) ; en évaluation, erreur
+# UsageInconnu si exiger_usage_en_evaluation.
+truncation_check:
+  providers: [ollama]
+  chars_per_token: 4.5
+  min_estimated_tokens: 1000
+  min_ratio: 0.5
+  saturation_ratio: 0.98
+  exiger_usage_en_evaluation: true
 
 # Nouvelles tentatives sur erreur 503 et timeout (attente exponentielle) et pauses sur 429.
 retry:

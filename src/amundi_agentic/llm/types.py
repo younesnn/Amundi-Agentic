@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -88,6 +88,42 @@ class ProviderError(LLMError):
         self.status = status
 
 
+class PromptTronque(LLMError):  # noqa: N818
+    """Le serveur a évalué bien moins de jetons que le prompt envoyé (troncature silencieuse du
+    contexte, D-062). Pas une panne de fournisseur : ni relais, ni cache, ni nouvelle tentative."""
+
+    def __init__(
+        self,
+        estimes: int,
+        evalues: int,
+        num_ctx: int | None,
+        fournisseur: str,
+        motif: Literal["troncature", "saturation"] = "troncature",
+    ) -> None:
+        explication = (
+            f"contexte saturé (motif saturation) : {evalues} jetons évalués pour une fenêtre "
+            f"de {num_ctx} ; le prompt a probablement été coupé"
+            if motif == "saturation"
+            else f"prompt tronqué en silence (motif troncature) : {evalues} jetons évalués "
+            f"pour {estimes} estimés"
+        )
+        super().__init__(
+            f"{explication} par {fournisseur} (estimés {estimes}, évalués {evalues}, "
+            f"num_ctx={num_ctx}) ; augmenter `ollama.num_ctx` dans config/llm.yaml ou "
+            "raccourcir le prompt"
+        )
+        self.motif = motif
+        self.estimes = estimes
+        self.evalues = evalues
+        self.num_ctx = num_ctx
+        self.fournisseur = fournisseur
+
+
+class UsageInconnu(LLMError):  # noqa: N818
+    """Mode évaluation : le fournisseur contrôlé n'a pas renvoyé le nombre de jetons du prompt,
+    la non-troncature est invérifiable (D-062, `truncation_check.exiger_usage_en_evaluation`)."""
+
+
 class QuotaEpuise(LLMError):  # noqa: N818
     """Mode interactif : tous les modèles de la chaîne ont répondu 429 ou sont indisponibles."""
 
@@ -131,6 +167,7 @@ class Transport:
         max_tokens: int | None,
         timeout: float,
         json_mode: bool,
+        extra_params: dict[str, Any] | None = None,
     ) -> RawCompletion:
         raise NotImplementedError
 

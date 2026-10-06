@@ -74,6 +74,33 @@ class RelayCfg(_Cfg):
     on_unavailable_exhausted: bool = True
 
 
+class OllamaCfg(_Cfg):
+    """Réglages propres à Ollama (D-062). Sans `num_ctx`, Ollama tronque en silence les prompts
+    à environ 2 000 jetons : la valeur du fichier de config est donc toujours transmise."""
+
+    num_ctx: StrictInt | None = Field(default=None, gt=0)
+
+
+class TruncationCfg(_Cfg):
+    """Détection de troncature silencieuse du prompt (D-062).
+
+    Jetons estimés = caractères / `chars_per_token` ; le contrôle ne s'applique qu'au-dessus de
+    `min_estimated_tokens` ; échec si jetons évalués par le serveur < `min_ratio` x estimation.
+    """
+
+    # Défauts SÛRS : absente du fichier, la détection reste active pour Ollama.
+    providers: list[str] = Field(default_factory=lambda: ["ollama"])
+    chars_per_token: float = Field(default=4.5, gt=0)
+    min_estimated_tokens: int = Field(default=1000, ge=0)
+    min_ratio: float = Field(default=0.5, gt=0, le=1)
+    # Contexte saturé : jetons évalués >= saturation_ratio x num_ctx (H). Le serveur a
+    # probablement rempli sa fenêtre : rien ne prouve que le prompt tient entièrement.
+    saturation_ratio: float = Field(default=0.98, gt=0, le=1)
+    # Mode évaluation : un usage (nombre de jetons du prompt) inconnu pour un fournisseur
+    # contrôlé est une erreur (`UsageInconnu`) plutôt qu'une exécution non vérifiable.
+    exiger_usage_en_evaluation: bool = True
+
+
 class LimitCfg(_Cfg):
     # StrictInt : `true` (booléen) n'est pas une limite et ne devient pas 1.
     requests_per_day: StrictInt | None = Field(default=None, gt=0)
@@ -104,6 +131,8 @@ class LLMConfig(_Cfg):
     retry: RetryCfg = RetryCfg()
     relay: RelayCfg = RelayCfg()
     quotas: QuotasCfg = QuotasCfg()
+    ollama: OllamaCfg = OllamaCfg()
+    truncation_check: TruncationCfg = TruncationCfg()
     pricing: dict[str, PriceCfg] = Field(default_factory=dict)
     embeddings: dict[str, str] = Field(default_factory=dict)
     training_cutoff: dict[str, date] = Field(default_factory=dict)
@@ -119,6 +148,13 @@ class LLMConfig(_Cfg):
         ]:
             if "/" not in ident or ident.split("/", 1)[0] not in self.providers:
                 raise ValueError(f"identifiant {ident!r} : fournisseur absent de `providers`")
+        utilises = {*self.models.values(), *self.evaluation.models.values()}
+        if self.ollama.num_ctx is None and any(i.startswith("ollama/") for i in utilises):
+            raise ValueError(
+                "un modèle Ollama est configuré sans `ollama.num_ctx` : Ollama tronquerait "
+                "en silence les prompts à environ 2 000 jetons (D-062) ; fixer `ollama: "
+                "{num_ctx: ...}` dans config/llm.yaml"
+            )
         for niveau, chaine in self.fallback_order.items():
             if niveau not in self.models or not set(chaine) <= set(self.models):
                 raise ValueError(f"fallback_order.{niveau} cite un niveau non déclaré")
@@ -159,6 +195,12 @@ class LLMConfig(_Cfg):
         niveaux = self.fallback_order.get(tier, [tier])
         return [(n, self.models[n]) for n in niveaux]
 
+    def provider_params(self, provider: str) -> dict[str, Any]:
+        """Paramètres propres à un fournisseur, transmis tels quels au transport (D-062)."""
+        if provider == "ollama" and self.ollama.num_ctx is not None:
+            return {"num_ctx": self.ollama.num_ctx}
+        return {}
+
     def embedding_model(self, profile: Profil) -> str:
         try:
             return self.embeddings[profile]
@@ -172,11 +214,31 @@ class LLMConfig(_Cfg):
         return limites.get(model) or limites.get(provider) or LimitCfg()
 
 
+class _ChargeurStrict(yaml.SafeLoader):
+    """`SafeLoader` qui refuse les clés dupliquées (PyYAML garde la dernière en silence)."""
+
+
+def _construire_mapping(loader: yaml.SafeLoader, node: yaml.MappingNode, deep: bool = False):
+    vues: set[Any] = set()
+    for cle_node, _ in node.value:
+        cle = loader.construct_object(cle_node, deep=deep)
+        if cle in vues:
+            raise yaml.YAMLError(f"clé dupliquée : {cle!r} (ligne {cle_node.start_mark.line + 1})")
+        vues.add(cle)
+    return yaml.SafeLoader.construct_mapping(loader, node, deep=deep)
+
+
+_ChargeurStrict.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _construire_mapping)
+
+
 def load_config(path: Path | None = None, overrides: dict[str, Any] | None = None) -> LLMConfig:
     """Charge `config/llm.yaml` ; `overrides` (fusion superficielle par section) sert aux tests."""
     fichier = path or CONFIG_PATH
     octets = fichier.read_bytes()
-    brut = yaml.safe_load(octets.decode("utf-8"))
+    try:
+        brut = yaml.load(octets.decode("utf-8"), Loader=_ChargeurStrict)  # noqa: S506
+    except yaml.YAMLError as exc:
+        raise ConfigurationError(f"YAML invalide : {exc}") from None
     for section, valeur in (overrides or {}).items():
         if isinstance(valeur, dict) and isinstance(brut.get(section), dict):
             brut[section] = {**brut[section], **valeur}

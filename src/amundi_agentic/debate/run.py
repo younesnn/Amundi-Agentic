@@ -18,7 +18,13 @@ from amundi_agentic.agents.coordinator import Coordinator
 from amundi_agentic.agents.esg import EsgAgent, actifs_vetoes, filtrer_univers
 from amundi_agentic.agents.risk import RiskAgent
 from amundi_agentic.debate.orchestrator import DebateResult, construire_votants, run_debate
-from amundi_agentic.llm.types import ExecutionPausee, ProviderError, QuotaEpuise
+from amundi_agentic.llm.types import (
+    ExecutionPausee,
+    PromptTronque,
+    ProviderError,
+    QuotaEpuise,
+    UsageInconnu,
+)
 from amundi_agentic.schemas import AppelJournal, EsgAssessment, View
 from amundi_agentic.tools.base import ToolError
 
@@ -96,6 +102,14 @@ def executer(
         except (KeyError, ToolError) as exc:  # données absentes du stockage : débat non terminé
             sortie.echecs[nom] = (
                 f"données indisponibles ({type(exc).__name__}) : "
+                f"{str(exc)[: ctx.settings.limites.motif_max_caracteres]}"
+            )
+            sortie.appels_echecs += ctx.vider_journaux()[0]
+        except (PromptTronque, UsageInconnu) as exc:
+            # D-062 : jamais de poursuite sur un prompt tronqué ; le vote précédent n'est
+            # conservé que pour les pannes de fournisseur. Les autres débats continuent.
+            sortie.echecs[nom] = (
+                f"débat non terminé : prompt tronqué (D-062) : {type(exc).__name__} : "
                 f"{str(exc)[: ctx.settings.limites.motif_max_caracteres]}"
             )
             sortie.appels_echecs += ctx.vider_journaux()[0]

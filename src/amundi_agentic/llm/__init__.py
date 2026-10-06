@@ -14,9 +14,11 @@ from amundi_agentic.llm.types import (
     Message,
     ModeleServiChange,
     PromptRef,
+    PromptTronque,
     ProviderError,
     QuotaEpuise,
     StructuredOutputError,
+    UsageInconnu,
 )
 
 __all__ = [
@@ -32,8 +34,10 @@ __all__ = [
     "MockTransport",
     "ModeleServiChange",
     "PromptRef",
+    "PromptTronque",
     "ProviderError",
     "QuotaEpuise",
     "StructuredOutputError",
+    "UsageInconnu",
     "load_config",
 ]

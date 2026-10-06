@@ -23,7 +23,7 @@ import uuid
 from collections.abc import Callable, Mapping, Sequence
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ValidationError
 
@@ -46,12 +46,14 @@ from amundi_agentic.llm.types import (
     Message,
     ModeleServiChange,
     PromptRef,
+    PromptTronque,
     ProviderError,
     QuotaEpuise,
     RawCompletion,
     RawEmbedding,
     StructuredOutputError,
     Transport,
+    UsageInconnu,
     sha256_text,
 )
 from amundi_agentic.schemas import ExecutionRecord, ModeExecution
@@ -133,6 +135,7 @@ class LLMClient:
         )
         self.records: list[ExecutionRecord] = []
         self._cooldown: dict[str, float] = {}
+        self._aveugle_signale = False
         self._lock = threading.Lock()
         self._fige: dict[str, str] = self._charger_fige()
 
@@ -210,7 +213,14 @@ class LLMClient:
             model=chaine[0][1],
             messages=[m.model_dump() for m in msgs],
             schema=schema_json,
-            params={"temperature": temp, "seed": graine, "max_tokens": max_tok},
+            params={
+                "temperature": temp,
+                "seed": graine,
+                "max_tokens": max_tok,
+                # Paramètres du fournisseur (num_ctx Ollama) : un résultat obtenu avec un autre
+                # contexte n'est jamais réutilisé (D-062).
+                **self.config.provider_params(chaine[0][1].split("/", 1)[0]),
+            },
             date_donnees=date_donnees,
             scope=self._scope,
         )
@@ -392,7 +402,10 @@ class LLMClient:
             if i < dernier_indice and self._monotonic() < self._cooldown.get(modele, 0.0):
                 continue  # modèle récemment à court de quota : relais direct
 
-            def appel(modele: str = modele) -> RawCompletion:
+            extra = self.config.provider_params(fournisseur)
+
+            def appel(modele: str = modele, extra: dict[str, Any] = extra) -> RawCompletion:
+                kw: dict[str, Any] = {"extra_params": extra} if extra else {}
                 return self._transport.completion(
                     model=modele,
                     messages=dicts,
@@ -401,6 +414,7 @@ class LLMClient:
                     max_tokens=max_tokens,
                     timeout=self.config.defaults.timeout_s,
                     json_mode=json_mode,
+                    **kw,
                 )
 
             try:
@@ -416,7 +430,22 @@ class LLMClient:
                 ):
                     continue
                 raise
-            rec = self._enregistrer(raw, ctx, niveau, modele, i > 0, latence)
+            estimes = self._estimer_jetons(dicts)
+            num_ctx = extra.get("num_ctx")
+            aveugle = self._verifier_troncature(
+                raw, fournisseur, estimes, num_ctx, ctx, niveau, modele, i > 0, latence
+            )
+            rec = self._enregistrer(
+                raw,
+                ctx,
+                niveau,
+                modele,
+                i > 0,
+                latence,
+                estimes=estimes,
+                num_ctx=num_ctx,
+                aveugle=aveugle,
+            )
             return raw, rec, i > 0
         # Le dernier modèle n'est jamais ignoré : on n'arrive ici qu'après une erreur.
         if derniere_erreur is None or derniere_erreur.kind == "quota":
@@ -424,6 +453,79 @@ class LLMClient:
                 "quota épuisé sur tous les modèles de la chaîne de relais (mode interactif)"
             ) from None
         raise derniere_erreur
+
+    def _estimer_jetons(self, dicts: list[dict[str, str]]) -> int:
+        """Estimation prudente (basse) des jetons du prompt : caractères / chars_per_token."""
+        caracteres = sum(len(m["content"]) for m in dicts)
+        return int(caracteres / self.config.truncation_check.chars_per_token)
+
+    def _verifier_troncature(
+        self,
+        raw: Any,
+        fournisseur: str,
+        estimes: int,
+        num_ctx: int | None,
+        ctx: _Contexte,
+        niveau: str,
+        modele: str,
+        relais: bool,
+        latence: int,
+    ) -> bool:
+        """Échec franc si le serveur a évalué trop peu de jetons (troncature silencieuse) ou a
+        saturé sa fenêtre (D-062). Ni relais, ni cache : l'exception n'est pas une `ProviderError`.
+
+        Renvoie True si la détection est « aveugle » (usage inconnu : absent, nul, négatif ou non
+        numérique) : ce n'est pas une preuve de troncature ; en mode évaluation, c'est une erreur
+        `UsageInconnu` si `exiger_usage_en_evaluation`."""
+        cfg = self.config.truncation_check
+        if fournisseur not in cfg.providers:
+            return False
+        brut = getattr(raw, "tokens_in", None)
+        connu = isinstance(brut, int | float) and not isinstance(brut, bool) and brut > 0
+        evalues = int(brut) if connu else 0  # type: ignore[arg-type]
+        tokens_out = getattr(raw, "tokens_out", 0)
+        tokens_out = tokens_out if isinstance(tokens_out, int) and tokens_out >= 0 else 0
+        servi = getattr(raw, "model_served", "")
+        if not connu:
+            if estimes < cfg.min_estimated_tokens:
+                return False  # prompt court : rien à vérifier
+            message = (
+                f"usage (jetons du prompt) inconnu pour {fournisseur} : troncature invérifiable"
+            )
+            if self.mode == "evaluation" and cfg.exiger_usage_en_evaluation:
+                self._enregistrer_erreur(
+                    ctx, niveau, modele, relais, latence, "usage_inconnu", message,
+                    servi=servi, tokens_out=tokens_out, estimes=estimes, num_ctx=num_ctx,
+                    aveugle=True,
+                )  # fmt: skip
+                raise UsageInconnu(message)
+            if not self._aveugle_signale:
+                self._aveugle_signale = True
+                log.warning("détection de troncature aveugle : %s (avertissement unique)", message)
+            return True
+        motif: Literal["troncature", "saturation"] | None = None
+        if estimes >= cfg.min_estimated_tokens and evalues < cfg.min_ratio * estimes:
+            motif = "troncature"
+        elif num_ctx is not None and evalues >= cfg.saturation_ratio * num_ctx:
+            motif = "saturation"
+        if motif is None:
+            return False
+        exc = PromptTronque(estimes, evalues, num_ctx, fournisseur, motif)
+        self._enregistrer_erreur(
+            ctx,
+            niveau,
+            modele,
+            relais,
+            latence,
+            "prompt_tronque" if motif == "troncature" else "prompt_tronque_saturation",
+            redact(exc),
+            servi=servi,
+            tokens_in=evalues,
+            tokens_out=tokens_out,
+            estimes=estimes,
+            num_ctx=num_ctx,
+        )
+        raise exc
 
     def _tenter(
         self,
@@ -619,7 +721,17 @@ class LLMClient:
         return rec
 
     def _enregistrer(
-        self, raw: Any, ctx: _Contexte, niveau: str, modele: str, relais: bool, latence_ms: int
+        self,
+        raw: Any,
+        ctx: _Contexte,
+        niveau: str,
+        modele: str,
+        relais: bool,
+        latence_ms: int,
+        *,
+        estimes: int | None = None,
+        num_ctx: int | None = None,
+        aveugle: bool = False,
     ) -> ExecutionRecord:
         tin, tout = getattr(raw, "tokens_in", 0), getattr(raw, "tokens_out", 0)
         servi = getattr(raw, "model_served", "") or "inconnu"
@@ -634,6 +746,10 @@ class LLMClient:
                 tokens_sortie=tout,
                 cout_eur=self._cout(fournisseur, tin, tout),
                 latence_ms=latence_ms,
+                prompt_tokens_evalues=tin if estimes is not None and not aveugle else None,
+                prompt_tokens_estimes=estimes,
+                num_ctx=num_ctx,
+                detection_aveugle=True if aveugle else None,
             )
         )
 
@@ -651,6 +767,9 @@ class LLMClient:
         tokens_in: int = 0,
         tokens_out: int = 0,
         cache_hit: bool = False,
+        estimes: int | None = None,
+        num_ctx: int | None = None,
+        aveugle: bool = False,
     ) -> None:
         self._publier(
             ExecutionRecord(
@@ -661,6 +780,10 @@ class LLMClient:
                 tokens_sortie=tokens_out,
                 cout_eur=self._cout(modele.split("/", 1)[0], tokens_in, tokens_out),
                 latence_ms=latence,
+                prompt_tokens_evalues=tokens_in if estimes is not None and not aveugle else None,
+                prompt_tokens_estimes=estimes,
+                num_ctx=num_ctx,
+                detection_aveugle=True if aveugle else None,
                 erreur=f"{kind}: {msg}"[:500],
             )
         )
