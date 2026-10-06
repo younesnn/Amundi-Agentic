@@ -520,3 +520,15 @@ def test_variables_d_environnement_des_donnees_documentees_et_distinguees():
 
 
 _ = (subprocess, date)
+
+
+def test_comparaison_avec_le_papier_qualitative_aucun_chiffre_du_papier(run_mock):
+    texte = (run_mock[1] / "rapport.md").read_text(encoding="utf-8")
+    bloc = texte.split("## Comparaison qualitative avec le papier")[1].split("## Limites")[0]
+    lignes = [l for l in bloc.splitlines() if l.startswith("|") and not set(l) <= set("|- ")][1:]
+    assert lignes, "tableau qualitatif absent"
+    for l in lignes:
+        col_papier, col_observe, col_lecture = (c.strip() for c in l.strip("|").split("|"))
+        assert not re.search(r"\d", col_papier), col_papier  # aucune valeur attribuée au papier
+        assert col_lecture in {"cohérent", "différent", "indéterminé"}
+    assert "aucun chiffre du papier" in texte.lower()

@@ -508,3 +508,63 @@ def test_portefeuille_vide_en_tresorerie_compare_a_un_portefeuille_d_actions_art
         assert pf[nom]["tresorerie"] is True and pf[nom]["m"] == 0
     assert pf["valuation_seul"]["tresorerie"] is False
     assert pf["multi_agent"]["cumul"] == pytest.approx(res["fenetre"]["cumul_tresorerie"])
+
+
+def test_references_ref15_tous_evalues_tresorerie_et_rf_de_la_fenetre_oracle():
+    plan = {t: (1, 1, 1) for t in TIT}
+    res = _analyse(plan)
+    src = _Src()
+    rel = src.p.iloc[-1] / src.p.iloc[0]
+    ref15 = res["references"]["ref15"]
+    assert ref15["m"] == 15 and ref15["cumul"] == pytest.approx(rel.mean() - 1, rel=1e-12)
+    tous = res["references"]["tous_evalues"]
+    assert tous["m"] == 15 and tous["cumul"] == pytest.approx(rel.mean() - 1, rel=1e-12)
+    cash = res["references"]["tresorerie"]
+    taux_j = (1 + 0.053) ** (1 / 252)
+    assert cash["tresorerie"] is True and cash["cumul"] == pytest.approx(
+        taux_j ** (len(IDX) - 1) - 1, rel=1e-10
+    )
+    assert res["fenetre"]["rf_annuel"] == pytest.approx(
+        0.053
+    )  # DGS1MO 5,3 % constant -> 0,053 décimal
+    assert (
+        res["fenetre"]["n_seances"] == len(IDX) == 87 and res["fenetre"]["entree"] == "2024-02-01"
+    )
+    # sharpe de ref15 = (R_ann - R_f) / sigma_ann, recalculé ici
+    p15 = (src.p / src.p.iloc[0]).mean(axis=1).to_numpy()
+    r = p15[1:] / p15[:-1] - 1
+    ann = (p15[-1] / p15[0]) ** (252 / len(r)) - 1
+    assert ref15["sharpe"] == pytest.approx((ann - 0.053) / (r.std(ddof=1) * SQ), rel=1e-10)
+    assert (
+        ref15["sharpe_intervalle"] is not None
+        and ref15["sharpe_intervalle"][0] < ref15["sharpe"] < ref15["sharpe_intervalle"][1]
+    )
+
+
+def test_tous_evalues_exclut_les_titres_sans_debat_ok():
+    plan = {t: (1, 1, 1) for t in TIT}
+    cfg = charger_config(
+        overrides={
+            "tirage": {"n_titres": 14, "n_tirages_secondaires": 0},
+            "inference": {"bootstrap": {"n_reechantillonnages": 100}},
+            "profils": ["risk_averse"],
+            "executions": [
+                {"nom": "baseline", "temperature": 0.0, "paraphrase": None, "graine_llm": 0}
+            ],
+        }
+    )
+    debats = {
+        f"baseline|risk_averse|{t}": _debat(*plan[t]) for t in TIT[:-2]
+    }  # deux titres sans débat
+    debats[f"baseline|risk_averse|{TIT[-1]}"] = {
+        **_debat(1, 1, 1),
+        "statut_debat": "echec_donnees",
+        "motif": "x",
+    }
+    tir = Tirage(tuple(TIT[1:]), tuple(TIT), tuple(TIT[1:]))
+    res = analyse.analyser(cfg, _Src(), debats, {}, tir, TIT, ["baseline"])
+    assert sorted(res["titres"]["evalues"]) == sorted(TIT[:-2])
+    assert (
+        res["references"]["tous_evalues"]["m"] == len(TIT) - 2
+        and res["references"]["ref15"]["m"] == 15
+    )
