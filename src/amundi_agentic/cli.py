@@ -2,6 +2,7 @@
 
 amundi-agentic data fetch --sources prices,fx,macro,filings,news,esg,pool
 amundi-agentic data coverage
+amundi-agentic preregister [--check] ; amundi-agentic replicate --plan|--run
 amundi-agentic views --date AAAA-MM-JJ --profile equilibre --llm-profile dev --out runs/ [--mock]
 """
 
@@ -30,12 +31,23 @@ def main(argv: list[str] | None = None) -> int:
     from amundi_agentic.debate.commande import ajouter_parseur
 
     ajouter_parseur(sub)
+    from amundi_agentic.evaluation.commande import ajouter_parseurs
+
+    ajouter_parseurs(sub)
     args = p.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     if args.cmd == "views":
         from amundi_agentic.debate.commande import executer_commande
 
         return executer_commande(args, argv)
+    if args.cmd == "preregister":
+        from amundi_agentic.evaluation.commande import executer_preregister
+
+        return executer_preregister(args)
+    if args.cmd == "replicate":
+        from amundi_agentic.evaluation.commande import executer_replicate
+
+        return executer_replicate(args, argv)
 
     from amundi_agentic.data.settings import DataSettings
 

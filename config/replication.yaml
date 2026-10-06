@@ -1,0 +1,156 @@
+# Protocole de réplication AlphaAgents (D-065, qui remplace D-021 et L1 §9.3). Gelé par la commande
+# `amundi-agentic preregister` AVANT tout run (D-027) : ce fichier entier est le « plan d'analyse »
+# qui est hashé et recopié dans l'enregistrement. Toute modification crée une nouvelle version datée.
+#
+# Objet : vérifier la mécanique et la cohérence QUALITATIVE avec le papier. Aucune conclusion de
+# performance (15 titres du même secteur, une fenêtre de 4 mois : puissance pratiquement nulle).
+# (H) = hypothèse de conception, non mesurée. Le code ne contient aucune de ces valeurs.
+
+protocole:
+  nom: alphaagents_replication        # H : nom du dossier runs/preregistration/<nom>/
+  reference: D-065
+
+cible:
+  date_decision: 2024-02-01           # t : décisions prises avec des données STRICTEMENT antérieures
+  fin_suivi: 2024-05-31               # dernière séance de suivi, incluse
+  as_of_performance: 2024-06-01       # H : date servie à la couche de données pour la mesure après coup
+                                      # (prix connus < as_of, donc jusqu'à fin_suivi inclus, jamais au-delà)
+  prix_entree: premiere_cloture_a_partir_de_t   # H : l'achat se fait à la clôture de la 1re séance >= t
+                                                # (les décisions n'ont vu que des séances < t : un jour de délai)
+  devise_performance: USD             # H : le papier et DGS1MO sont en dollars ; pas de bruit de change
+  prix: adj_close                     # H : cours ajustés des dividendes (rendement total)
+  rebalancement: unique               # un seul rééquilibrage (achat et conservation à poids initiaux égaux)
+  couts_de_transaction: non_modelises # H : performance surestimée (le papier non plus n'en modélise pas)
+
+profils: [risk_averse, risk_neutral]  # papier §2.3 ; les prompts de profil sont dans agent_prompts/profils_v1.md
+
+pool:
+  # Le pool daté (révision Wikipédia du 2024-01-21, D-037) vient de config/universe.yaml `stocks.pool`
+  # et du stockage (`universe/pool`). ZS n'en fait pas partie : ajouté d'office, hors pool.
+  titre_hors_pool: ZS                 # doit être égal à universe.yaml stocks.paper_named_ticker
+  # Règle d'utilisabilité fixée d'avance (L1 §9.3 pt 4) : ne dépend ni d'une décision ni d'une valeur
+  # de performance, seulement de la disponibilité des données.
+  barres_min_historique: 252          # H : séances strictement antérieures à t (fenêtre de DEFAULT_WINDOW)
+  barres_min_janvier: 10              # H : séances dans les 31 jours calendaires précédant t
+  depot_requis_avant_t: true          # au moins un 10-K ou 10-Q accepté avant t (index EDGAR du stockage)
+  formulaires: ["10-K", "10-Q"]
+  # AUCUNE condition sur des données postérieures à t (revue B1) : ni nombre de séances de suivi, ni
+  # existence d'une clôture après t. Un titre dont les prix s'arrêtent avant la fin du suivi (radiation,
+  # suspension, absorption) reste dans l'univers ; règle fixée AVANT les résultats (H) :
+  titre_sans_prix_en_fin_de_suivi: derniere_valeur_connue   # le portefeuille garde la dernière clôture connue
+                                                            # (position gelée) jusqu'à fin_suivi ; le rapport les liste
+  depots_texte_requis: false          # H : true restreindrait le pool aux titres dont les TEXTES de dépôts
+                                      # sont dans le stockage (sinon Fundamental s'abstient : voir `replicate --plan`)
+
+tirage:
+  n_titres: 14                        # le papier : 15 titres au total = ZS + 14
+  graine: 20240201                    # H : graine du tirage ; SON SHA-256 est enregistré AVANT le tirage
+  methode: tri_par_sha256             # permutation fixée d'avance : tri des titres par SHA-256(graine|titre)
+  remplacement: titre_suivant_dans_la_permutation   # ne se déclenche que sur échec technique (données, fournisseur),
+                                                    # jamais sur une abstention, une décision ou une performance
+  n_tirages_secondaires: 1000         # rééchantillonnent le pool déjà évalué : AUCUN appel LLM de plus
+  graine_secondaires: 20240202        # H
+
+evaluation:
+  agents_votants: [valuation, fundamental]   # D-044 : pas d'agent Sentiment dans la réplication
+  inclure_sentiment: false
+  journal_complet: false              # true : un DebateLog complet par débat (volumineux : prompts et réponses)
+
+executions:                           # un débat par titre, profil et exécution ; sans cache partagé entre elles
+  - {nom: baseline, temperature: 0.0, paraphrase: null, graine_llm: 0}
+  - {nom: paraphrase_1, temperature: 0.0, paraphrase: paraphrase_1, graine_llm: 0}
+  - {nom: paraphrase_2, temperature: 0.0, paraphrase: paraphrase_2, graine_llm: 0}
+  - {nom: t07_1, temperature: 0.7, paraphrase: null, graine_llm: 1}
+  - {nom: t07_2, temperature: 0.7, paraphrase: null, graine_llm: 2}
+  - {nom: t07_3, temperature: 0.7, paraphrase: null, graine_llm: 3}
+  - {nom: t07_4, temperature: 0.7, paraphrase: null, graine_llm: 4}
+  - {nom: t07_5, temperature: 0.7, paraphrase: null, graine_llm: 5}
+paraphrases:                          # recouvrements de prompts : fichiers <nom>_v1.md, mêmes en-têtes, mêmes variables
+  dossier: config/replication_paraphrases
+  prompts_paraphrases: [valuation_titre, fundamental, profils, regles_communes, debate_round, devil,
+                        coordinator_report, coordinator_arbitrage]
+
+mapping:
+  buy_si_niveau_superieur_a: 0        # niveau final > 0 : BUY ; sinon SELL (pas de HOLD, comme dans le papier)
+  abstention: exclu_des_portefeuilles_signal   # abstention, rejet d'ancrage ou voix_unique : titre exclu, JAMAIS SELL implicite
+  sensibilite_abstention_buy: true    # rapportée à côté (revue I2) : les titres abstenus sont INCLUS au portefeuille
+                                      # « signal » ; un portefeuille ne contenant que des BUY, lire l'abstention
+                                      # comme SELL ne changerait rien. Taux d'abstention par agent et profil publiés.
+  portefeuille_vide: tresorerie       # liquidités rémunérées au taux sans risque
+
+taux_sans_risque:
+  serie: "fred:DGS1MO"                # papier : Treasury 1 mois (en %, converti en décimal)
+  mode: moyenne_sur_la_fenetre        # H : taux annuel moyen sur [entrée, fin_suivi] pour les Sharpe
+  tresorerie: taux_du_jour_reporte    # H : taux de la dernière observation connue, jour par jour
+
+performance:
+  fenetre_sharpe_glissant: 21         # H : séances (le papier ne donne pas sa fenêtre) ; pas de valeur dans le rapport :
+                                      # un Sharpe sans intervalle est interdit (D-064), la trajectoire va dans un CSV marqué
+
+distribution_aleatoire:
+  max_exact: 200000                   # H : énumération exacte de C(n, m) si C <= max_exact
+  n_echantillon: 20000                # H : sinon échantillon (graine ci-dessous)
+  graine: 20240203                    # H
+
+inference:
+  bootstrap:
+    methode: stationnaire             # Politis et Romano (1994)
+    longueur_moyenne_bloc: 5          # H : blocs de 5 séances
+    n_reechantillonnages: 10000       # H
+    graine: 20240204                  # H
+    niveau: 0.95
+  wilson_niveau: 0.95
+
+regles_rapport:                       # D-065 §10, appliquées par le code
+  min_titres_differents: 4
+  # « non concluant » si : l'intervalle d'une différence contient 0 ; moins de min_titres_differents titres diffèrent
+  # entre les portefeuilles comparés ; l'écart est inférieur au désaccord entre exécutions ; ou le multi-agent ne bat pas ET.
+  desaccord_entre_executions: ecart_type   # H : écart-type, sur les exécutions, de la différence comparée
+  regle_a_battre: ET
+  comparaisons_agents_seuls: [valuation_seul, fundamental_seul]
+  profils_requis: tous                # « meilleur » seulement si toutes les conditions tiennent sur les deux profils
+  jamais_de_moyenne_entre_modeles: true
+
+modele:
+  marge_contamination_mois: 3         # D-064 : un résultat n'est dit « hors échantillon » que si la date de décision
+                                      # dépasse la fin d'entraînement PLUS cette marge
+  etiquette_contamine: "contaminé"
+  etiquette_hors_echantillon: "hors échantillon sous réserve d'un sondage de mémoire"
+  etiquette_marge: "dans la marge de contamination : hors échantillon non garanti, sondage de mémoire requis"
+  etiquette_inconnue: "fin d'entraînement non renseignée dans config/llm.yaml (training_cutoff) : aucune étiquette hors échantillon"
+  etiquette_simule: "LLM simulé : essai de mécanique, aucun résultat de modèle"
+
+cout:
+  secondes_par_appel: null            # À RENSEIGNER après mesure (D-062 : à remesurer avec le contexte corrigé) ; jamais inventé
+
+rapport_interdit:                     # D-064 : formulations interdites (revue N1), regex sur le texte NORMALISÉ
+  # normalisation : minuscules, sans accents, apostrophes droites, tous les tirets (insécables compris) et
+  # espaces réduits à un espace. Les formules d'étiquette de `modele` sont retirées avant le balayage.
+  motifs:
+    - 'multi agents? (bat|battent|beats?|outperforms?|surperforme\w*|l.emporte)'
+    - 'bat(tent)? les agents seuls'
+    - 'beats? the single agents'
+    - 'l.emporte sur les agents seuls'
+    - 'multi agents? (est|sont) meilleurs? que les agents seuls'
+    - 'confirm\w* (les )?(resultats )?(d.?|du )?(alphaagents|papier|paper)'
+    - 'reduit\w* (la pensee|les biais) de groupe'
+    - 'reduces? groupthink'
+    - 'confiance (est )?calibree'
+    - 'calibrated confidence'
+    - 'probabilite de succes'
+    - 'probability of success'
+    - '\balphas?\b'
+    - 'sur ?performance'
+    - 'surperform\w*'
+    - 'outperform\w*'
+    - '\brobust\w*'
+    - '\bvalid(e|es|ee|ees|ated)\b'
+    - '\bvalidates?\b'
+    - 'conforme esg'
+    - 'esg compliant'
+    - 'analyses? fondamentales?'
+    - 'fundamental analysis'
+    - 'prouv\w* la qualite'
+    - '\bprouve\w*'
+    - '\bproves?\b|\bproved\b|\bproven\b'
+    - 'out of sample'
