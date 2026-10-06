@@ -212,6 +212,13 @@ def test_journaux_calls_jsonl_date_donnees_toujours_t(tmp_path):
     assert dates <= {"2024-02-01"}, dates
 
 
+def _interdit(nom):
+    def f(*a, **k):
+        raise AssertionError(nom)
+
+    return f
+
+
 def test_aucun_prix_ni_taux_de_suivi_lu_pendant_les_decisions_et_perf_jamais_appelee(
     tmp_path, monkeypatch
 ):
@@ -228,9 +235,7 @@ def test_aucun_prix_ni_taux_de_suivi_lu_pendant_les_decisions_et_perf_jamais_app
         "rendements",
         "prix_relatifs",
     ):
-        monkeypatch.setattr(
-            perf_mod, nom, lambda *a, **k: (_ for _ in ()).throw(AssertionError(nom))
-        )
+        monkeypatch.setattr(perf_mod, nom, _interdit(nom))
     etat = Etat(tmp_path / "e.json", cfg.source_sha256 or "")
     produire_decisions(
         cfg,
