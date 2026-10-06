@@ -42,6 +42,24 @@ def lancer(tmp_path, *extra, date_="2024-02-01", profil="equilibre", llm_profile
     return code, dossiers[-1] if dossiers else None
 
 
+_RUNS: dict[tuple, tuple] = {}
+
+
+@pytest.fixture(scope="module")
+def run_partage(tmp_path_factory):
+    """Un run par combinaison d'options pour tout le module (les tests de lecture le partagent :
+    la suite reste rapide). Les tests qui vérifient l'écriture ou la répétition lancent le leur."""
+
+    def obtenir(*extra, date_="2024-02-01", profil="equilibre", llm_profile="dev"):
+        cle = (extra, date_, profil, llm_profile)
+        if cle not in _RUNS:
+            racine = tmp_path_factory.mktemp("run")
+            _RUNS[cle] = lancer(racine, *extra, date_=date_, profil=profil, llm_profile=llm_profile)
+        return _RUNS[cle]
+
+    return obtenir
+
+
 def normaliser(o, run_id):
     """Journal sans ce qui varie légitimement (horodatages, durées, identifiants uniques)."""
     volatil = {"appel_id", "horodatage", "duree_s", "latence_ms", "duree_ms", "debut", "fin"}
@@ -75,13 +93,14 @@ def test_deux_executions_identiques_donnent_des_journaux_identiques_hors_horodat
     (tmp_path / "b").mkdir()
     ca, ra = lancer(tmp_path / "a")
     cb, rb = lancer(tmp_path / "b")
-    assert ca == cb == 0
+    assert ca == cb == 0 and ra != rb
     ea, eb = empreinte_run(ra), empreinte_run(rb)
     assert set(ea) == set(eb) and len(ea) > 8
     for nom in ea:
         assert ea[nom] == eb[nom], f"journal différent : {nom}"
 
 
+@pytest.mark.slow
 def test_la_graine_et_le_profil_changent_les_journaux_attendus(tmp_path):
     (tmp_path / "a").mkdir()
     (tmp_path / "b").mkdir()
@@ -94,8 +113,8 @@ def test_la_graine_et_le_profil_changent_les_journaux_attendus(tmp_path):
     assert ca != (rb / "calls.jsonl").read_text()  # le profil change les requêtes (donc les clés)
 
 
-def test_run_record_complet_et_hashes_verifiables(tmp_path):
-    code, run = lancer(tmp_path)
+def test_run_record_complet_et_hashes_verifiables(run_partage):
+    code, run = run_partage()
     assert code == 0
     rec = RunRecord.model_validate_json((run / "run.json").read_text())
     ex = json.loads((run / "execution.json").read_text())
@@ -143,8 +162,8 @@ def test_le_hash_de_la_configuration_du_debat_change_si_le_yaml_change(tmp_path,
     assert a and load_settings(copie).source_sha256 not in (None, a)
 
 
-def test_graine_cli_enregistree(tmp_path):
-    code, run = lancer(tmp_path, "--seed", "7")
+def test_graine_cli_enregistree(run_partage):
+    code, run = run_partage("--seed", "7")
     assert code == 0
     assert json.loads((run / "run.json").read_text())["graine"] == 7
     assert {json.loads(x)["graine"] for x in (run / "calls.jsonl").read_text().splitlines()} == {7}
@@ -231,14 +250,14 @@ def test_entrees_invalides_donnent_un_code_2_et_un_message(tmp_path, extra, prof
     assert code == 2 and capsys.readouterr().err
 
 
-def test_assets_et_stocks_vides_limitent_la_sortie(tmp_path):
-    code, run = lancer(tmp_path, "--assets", "or", "--stocks", "")
+def test_assets_et_stocks_vides_limitent_la_sortie(run_partage):
+    code, run = run_partage("--assets", "or", "--stocks", "")
     assert code == 0
     assert {v["actif"] for v in json.loads((run / "views.json").read_text())} == {"or"}
 
 
-def test_le_residuel_monetaire_est_ecarte_meme_demande_avec_d_autres_actifs(tmp_path):
-    code, run = lancer(tmp_path, "--assets", "or,monetaire_euro", "--stocks", "")
+def test_le_residuel_monetaire_est_ecarte_meme_demande_avec_d_autres_actifs(run_partage):
+    code, run = run_partage("--assets", "or,monetaire_euro", "--stocks", "")
     assert code == 0
     assert "monetaire_euro" not in {
         v["actif"] for v in json.loads((run / "views.json").read_text())
@@ -294,6 +313,7 @@ def test_mock_n_ecrit_rien_hors_du_dossier_de_sortie(tmp_path, monkeypatch):
     assert list(tmp_sys.iterdir()) == []
 
 
+@pytest.mark.slow
 def test_journaux_ecrits_une_fois_aucun_fichier_existant_n_est_reecrit(tmp_path):
     (tmp_path / "x").mkdir()
     code, run = lancer(tmp_path / "x")
@@ -302,16 +322,16 @@ def test_journaux_ecrits_une_fois_aucun_fichier_existant_n_est_reecrit(tmp_path)
     assert run2 != run and all(f.read_bytes() == b for f, b in avant.items())
 
 
-def test_le_dossier_de_sortie_contient_les_fichiers_attendus(tmp_path):
-    code, run = lancer(tmp_path)
+def test_le_dossier_de_sortie_contient_les_fichiers_attendus(run_partage):
+    code, run = run_partage()
     attendus = {"rapport.md", "views.json", "esg.json", "esg_appels.json", "run.json",
                 "execution.json", "calls.jsonl", "debates"}  # fmt: skip
     assert attendus <= {p.name for p in run.iterdir()}
 
 
 # --------------------------------------------------------------------------- critères d'acceptation
-def test_chaque_vue_cite_ses_sources_et_chaque_vue_valuation_porte_ses_toolcalls(tmp_path):
-    code, run = lancer(tmp_path)
+def test_chaque_vue_cite_ses_sources_et_chaque_vue_valuation_porte_ses_toolcalls(run_partage):
+    code, run = run_partage()
     from amundi_agentic.schemas import DebateLog
 
     logs = [DebateLog.model_validate_json(f.read_text()) for f in (run / "debates").glob("*.json")]
@@ -356,8 +376,8 @@ def test_changer_de_fournisseur_se_fait_par_la_configuration_seule_et_le_code_ne
         assert not interdit.search(f.read_text(encoding="utf-8")), f.name
 
 
-def test_aucun_nom_de_modele_dans_les_sorties_lisibles(tmp_path):
-    code, run = lancer(tmp_path)
+def test_aucun_nom_de_modele_dans_les_sorties_lisibles(run_partage):
+    code, run = run_partage()
     cfg = load_config()
     noms = {i.split("/", 1)[1] for i in [*cfg.models.values(), *cfg.evaluation.models.values()]}
     for nom in ("rapport.md", "views.json", "esg.json"):
