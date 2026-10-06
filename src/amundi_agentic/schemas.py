@@ -278,6 +278,8 @@ class DebateOutcome(_Modele):
     alerte_risque: NiveauAlerte
     confiance_finale: float = Field(ge=0, le=1)
     arbitrage: str | None = None
+    # limite de données qui a plafonné la confiance finale (calcul Python), sinon None
+    plafonnee_par: str | None = None
 
     @model_validator(mode="after")
     def _contestee_bornee(self) -> DebateOutcome:

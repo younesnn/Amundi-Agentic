@@ -157,6 +157,15 @@ def rendre_rapport(ctx: AgentContext, sortie: RunOutput) -> str:
                 "",
                 "Exécution interrompue proprement : relancer la même commande reprend depuis le cache.",
             ]
+    plafonnees = [
+        (o.actif, o.plafonnee_par)
+        for d in sortie.debats
+        for o in d.log.resultats
+        if o.plafonnee_par
+    ]
+    if plafonnees:
+        lignes += ["", "**Confiance plafonnée par une limite de données :**"]
+        lignes += [f"- {a} : confiance plafonnée par : {m}" for a, m in plafonnees]
     sans = {a: m for d in sortie.debats for a, m in d.log.sans_decision.items()}
     if sans:
         lignes += ["", "**Actifs sans vue valide** (rejets du contrôle d'ancrage ou abstentions) :"]

@@ -76,7 +76,7 @@ grounding:
                        capitalisation, return, returns, yield, loss, losses, volatility, margin, growth, rate,
                        spread, drop, rise, increase, decrease, revenue, revenus, benefice, profit]
   plage_annees: [1900, 2100]    # entiers de 4 chiffres lus comme des années, jamais contrôlés
-  unites_financieres: ["%", "pb", "bps", "$", "usd", "eur", "€", "millions", "milliards", "md", "m$"]
+  unites_financieres: ["%", "pb", "bps", "$", "usd", "eur", "€", "millions", "milliards", "billion", "billions", "thousand", "md", "m$"]
 
 # --- Agent Valuation / Momentum (L1 §4) ------------------------------------------------------
 valuation:

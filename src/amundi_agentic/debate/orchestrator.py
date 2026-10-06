@@ -336,6 +336,20 @@ def run_debate(
         alerte = risque.alerte(a, defaut_alerte) if risque else defaut_alerte
         accord_a = cs.accord(s["niv"], s["n"])
         c = cs.confiance(accord_a, s["statut"], s["tours"], alerte, cfg.confidence)
+        # limites de données (ex. découpage RAG en repli) : plafond le plus bas applicable ; une
+        # limite ne relève jamais une confiance déjà plus basse
+        plafonds = [
+            x
+            for _, evid in ctx.cache.values()
+            for x in evid.limites
+            if x.actif in (None, a) and x.plafond_confiance is not None
+        ]
+        plafonnee_par = None
+        if plafonds:
+            pire = min(plafonds, key=lambda x: x.plafond_confiance)
+            if pire.plafond_confiance < c:
+                c = pire.plafond_confiance
+                plafonnee_par = f"{pire.texte} (plafond {pire.plafond_confiance})"
         resultats.append(
             DebateOutcome(
                 actif=a,
@@ -346,6 +360,7 @@ def run_debate(
                 alerte_risque=alerte,
                 confiance_finale=c,
                 arbitrage=s["arb"],
+                plafonnee_par=plafonnee_par,
             )
         )
         vues = list(s["vues"].values())

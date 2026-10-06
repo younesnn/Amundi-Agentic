@@ -206,6 +206,11 @@ class DataView:
 
     # ------------------------------------------------------------------ news
     def news(self, query: NewsQuery) -> list[NewsItem]:
+        if any(not str(t).strip() for t in query.tags):
+            raise ValueError(
+                "étiquette de news vide : elle attraperait les articles sans étiquette ; "
+                "fournir une étiquette non vide ou aucune"
+            )
         df = self._store.read("news/items")
         if df is None or df.empty:
             return []

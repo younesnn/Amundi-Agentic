@@ -45,6 +45,7 @@ import re
 import unicodedata
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
+from decimal import Decimal
 from typing import Any, Literal
 
 from amundi_agentic.agents.settings import GroundingCfg
@@ -55,7 +56,7 @@ _NOMBRE = re.compile(
     re.UNICODE,
 )
 _UNITE_SUIVANTE = re.compile(
-    r"\s*(%|pb\b|bps\b|\$|€|usd\b|eur\b|millions?\b|milliards?\b|md\b)", re.I
+    r"\s*(%|pb\b|bps\b|\$|€|usd\b|eur\b|millions?\b|milliards?\b|billions?\b|thousand\b|md\b)", re.I
 )
 _CHIFFRES_EXOTIQUES = str.maketrans(
     {
@@ -163,7 +164,14 @@ _UNITE_MOT = re.compile(
     r"|bps\b|pb\b|dollars?|euros?|usd\b|eur\b|\$|€|millions?\b|milliards?\b|billions?\b)",
     re.I,
 )
-_MAGNITUDE_UNITES = {"million": 10**6, "milliard": 10**9, "billion": 10**9, "md": 10**9}
+_MAGNITUDE_UNITES = {
+    "thousand": 10**3,
+    "million": 10**6,
+    "milliard": 10**9,
+    "billion": 10**9,
+    "md": 10**9,
+}
+_ECHELLES_TEXTE = (1, 10**3, 10**6, 10**9, 10**9 * 10**3)
 
 
 def _sans_accents(s: str) -> str:
@@ -461,6 +469,10 @@ def est_ancre(claim: Claim, valeurs: Iterable[float | Ancre], cfg: GroundingCfg)
             # un nombre lu dans un texte source se retrouve tel qu'écrit : aucune tolérance
             if any(math.isclose(cible, v, rel_tol=1e-9, abs_tol=1e-12) for cible, _ in lectures):
                 return True
+            if mult:  # « 12,7 milliards » = « 12 700 million » : égalité exacte après changement d'échelle
+                base = Decimal(repr(claim.valeur)) * mult
+                if any(base == Decimal(repr(v)) * e for e in _ECHELLES_TEXTE):
+                    return True
             continue
         for k in _echelles(a, claim, cfg):
             for cible, dec in lectures:
