@@ -1,0 +1,30 @@
+# Outils de texte (phase 3, tâche A) : RAG sur les rapports, résumé de news, évaluation du RAG.
+# Aucun nom de modèle ici (ils vivent dans llm.yaml). Valeurs marquées (H) : hypothèses à régler.
+
+rag:
+  forms: ["10-K", "10-Q"]       # formulaires indexés (sous-ensemble de data.yaml > edgar.text_forms)
+  max_filings: 4                # (H) dépôts les plus récents acceptés avant t qui sont indexés
+  chunk_chars: 1800             # (H) taille cible d'un passage (environ 450 jetons)
+  overlap_chars: 200            # (H) recouvrement quand un paragraphe doit être coupé
+  min_chunk_chars: 80           # passages plus courts écartés (numéros de page, titres seuls)
+  min_section_chars: 400        # section « utile » : en dessous, un en-tête n'est pas retenu
+  toc_gap_chars: 1500           # (H) en-têtes séparés de moins de ce nombre de caractères : table des matières
+  # Repli « Document » (découpage par sections échoué, signalé dans Passage et RagResult) si le
+  # préambule dépasse max_preamble_chars ou si moins de min_substantial_sections sections sont lues.
+  max_preamble_chars: 80000     # (H) mesuré sur 286 dépôts réels : préambule normal < 30 000
+  min_substantial_sections: 3   # (H)
+  embed_batch: 16               # textes par appel d'embedding
+  # Préfixes de tâche des modèles d'embedding asymétriques, par profil (chaîne vide : aucun).
+  # Le modèle d'embedding local du profil dev exige ces deux préfixes (voir llm.yaml, section embeddings).
+  prefixes:
+    dev: {document: "search_document: ", query: "search_query: "}
+    prod: {document: "", query: ""}
+
+summary:
+  max_items: 25                 # (H) articles au plus dans un résumé (les plus récents)
+  max_chars_per_item: 700       # (H) titre + résumé de chaque article, tronqués
+
+rag_eval:
+  judge_tier: light             # niveau du juge LLM (par LLMClient)
+  answer_tier: light            # niveau du générateur de réponses du jeu d'évaluation
+  max_passage_chars: 1200       # passage tronqué avant d'être montré au juge

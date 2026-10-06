@@ -14,7 +14,14 @@ from pathlib import Path
 from typing import Any, Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictInt,
+    ValidationError,
+    model_validator,
+)
 
 ROOT = Path(__file__).resolve().parents[3]
 CONFIG_PATH = Path(os.environ.get("AMUNDI_CONFIG_DIR", ROOT / "config")) / "llm.yaml"
@@ -68,9 +75,10 @@ class RelayCfg(_Cfg):
 
 
 class LimitCfg(_Cfg):
-    requests_per_day: int | None = Field(default=None, gt=0)
-    requests_per_minute: int | None = Field(default=None, gt=0)
-    tokens_per_minute: int | None = Field(default=None, gt=0)
+    # StrictInt : `true` (booléen) n'est pas une limite et ne devient pas 1.
+    requests_per_day: StrictInt | None = Field(default=None, gt=0)
+    requests_per_minute: StrictInt | None = Field(default=None, gt=0)
+    tokens_per_minute: StrictInt | None = Field(default=None, gt=0)
 
 
 class QuotasCfg(_Cfg):
