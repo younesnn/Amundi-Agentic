@@ -98,6 +98,8 @@ class GroundingCfg(_Cfg):
     facteurs_echelle: list[float]
     facteur_points_de_base: float
     plage_annees: tuple[int, int]
+    fenetre_contexte_mots: int = Field(ge=1)
+    contexte_financier: list[str]
     unites_financieres: list[str]
 
 
@@ -110,6 +112,7 @@ class FundamentalCfg(_Cfg):
     max_caracteres_passage: int = Field(ge=100)
     questions: list[str] = Field(min_length=1)
     concepts_xbrl_max: int = Field(ge=0)
+    plafond_confiance_decoupage_echoue: float = Field(ge=0, le=1)
 
 
 class SentimentCfg(_Cfg):
@@ -125,6 +128,13 @@ class EsgCfg(_Cfg):
     etf_criteres_requis: list[str]
     etf_etats_acceptes: list[str]
     llm_explique_les_vetos: bool
+    accepter_non_point_in_time: dict[str, bool]
+
+    @model_validator(mode="after")
+    def _modes(self) -> EsgCfg:
+        if set(self.accepter_non_point_in_time) != {"interactif", "evaluation"}:
+            raise ValueError("accepter_non_point_in_time : clés interactif et evaluation")
+        return self
 
 
 class LimitesCfg(_Cfg):

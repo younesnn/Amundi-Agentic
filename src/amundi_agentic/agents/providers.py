@@ -312,3 +312,27 @@ def rag_synthetique(t: date, stocks: Sequence[str]):
             )
         passages[tk] = lot
     return FakeRagTool(passages=passages)
+
+
+def construire_outils_reels(llm: Any, fournisseur: PitDataProvider, store_dir: Any):
+    """RAG sur les 10-K et 10-Q (`FilingsRAG`) et résumé de news (`summarize_news`) de la tâche A,
+    branchés sur le fournisseur point-in-time. Renvoie `(rag, résumé, avertissements)` ; un outil
+    qui ne peut pas être construit vaut None et l'avertissement le dit (l'agent concerné s'abstient)."""
+    from pathlib import Path
+
+    avertissements: list[str] = []
+    rag = resume = None
+    try:
+        from amundi_agentic.tools.rag import FilingsRAG
+
+        Path(store_dir).mkdir(parents=True, exist_ok=True)
+        rag = FilingsRAG(llm, store_dir=Path(store_dir), data_view=fournisseur.view)
+    except Exception as exc:  # noqa: BLE001 - données ou configuration absentes
+        avertissements.append(f"RAG indisponible ({type(exc).__name__}) : Fundamental s'abstient")
+    try:
+        from amundi_agentic.tools.summarize import summarize_news
+
+        resume = summarize_news
+    except Exception as exc:  # noqa: BLE001
+        avertissements.append(f"résumé indisponible ({type(exc).__name__}) : Sentiment s'abstient")
+    return rag, resume, avertissements

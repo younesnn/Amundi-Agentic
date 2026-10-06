@@ -22,7 +22,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from amundi_agentic.agents.context import AgentContext
-from amundi_agentic.agents.evidence import EvidenceSet, neutraliser, reutiliser
+from amundi_agentic.agents.evidence import EvidenceSet, Limite, neutraliser, reutiliser
 from amundi_agentic.agents.grounding import Ancre, ancres, chiffres_non_ancres
 from amundi_agentic.agents.prompts import PromptComposite
 from amundi_agentic.llm.types import LLMError, Message, StructuredOutputError
@@ -56,6 +56,18 @@ class AgentDraft(BaseModel):
     objection: str | None = None
     objection_source_ids: list[str] = Field(default_factory=list)
     revision_motif: str | None = None
+
+
+@dataclass
+class Portee:
+    """Ce qu'une vue sur l'actif A a le droit de citer : chiffres, sources, limites."""
+
+    ancres: dict[
+        str, list[Ancre]
+    ]  # actif -> ancrages typés (outils de A, transversaux, pairs sur A)
+    union: list[Ancre]  # objection et motif de révision (hors actif)
+    sources: dict[str, set[str]]  # actif -> source_id citables (A, transversales, pairs sur A)
+    limites: list[Limite] = field(default_factory=list)
 
 
 @dataclass
@@ -192,6 +204,7 @@ class LLMAgent(ABC):
         sources = dict(ev.sources())
         par_actif = {a: ev.ancres_pour(a) for a in assets}
         union = ev.ancres_toutes()
+        ids_par_actif = {a: ev.pour([a]).ids() for a in assets}
         blocs = [f"Actifs à analyser : {json.dumps(assets, ensure_ascii=False)}", ev.rendre()]
         if tour > 0:
             texte_pairs, src_pairs, txt_pairs = decrire_pairs(
@@ -203,6 +216,13 @@ class LLMAgent(ABC):
             for a in assets:
                 par_actif[a] = [*par_actif[a], *ancres(txt_pairs.get(a, []), "texte")]
             union = [*union, *(x for t in txt_pairs.values() for x in ancres(t, "texte"))]
+            # sources des pairs : citables pour l'actif concerné seulement
+            for p in peers:
+                for v in p.vues:
+                    if v.actif in ids_par_actif:
+                        ids_par_actif[v.actif] = ids_par_actif[v.actif] | {
+                            s.source_id for s in v.sources
+                        }
             blocs.append(texte_pairs)
             blocs.append(
                 "Position majoritaire du tour précédent (calculée par le système) : "
@@ -213,7 +233,15 @@ class LLMAgent(ABC):
             Message(role="user", content="\n\n".join(blocs)),
         ]
         vues, objection, motif_rev, rejets, dernier_appel = self._demander(
-            ctx, assets, tour, nature, composite, messages, sources, (par_actif, union), devil
+            ctx,
+            assets,
+            tour,
+            nature,
+            composite,
+            messages,
+            sources,
+            Portee(par_actif, union, ids_par_actif, ev.limites),
+            devil,
         )
         role = "avocat_du_diable" if devil and objection else "normal"
         turn = AgentTurn(
@@ -246,7 +274,7 @@ class LLMAgent(ABC):
         composite: PromptComposite,
         messages: list[Message],
         sources: dict[str, Source],
-        valeurs: tuple[dict[str, list[Ancre]], list[Ancre]],
+        valeurs: Portee,
         devil: bool,
     ) -> tuple[list[View], str | None, str | None, list[VueRejetee], str | None]:
         cfg = ctx.settings.grounding
@@ -338,12 +366,12 @@ class LLMAgent(ABC):
         draft: AgentDraft,
         assets: list[str],
         sources: dict[str, Source],
-        valeurs: tuple[dict[str, list[Ancre]], list[Ancre]],
+        valeurs: Portee,
         devil: bool,
         tour: int,
     ) -> tuple[dict[str, View], dict[str, str], str | None]:
         cfg = ctx.settings.grounding
-        par_actif_ancres, union = valeurs
+        par_actif_ancres, union = valeurs.ancres, valeurs.union
         fautes: dict[str, str] = {}
         valides: dict[str, View] = {}
         par_actif: dict[str, list[ViewDraft]] = {}
@@ -355,9 +383,11 @@ class LLMAgent(ABC):
                 fautes[a] = "exactement une vue par actif demandé" if vs else "vue absente"
                 continue
             v = vs[0]
-            inconnues = [s for s in v.source_ids if s not in sources]
+            inconnues = [s for s in v.source_ids if s not in valeurs.sources[a]]
             if inconnues:
-                fautes[a] = f"source_id inexistant parmi les sorties de ce tour : {inconnues}"
+                fautes[a] = (
+                    f"source_id inexistant parmi les sources de cet actif pour ce tour : {inconnues}"
+                )
                 continue
             nonancres = chiffres_non_ancres(
                 [*v.arguments_pour, *v.arguments_contre], par_actif_ancres[a], cfg
@@ -365,6 +395,15 @@ class LLMAgent(ABC):
             if nonancres:
                 fautes[a] = f"chiffres introuvables dans les sorties d'outils : {nonancres}"
                 continue
+            lim = [x for x in valeurs.limites if x.actif in (None, a)]
+            plafonds = [x.plafond_confiance for x in lim if x.plafond_confiance is not None]
+            confiance = min(
+                [v.confiance, *plafonds]
+            )  # une limite de donnée ne gonfle jamais la confiance
+            contre = [
+                *v.arguments_contre,
+                *(x.texte for x in lim if x.texte not in v.arguments_contre),
+            ]
             try:
                 valides[a] = View(
                     view_id=f"{ctx.run_id}:{self.name}:{a}:t{tour}",
@@ -374,9 +413,9 @@ class LLMAgent(ABC):
                     horizon_mois=ctx.settings.debate.horizon_mois,
                     direction=v.direction,
                     rendement_excedentaire_attendu=None,
-                    confiance=v.confiance,
+                    confiance=confiance,
                     arguments_pour=v.arguments_pour,
-                    arguments_contre=v.arguments_contre,
+                    arguments_contre=contre,
                     sources=[sources[s] for s in dict.fromkeys(v.source_ids)],
                     profil_risque=ctx.profil,
                     auteur=self.name,

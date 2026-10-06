@@ -96,17 +96,24 @@ class DebateResult:
     trace_graphe: list[str] = field(default_factory=list)
     exclus_esg: list[str] = field(default_factory=list)
     arbitrage_repli: list[str] = field(default_factory=list)
+    voix_unique_transmise_par_defaut: bool = False  # `debate.transmettre_voix_unique` (YAML)
 
     def vues_transmises(
-        self, neutre_transmis: bool, voix_unique_transmise: bool = False
+        self, neutre_transmis: bool, voix_unique_transmise: bool | None = None
     ) -> list[View]:
         """Vues pour Black-Litterman : une vue NEUTRE est journalisée mais pas transmise (L1 §6.2) ;
         une vue à voix unique (un seul votant valide) non plus, sauf configuration explicite."""
+        # la valeur du YAML est le défaut ; l'appelant peut la surcharger explicitement
+        voix_unique = (
+            self.voix_unique_transmise_par_defaut
+            if voix_unique_transmise is None
+            else voix_unique_transmise
+        )
         return [
             v
             for v in self.vues_finales
             if (neutre_transmis or v.direction != Decision5.NEUTRE)
-            and (voix_unique_transmise or v.statut != "voix_unique")
+            and (voix_unique or v.statut != "voix_unique")
         ]
 
 
@@ -409,4 +416,5 @@ def run_debate(
         final["trace"],
         exclus,
         repli,
+        cfg.debate.transmettre_voix_unique,
     )

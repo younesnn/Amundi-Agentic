@@ -58,8 +58,10 @@ class EsgAgent:
         point-in-time par la couche de données (mode de sensibilité) : alors signalé comme tel."""
         if rec is None:
             return None, False
-        if rec.observed_at >= coupure(ctx.t) and not rec.non_point_in_time:
-            return None, True
+        if rec.observed_at >= coupure(ctx.t):
+            mode = getattr(ctx.llm, "mode", "evaluation")
+            if not (rec.non_point_in_time and ctx.settings.esg.accepter_non_point_in_time[mode]):
+                return None, True
         return rec, False
 
     def evaluer(

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -22,7 +23,12 @@ from amundi_agentic.agents.context import AgentContext
 from amundi_agentic.agents.mock_policy import politique_simulee
 from amundi_agentic.agents.ports import FakeNewsSummaryTool, NewsSummaryTool, RagTool
 from amundi_agentic.agents.prompts import PromptLibrary
-from amundi_agentic.agents.providers import PitDataProvider, SyntheticData, rag_synthetique
+from amundi_agentic.agents.providers import (
+    PitDataProvider,
+    SyntheticData,
+    construire_outils_reels,
+    rag_synthetique,
+)
 from amundi_agentic.agents.settings import load_settings
 from amundi_agentic.data.settings import CONFIG_DIR, ROOT
 from amundi_agentic.data.universe import Universe
@@ -45,6 +51,7 @@ def ajouter_parseur(sub: Any) -> None:
     v.add_argument(
         "--mock", action="store_true", help="LLM simulé et données synthétiques (aucun réseau)"
     )
+    v.add_argument("--mock-llm", action="store_true", help="LLM simulé, données du stockage local")
     v.add_argument(
         "--synthetic-data", action="store_true", help="données synthétiques (LLM réel du profil)"
     )
@@ -154,7 +161,7 @@ def _executer(args: Any, argv: list[str] | None) -> int:
         dossier = Path(args.out) / run_id
     graine = config.defaults.seed if args.seed is None else args.seed
 
-    if args.mock:
+    if args.mock or args.mock_llm:
         llm: LLMClient = MockLLMClient(
             config,
             mode=args.mode,
@@ -175,12 +182,6 @@ def _executer(args: Any, argv: list[str] | None) -> int:
         stocks_defaut = list(SyntheticData(t, universe=universe).stocks)
     else:
         stocks_defaut = list(universe.stock_demo_tickers)
-        # RAG et résumé (tâche A) : fournis par `tools/` quand il est fusionné ; sinon Fundamental
-        # et Sentiment s'abstiennent et le signalent (jamais de valeur inventée).
-        print(
-            "avertissement : RAG et résumé de news non branchés (tâche A) : "
-            "Fundamental et Sentiment s'abstiennent"
-        )
     titres = [x for x in args.stocks.split(",") if x] if args.stocks is not None else stocks_defaut
     if len(set(titres)) != len(titres):  # deux débats au même identifiant : refusé, pas deviné
         return _refus(f"titres en double dans --stocks : {titres}")
@@ -189,7 +190,15 @@ def _executer(args: Any, argv: list[str] | None) -> int:
         rag = rag_synthetique(t, titres)
         resume = FakeNewsSummaryTool()
     else:
-        data = _donnees_reelles(t, universe)
+        try:
+            data = _donnees_reelles(t, universe)
+        except Exception as exc:  # noqa: BLE001 - stockage absent ou illisible : message, pas de trace
+            return _refus(f"données point-in-time indisponibles ({type(exc).__name__}) : {exc}")
+        rag, resume, avertissements = construire_outils_reels(
+            llm, data, Path(os.environ.get("AMUNDI_RAG_DIR", ROOT / ".cache" / "rag"))
+        )
+        for a in avertissements:
+            print(f"avertissement : {a}", file=sys.stderr)
     if len(titres) > settings.debate.max_titres:
         print(
             f"poche titres limitée à {settings.debate.max_titres} titres (D-029) : {len(titres)} demandés",

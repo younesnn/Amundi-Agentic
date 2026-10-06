@@ -215,7 +215,10 @@ class DataView:
         if query.sources:
             df = df[df["source"].isin(query.sources)]
         if query.tags:
-            df = df[df["tags"].apply(lambda s: bool(set(str(s).split("|")) & set(query.tags)))]
+            # `.astype(bool)` : sur un tableau déjà vide, `apply` renvoie une série non booléenne
+            # et l'indexation écartait les colonnes (KeyError au tri suivant)
+            masque = df["tags"].apply(lambda s: bool(set(str(s).split("|")) & set(query.tags)))
+            df = df[masque.astype(bool)]
         if query.terms:
             texte = (df["title"].fillna("") + " " + df["summary"].fillna("")).str.lower()
             masque = pd.Series(False, index=df.index)

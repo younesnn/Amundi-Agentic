@@ -16,10 +16,10 @@ import pandas as pd
 
 from amundi_agentic.agents.base import LLMAgent
 from amundi_agentic.agents.context import AgentContext
-from amundi_agentic.agents.evidence import Evidence, EvidenceSet, jsonable
+from amundi_agentic.agents.evidence import Evidence, EvidenceSet, Limite, jsonable
 from amundi_agentic.agents.grounding import valeurs_ancrage
 from amundi_agentic.schemas import Source, ToolCall, coupure
-from amundi_agentic.tools.base import EXTRAIT_MAX
+from amundi_agentic.tools.base import EXTRAIT_MAX, ToolError
 
 
 class FundamentalAgent(LLMAgent):
@@ -38,14 +38,19 @@ class FundamentalAgent(LLMAgent):
                 continue
             try:
                 n_index = ctx.rag.index_filings(ticker, ctx.t)
-            except (KeyError, ValueError) as e:
+            except (KeyError, ValueError, ToolError) as e:
                 ev.manquants[f"rag:{ticker}"] = f"indexation impossible : {e}"
                 continue
             for question in cfg.questions:
                 debut = time.perf_counter()
-                res = ctx.rag.query(ticker, question, ctx.t, k=cfg.rag_k)
+                try:
+                    res = ctx.rag.query(ticker, question, ctx.t, k=cfg.rag_k)
+                except ToolError as e:  # dépôts absents : signalé, jamais inventé
+                    ev.manquants[f"rag:{ticker}"] = f"{type(e).__name__} : {e}"
+                    break
                 duree = int((time.perf_counter() - debut) * 1000)
                 passages = [p for p in res.passages if p.source.date_publication < limite]
+                self._limite_decoupage(ctx, ev, ticker, res, passages)
                 appel = ToolCall(
                     outil="rag_query",
                     parametres={
@@ -89,8 +94,13 @@ class FundamentalAgent(LLMAgent):
                     if p.source.source_id in dejas:
                         continue  # même passage retrouvé par une autre question : une seule fois
                     dejas.add(p.source.source_id)
+                    section = (
+                        "Document (découpage par sections échoué : section non fiable)"
+                        if getattr(p, "section_fallback", False)
+                        else p.section
+                    )
                     texte = (
-                        f"[source_id={p.source.source_id}] actif={ticker} outil=rag section={p.section} "
+                        f"[source_id={p.source.source_id}] actif={ticker} outil=rag section={section} "
                         f"question=« {question} »\n{p.text[: cfg.max_caracteres_passage]}"
                     )
                     ev.items.append(
@@ -109,6 +119,27 @@ class FundamentalAgent(LLMAgent):
                         Evidence(None, appel, f"Question déjà couverte : {question}", [], ticker)
                     )
         return ev
+
+    @staticmethod
+    def _limite_decoupage(ctx: AgentContext, ev: EvidenceSet, ticker: str, res, passages) -> None:
+        """Découpage par sections échoué (repli « Document ») : dit dans le prompt, dans la vue et
+        dans les données manquantes ; l'auto-confiance de la vue est plafonnée (H)."""
+        accessions = list(getattr(res, "fallback_accessions", []) or [])
+        en_repli = bool(getattr(res, "section_fallback", False)) or any(
+            getattr(p, "section_fallback", False) for p in passages
+        )
+        if not en_repli:
+            return
+        texte = (
+            f"Découpage par sections en repli (« Document ») pour {ticker}"
+            + (f", dépôts {', '.join(accessions)}" if accessions else "")
+            + " : n'attribue aucun passage à une section ; lecture moins fiable."
+        )
+        if all(x.texte != texte for x in ev.limites):
+            ev.limites.append(
+                Limite(ticker, texte, ctx.settings.fundamental.plafond_confiance_decoupage_echoue)
+            )
+        ev.manquants[f"decoupage_sections:{ticker}"] = texte
 
     def _xbrl(self, ctx: AgentContext, ev: EvidenceSet, ticker: str) -> None:
         cfg = ctx.settings.fundamental

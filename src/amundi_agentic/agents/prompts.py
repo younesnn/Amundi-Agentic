@@ -128,10 +128,23 @@ class PromptLibrary:
         sortie: dict[str, str] = {}
         suffixe = f"_{self.version}.md"
         for f in sorted(self.dossier.glob(f"*{suffixe}")):
-            sortie[f.name.removesuffix(suffixe)] = self.load(
-                f.name.removesuffix(suffixe)
-            ).ref.sha256
+            nom = f.name.removesuffix(suffixe)
+            if not self.est_prompt_de_role(f, nom):
+                continue  # fichier d'un autre outil (rag_*, summary_*) : hors de ce registre
+            sortie[nom] = self.load(nom).ref.sha256
         return sortie
+
+    def est_prompt_de_role(self, chemin: Path, nom: str) -> bool:
+        """Règle explicite : seuls les fichiers dont l'en-tête YAML déclare `agent: <nom>` sont des
+        prompts de rôle de ce module ; les autres appartiennent à d'autres outils (tâche A)."""
+        m = _ENTETE.match(chemin.read_text(encoding="utf-8"))
+        if not m:
+            return False
+        try:
+            meta = yaml.safe_load(m.group(1)) or {}
+        except yaml.YAMLError:
+            return False
+        return isinstance(meta, dict) and meta.get("agent") == nom
 
 
 def load_prompt(nom: str, version: str = VERSION_PAR_DEFAUT, dossier: Path | None = None) -> Prompt:

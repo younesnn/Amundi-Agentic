@@ -21,14 +21,7 @@ import pandas as pd
 from amundi_agentic.agents.grounding import Ancre, valeurs_ancrage
 from amundi_agentic.schemas import Source, ToolCall, coupure
 from amundi_agentic.tools.base import EXTRAIT_MAX, ToolError, ToolMeta, ToolResult
-
-try:  # défense commune aux textes externes (tâche A) ; repli identique si le module est absent
-    from amundi_agentic.tools.untrusted import neutraliser
-except ImportError:  # pragma: no cover - dépend de la fusion de la tâche A
-
-    def neutraliser(texte: str) -> str:
-        t = (texte or "").replace("<<<", "‹‹‹").replace(">>>", "›››")
-        return t.replace("<|", "‹|").replace("|>", "|›")
+from amundi_agentic.tools.untrusted import neutraliser
 
 
 def jsonable(v: Any) -> Any:
@@ -84,12 +77,22 @@ class Evidence:
         return self.source.source_id if self.source else None
 
 
+@dataclass(frozen=True)
+class Limite:
+    """Limite d'une source de données, à reprendre dans la vue (jamais cachée au lecteur)."""
+
+    actif: str | None  # None : transversale
+    texte: str
+    plafond_confiance: float | None = None  # plafond de l'auto-confiance de la vue, le cas échéant
+
+
 @dataclass
 class EvidenceSet:
     items: list[Evidence] = field(default_factory=list)
     manquants: dict[str, str] = field(
         default_factory=dict
     )  # outil/actif -> raison (jamais inventé)
+    limites: list[Limite] = field(default_factory=list)
 
     def ids(self) -> set[str]:
         return {e.source_id for e in self.items if e.source_id}
@@ -120,7 +123,9 @@ class EvidenceSet:
         """Sous-ensemble : preuves transversales et celles des actifs demandés."""
         a = set(assets)
         return EvidenceSet(
-            [e for e in self.items if e.actif is None or e.actif in a], dict(self.manquants)
+            [e for e in self.items if e.actif is None or e.actif in a],
+            dict(self.manquants),
+            [x for x in self.limites if x.actif is None or x.actif in a],
         )
 
     def rendre(self) -> str:
@@ -133,13 +138,20 @@ class EvidenceSet:
                 "DONNEES MANQUANTES (ne rien déduire) : "
                 + json.dumps(self.manquants, ensure_ascii=False)
             )
+        if self.limites:
+            lignes.append(
+                "LIMITES DES DONNEES (à reprendre dans les arguments contre) : "
+                + " | ".join(neutraliser(x.texte) for x in self.limites)
+            )
         lignes.append("DONNEES>>>")
         return "\n".join(lignes)
 
     def fusion(self, autre: EvidenceSet) -> EvidenceSet:
         vus = {e.source_id for e in self.items if e.source_id}
         items = list(self.items) + [e for e in autre.items if e.source_id not in vus]
-        return EvidenceSet(items, {**self.manquants, **autre.manquants})
+        return EvidenceSet(
+            items, {**self.manquants, **autre.manquants}, [*self.limites, *autre.limites]
+        )
 
 
 def source_depuis_meta(meta: ToolMeta, t: date, *, titre: str, extrait: str) -> Source | None:

@@ -16,6 +16,14 @@ Règles (documentées, H) :
   séparateurs exotiques (`٫`, `·`, `'`, `’`, espaces fines) sont lus comme des décimales et contrôlés
   comme telles ; les chiffres arabes-indiens et pleine chasse sont ramenés en ASCII.
 * Dates (`2024-02-01`, `01/02/2024`) retirées avant la lecture des nombres.
+* Contexte : un mot-nombre COMPOSÉ sans unité (« dix-sept », « cent vingt », « fifteen ») n'est
+  contrôlé que si un mot de contexte financier (`contexte_financier`) figure dans les
+  `fenetre_contexte_mots` mots qui le précèdent ; « twenty-four hours », « mille et une nuits »,
+  « cinq cent » restent donc acceptés. Fractions parlées : « trois et demi », « twelve and a half »
+  (x,5) ; « un quart », « trois quarts » devant une unité financière.
+* Ancrages de genre TEXTE (passages de dépôts, articles) : correspondance exacte du nombre tel
+  qu'écrit (formes « 12.7 », « 12,7 », « 12 700 » ramenées à la même valeur), SANS tolérance ; la
+  tolérance d'arrondi ne s'applique qu'aux ancrages d'OUTIL (valeurs calculées).
 * Tolérance d'arrondi : un chiffre écrit avec d décimales est retrouvé à une demi-unité de sa dernière
   décimale ; un entier, à `min(0,5 ; tolerance_relative_entiers x valeur)` (H, `config/debate.yaml`),
   ce qui ramène les coïncidences accidentelles d'un entier à une fraction de ce qu'elles étaient.
@@ -146,6 +154,8 @@ _MAGNITUDES = {
     "milliard": 10**9, "milliards": 10**9, "billion": 10**9, "billions": 10**9,
 }  # fmt: skip
 _CHIFFRES_MOTS = {m for m, v in _MOTS.items() if v < 10 and m not in ("une",)} | {"zero"}
+_MILLION = 10**6
+_ADOS_EN = {"thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"}
 _LIAISONS = {"et", "and"}
 _SEP_MOTS = {"virgule", "point", "comma", "dot"}
 _UNITE_MOT = re.compile(
@@ -301,6 +311,9 @@ def _claims_mots(t: str, cfg: GroundingCfg) -> list[Claim]:
             else:
                 break
         fin = toks[j][3]
+        if len(mots) == 1 and mots[0] in _MAGNITUDES and t[: toks[i][2]].rstrip()[-1:].isdigit():
+            i = j + 1  # « 3 milliards » : lu par la branche des chiffres
+            continue
         valeur = _valeur_mots(mots)
         decimales = 0
         parle = False
@@ -323,10 +336,45 @@ def _claims_mots(t: str, cfg: GroundingCfg) -> list[Claim]:
             parle = True
             j = k - 1
             fin = toks[j][3]
+        # « trois et demi », « twelve and a half » : décimale parlée (x,5)
+        if (
+            not parle
+            and j + 2 < len(toks)
+            and toks[j + 1][1] in _LIAISONS
+            and (
+                toks[j + 2][1] in ("demi", "demie", "half")
+                or (j + 3 < len(toks) and toks[j + 2][1] == "a" and toks[j + 3][1] == "half")
+            )
+        ):
+            k = j + 2 if toks[j + 2][1] != "a" else j + 3
+            valeur += 0.5
+            decimales = 1
+            parle = True
+            j = k
+            fin = toks[j][3]
+        # « un quart », « trois quarts » : fraction contrôlée seulement devant une unité financière
+        fraction = (
+            j + 1 < len(toks) and toks[j + 1][1] in ("quart", "quarts") and valeur in (1.0, 3.0)
+        )
+        if fraction:
+            valeur = valeur * 0.25
+            decimales = 2
+            j += 1
+            fin = toks[j][3]
         u = _UNITE_MOT.match(t, fin)
         unite = _unite(u.group("u")) if u else ""
-        composé = sum(1 for w in mots if w not in _LIAISONS) >= 2
-        if unite or composé or parle:
+        if fraction and not unite:
+            i = j + 1
+            continue
+        composé = sum(1 for w in mots if w not in _LIAISONS) >= 2 or any(
+            w in _ADOS_EN for w in mots
+        )
+        contexte = False
+        if composé and not unite and not parle:
+            avant = {toks[k][1] for k in range(max(0, i - cfg.fenetre_contexte_mots), i)}
+            contexte = bool(avant & {_sans_accents(x) for x in cfg.contexte_financier})
+        grand = any(_MAGNITUDES.get(w, 0) >= _MILLION for w in mots)  # « douze millions »
+        if unite or parle or contexte or grand:
             brut = t[toks[i][2] : (u.end() if u else fin)].strip()
             alt: tuple[tuple[float, int], ...] = ()
             if unite in _MAGNITUDE_UNITES:
@@ -409,6 +457,11 @@ def est_ancre(claim: Claim, valeurs: Iterable[float | Ancre], cfg: GroundingCfg)
         lectures.append((claim.valeur * mult, claim.decimales))
     for a in valeurs:
         v = abs(a.valeur if isinstance(a, Ancre) else a)
+        if isinstance(a, Ancre) and a.genre == "texte":
+            # un nombre lu dans un texte source se retrouve tel qu'écrit : aucune tolérance
+            if any(math.isclose(cible, v, rel_tol=1e-9, abs_tol=1e-12) for cible, _ in lectures):
+                return True
+            continue
         for k in _echelles(a, claim, cfg):
             for cible, dec in lectures:
                 if abs(cible - v * k) <= _tolerance(cible, dec, cfg):

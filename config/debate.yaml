@@ -69,6 +69,12 @@ grounding:
   facteurs_echelle: [1.0, 100.0, 0.01]   # un chiffre cité peut être en décimal, en pourcentage ou l'inverse
   tolerance_relative_entiers: 0.01   # H : un entier cité est retrouvé à min(0,5 ; 1 % de sa valeur)
   facteur_points_de_base: 10000.0        # chiffre suivi de « pb » ou « bps »
+  fenetre_contexte_mots: 4      # H : un mot-nombre composé sans unité n'est contrôlé que si un mot de
+                                # contexte financier figure dans les N mots qui le précèdent
+  contexte_financier: [rendement, rendements, gain, gains, perte, pertes, hausse, baisse, ratio,
+                       volatilite, sharpe, marge, marges, croissance, taux, ecart, performance,
+                       capitalisation, return, returns, yield, loss, losses, volatility, margin, growth, rate,
+                       spread, drop, rise, increase, decrease, revenue, revenus, benefice, profit]
   plage_annees: [1900, 2100]    # entiers de 4 chiffres lus comme des années, jamais contrôlés
   unites_financieres: ["%", "pb", "bps", "$", "usd", "eur", "€", "millions", "milliards", "md", "m$"]
 
@@ -85,6 +91,7 @@ fundamental:
     - "Exploitation et marge brute : évolution de la marge d'exploitation et de la marge brute."
     - "Points d'inquiétude : risques, litiges, dépendances, facteurs défavorables mentionnés par la direction."
     - "Progrès vers les objectifs : avancement des objectifs et perspectives annoncés par la direction."
+  plafond_confiance_decoupage_echoue: 0.4   # H : plafond de l'auto-confiance si le découpage par sections a échoué
   concepts_xbrl_max: 12         # H : nombre maximal de concepts XBRL injectés
 
 # --- Agent Sentiment (L1 §4, EX-O1-15) ---------------------------------------------------------
@@ -102,6 +109,9 @@ esg:
                                 # vide = aucun veto ETF (L1 §9.4 : les exclusions normatives s'appliquent
                                 # pleinement à la poche titres ; « sans exclusion détectée » n'est pas une preuve)
   etf_etats_acceptes: [determine_par_donnee, suppose_par_regle]   # états qui satisfont un critère requis
+  accepter_non_point_in_time:   # H : un enregistrement ESG observé après t peut-il fonder un veto ?
+    interactif: true            # sensibilité et live : accepté, signalé dans le rapport
+    evaluation: false           # jamais en évaluation (L1 11.3)
   llm_explique_les_vetos: true  # le LLM (niveau light) ne fait que formuler l'explication d'un veto
 
 # --- Bornes de présentation et de sécurité (revue) ---------------------------------------------

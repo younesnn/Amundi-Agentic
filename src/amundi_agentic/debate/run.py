@@ -20,6 +20,7 @@ from amundi_agentic.agents.risk import RiskAgent
 from amundi_agentic.debate.orchestrator import DebateResult, construire_votants, run_debate
 from amundi_agentic.llm.types import ExecutionPausee, ProviderError, QuotaEpuise
 from amundi_agentic.schemas import AppelJournal, EsgAssessment, View
+from amundi_agentic.tools.base import ToolError
 
 AVERTISSEMENT = "Prototype académique (ESCP, pour Amundi Technology). Ce n'est pas un conseil en investissement."
 
@@ -92,6 +93,12 @@ def executer(
             sortie.interrompu = sortie.echecs[nom]
             sortie.appels_echecs += ctx.vider_journaux()[0]
             break  # arrêt propre : relancer la même commande reprend depuis le cache
+        except (KeyError, ToolError) as exc:  # données absentes du stockage : débat non terminé
+            sortie.echecs[nom] = (
+                f"données indisponibles ({type(exc).__name__}) : "
+                f"{str(exc)[: ctx.settings.limites.motif_max_caracteres]}"
+            )
+            sortie.appels_echecs += ctx.vider_journaux()[0]
         except ProviderError as exc:
             sortie.echecs[nom] = (
                 f"{type(exc).__name__} ({exc.kind}) : {str(exc)[: ctx.settings.limites.motif_max_caracteres]}"
@@ -219,6 +226,11 @@ def rendre_rapport(ctx: AgentContext, sortie: RunOutput) -> str:
         "« sans exclusion détectée » n'est pas une preuve d'absence d'exposition (Q-26).",
     ]
     for a, e in sortie.esg.items():
+        if e.veto and not e.point_in_time:
+            lignes.append(
+                f"- ATTENTION : le veto sur {a} repose sur un enregistrement ESG NON point-in-time "
+                "(observé après la date d'analyse ; accepté en mode interactif seulement)."
+            )
         if e.veto:
             lignes.append(
                 f"- veto sur {a} : {e.explication or '; '.join(m.detail for m in e.motifs)}"
