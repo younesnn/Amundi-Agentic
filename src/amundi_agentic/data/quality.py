@@ -13,6 +13,9 @@ import pandas as pd
 
 from amundi_agentic.data.models import QualityIssue
 
+RETOUR_MIN_RATIO = 0.6  # (H) part du saut reprise le lendemain pour parler de « retour »
+TOLERANCE_FLOTTANTE = 1e-9  # (H) absorbe l'erreur d'arrondi flottante (ex. 0,5999999999999982)
+
 
 def _d(x) -> date | None:
     return None if x is None or pd.isna(x) else pd.Timestamp(x).date()
@@ -90,6 +93,40 @@ def check_prices(
             QualityIssue("outlier", "warning", ticker, f"rendement quotidien de {ret[i]:+.1%}",
                          _d(df["date"][i]), _d(df["date"][i]))
         )  # fmt: skip
+
+    # Plafond de mouvement journalier propre à la classe d'actifs (config `class_abs_return`) : signale sans
+    # corriger ni masquer. Un saut suivi d'un retour le lendemain signe un écart de cotation (prix de
+    # clôture éloigné de la valeur liquidative) plutôt qu'un mouvement de la valeur liquidative.
+    classe = (qcfg.get("class_abs_return") or {}).get(ticker)
+    if classe:
+        plafond = float(classe["max"])
+        exempt = [(pd.Timestamp(a), pd.Timestamp(b)) for a, b in classe.get("exempt", [])]
+        suivant = ret.shift(-1)
+        # Plafond « exact » (|r| = plafond à l'erreur flottante près) : NON signalé, le plafond est une borne
+        # incluse ; seul un dépassement strict au-delà de TOLERANCE_FLOTTANTE l'est.
+        for i in df.index[(ret.abs() > plafond + TOLERANCE_FLOTTANTE) & ~gros & ~proche_split]:
+            jour = pd.Timestamp(df["date"][i])
+            if any(a <= jour <= b for a, b in exempt):
+                continue
+            # retour « d'au moins 60 % » du saut (borne incluse, à la tolérance près)
+            retour = bool(
+                pd.notna(suivant[i])
+                and np.sign(suivant[i]) != np.sign(ret[i])
+                and abs(suivant[i]) >= RETOUR_MIN_RATIO * abs(ret[i]) - TOLERANCE_FLOTTANTE
+            )
+            volume = pd.to_numeric(df["volume"][i], errors="coerce")
+            texte_volume = "volume inconnu" if pd.isna(volume) else f"volume {int(volume)}"
+            detail = (
+                f"rendement quotidien de {ret[i]:+.2%} au-delà du plafond de classe de "
+                f"{plafond:.1%} ({texte_volume})"
+            )
+            if retour:
+                detail += f" ; retour le lendemain ({suivant[i]:+.2%}) : écart de cotation probable"
+            issues.append(
+                QualityIssue(
+                    "outlier", "warning", ticker, detail, _d(df["date"][i]), _d(df["date"][i])
+                )
+            )
 
     # Séries figées
     run = qcfg["stale_run"]

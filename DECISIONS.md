@@ -561,3 +561,20 @@ Relevé fait par un agent de recherche le 2026-10-03, **à partir de pages offic
 - **Modèle d'embeddings local** `nomic-embed-text` installé (`ollama pull`, 274 Mo) pour le RAG en profil dev ; l'identifiant d'embedding Gemini de production reste à tester.
 - **CI :** `fetch-depth: 0` (les tests d'append-only lisent l'historique Git) ; les tests dépendant du temps doivent être robustes sur un runner à 2 cœurs (le test de verrou à seuil de 0,5 s a échoué avec 0,54 s ; réécrit par le `reviewer-tester`).
 - **Reportés** : `ToolMeta.to_dict` doit passer ses paramètres par `canonical_params` avant l'écriture des sources dans le journal ; date « jour réel » de l'ESG à unifier sur Paris (UTC pour les instantanés, locale pour le registre) ; variation de 1,04 % en un jour de C3M.PA le 2025-07-22 à vérifier avec la couche de données ; `DEFAULT_REPLAY_WEEKS`, `MIN_ANNUALIZED_VOLATILITY`, `MIN_ABS_DRAWDOWN` à geler dans `config/debate.yaml` et au pré-enregistrement.
+
+## D-054 — Nettoyage de la couche de données : date de Paris, plafonds par classe, C3M.PA (2026-10-06)
+
+- **Date de la source ESG :** la date « du jour » de `snapshot` et de `lock` est celle de **Paris** (`Europe/Paris`, cohérente avec la coupure de D-031), horloge injectable, horloge naïve refusée. Le nom du dossier d'instantané du stockage reste daté en UTC : le reviewer a vérifié qu'il n'en découle aucun défaut fonctionnel (le contrôle compare tous les instantanés), seulement un décalage d'affichage entre 00:00 et 02:00 à Paris.
+- **Règle de qualité `class_abs_return` (hypothèses H, `config/data.yaml`) :** plafond de rendement quotidien absolu par classe, signalement seulement (D-032 : on ne corrige jamais) :
+  - C3M.PA et CSH2.PA (monétaires) : 1 % ;
+  - MTD.PA, EGOV.PA, CRP.PA (obligataire souverain et crédit IG) : 3 %, exemption mars 2020 ;
+  - AHYE.PA (haut rendement) : 5 %, exemption mars 2020.
+  - Le plafond est une borne incluse, avec une tolérance de 1e-9 ; un retour d'au moins 60 % du saut le lendemain est annoncé comme « écart de cotation probable » ; un volume absent est signalé « volume inconnu » sans faire échouer le contrôle. L'exemption de mars 2020 masque le signalement, pas la volatilité réelle (CRP.PA : 4 jours au-dessus de 3 %, AHYE.PA : 3 jours au-dessus de 5 %).
+  - Recalculé de façon indépendante par le `reviewer-tester` : **un seul jour hors exemption sur les 6 ETF**, C3M.PA le 2025-07-22.
+- **C3M.PA, 2025-07-22 (−1,04 % en un jour, retour de +0,71 % le lendemain) : classification « indéterminé, écart de cotation probable ».**
+  - Preuves : cours bruts sans dividende ni split, aucun trou, fixing €STR stable, CSH2.PA, EGOV.PA et MTD.PA calmes le même jour, une variation de 1 % étant incompatible avec un fonds de bons du Trésor 0-6 mois.
+  - Seule la valeur liquidative officielle du 22/07/2025 (page produit de l'ETF sur amundietf.fr, ou Euronext) permet de trancher ; **non obtenue** (les pages sont rendues côté client, un essai de requête a renvoyé 400). Ne pas présenter le volume comme preuve : plusieurs séances voisines ont un volume comparable.
+  - Effet : volatilité de C3M.PA 0,383 % sur 1 an, 1,167 % sur 3 ans (0,998 % sans cette séance), 1,002 % sur 5 ans (0,887 % sans). La volatilité à 3 ans est donc peu représentative ; utiliser aussi la fenêtre de 1 an. Les 0,80 % restants viennent d'autres séances (avril 2025, 18-23 juillet 2025).
+  - **Plafond de C3M.PA maintenu à 1 %** : un plafond de 0,6 % signalerait aussi les 21 et 23/07 et le 11/04/2025 ; à rediscuter si la valeur liquidative confirme un écart de cotation récurrent.
+- **Garde-fou de volatilité des outils (`MIN_ANNUALIZED_VOLATILITY = 1e-4`) :** reste bien calibré, aucune fenêtre réelle ne passe sous 3,8e-4 (C3M.PA sur 63 séances, juillet 2019).
+- **Reste à faire :** obtenir la valeur liquidative officielle (question Q-21 étendue) ; chercher l'éventuel avis de changement d'indice de C3M.PA avant avril 2026.

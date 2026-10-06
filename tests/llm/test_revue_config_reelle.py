@@ -151,11 +151,6 @@ def test_champ_de_limite_inconnu_refuse():
         load_config(overrides={"quotas": {"limits": {GROQ: {"requests_per_hour": 5}}}})
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="DEFAUT MINEUR : `requests_per_day: true` est accepté et vaut 1 (booléen converti en "
-    "entier par Pydantic) ; un booléen n'est pas une limite numérique (config.py, LimitCfg)",
-)
 def test_limite_booleenne_refusee():
     with pytest.raises(ConfigurationError):
         load_config(overrides={"quotas": {"limits": {GROQ: {"requests_per_day": True}}}})
