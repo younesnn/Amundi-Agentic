@@ -578,3 +578,70 @@ Relevé fait par un agent de recherche le 2026-10-03, **à partir de pages offic
   - **Plafond de C3M.PA maintenu à 1 %** : un plafond de 0,6 % signalerait aussi les 21 et 23/07 et le 11/04/2025 ; à rediscuter si la valeur liquidative confirme un écart de cotation récurrent.
 - **Garde-fou de volatilité des outils (`MIN_ANNUALIZED_VOLATILITY = 1e-4`) :** reste bien calibré, aucune fenêtre réelle ne passe sous 3,8e-4 (C3M.PA sur 63 séances, juillet 2019).
 - **Reste à faire :** obtenir la valeur liquidative officielle (question Q-21 étendue) ; chercher l'éventuel avis de changement d'indice de C3M.PA avant avril 2026.
+
+---
+
+Décisions D-055 à D-066 : phase 3, agents, RAG, débat (2026-10-06). Les agents ont proposé D-054 à D-061 sous d'autres numéros : renumérotés ici.
+
+## D-055 — Agents « outils d'abord » et contrôle d'ancrage
+
+- **Choix :** le harnais exécute les outils de chaque agent (`tools/`, RAG, résumé), enregistre un `ToolCall` par appel et injecte les résultats avec leur `source_id` ; le LLM ne produit qu'une `View` structurée qui les commente. **Aucun chiffre ne vient du LLM** : le contrôle d'ancrage (`agents/grounding.py`) rejette toute vue dont un chiffre n'est pas retrouvé dans les sorties d'outils ou les textes sources (nombres en chiffres, en lettres FR et EN, décimales parlées, séparateurs exotiques, ancrage par actif), avec 2 redemandes puis rejet motivé et abstention.
+- **Écart avec le papier :** AlphaAgents laissait le LLM appeler ses outils (AutoGen). Ici l'appel des outils est déterministe, ce qui rend la vérification « l'agent Valuation utilise bien ses outils » triviale (chaque vue porte ses `ToolCall`) et rejouable.
+- **Limites mesurées (`reviewer-tester`) :** le contrôle est un filet de sécurité, pas une preuve.
+  - Entiers nus de 3 chiffres ou moins : non contrôlés ; petits mots-nombres sans unité : acceptés.
+  - Coïncidence accidentelle d'un chiffre inventé avec un ancrage : 2,4 % (entier avec %), 2,0 % (1 décimale), 0,2 % (2 décimales) avec 14 ancrages d'outil réels ; **jusqu'à 27 % (entier avec %) avec 200 ancrages d'outil** (la tolérance relative de 1 % est conservée pour les valeurs d'outil).
+  - Pour les textes de rapports ou d'articles : comparaison exacte, sans tolérance.
+  - **Dette (`xfail` strict)** : l'unité écrite d'un ancrage de texte n'est pas retenue, donc une erreur d'unité d'un facteur 1 000 (« 12,7 millions » pour « 12 700 million ») serait acceptée.
+- **Source des chiffres décisionnels :** les outils, jamais le LLM.
+
+## D-056 — Débat : arbitrage groupé, pannes, voix unique (précise D-016)
+
+- **Arbitrage groupé :** un seul appel d'arbitrage par débat pour toutes les vues contestées (repli : médiane tronquée vers 0), sinon l'allocation aurait coûté jusqu'à 9 arbitrages et dépassé K_a ≤ 2.
+- **Pannes du fournisseur :** révision manquée = vote précédent conservé et journalisé ; collaboration échouée = débat non terminé, les autres débats sont conservés ; quota épuisé ou pause = arrêt propre, la même commande reprend depuis le cache.
+- **Voix unique** (décision du lead, à reporter dans L1 §6) : si moins de `min_votants_valides` = 2 votants valides restent pour un actif, statut `voix_unique`, niveau borné à ±1, confiance plafonnée à 0,32, aucun tour de débat, **non transmis** à la construction du portefeuille par défaut (`transmettre_voix_unique: false`). Un agent seul ne porte jamais la confiance d'un consensus.
+- **Plafond de confiance du découpage en repli :** quand le RAG signale un découpage par sections en repli (INTC), la confiance **finale** est plafonnée à 0,4 (H) par l'orchestrateur, journalisée (`DebateOutcome.plafonnee_par`) et visible dans le rapport ; une limite ne relève jamais une confiance plus basse.
+- **Confiance :** c = clip(c_max·A·g·ρ·h) calculée en Python (L1 §6.4) ; l'auto-confiance des agents est journalisée mais n'entre pas dans le calcul (vérifié par test).
+
+## D-057 — Agent ESG (précise D-035, D-048)
+
+- **Choix :** agent déterministe (règles et données) ; veto sur exclusion normative détectée (SIC pour les titres, états `determine_par_donnee`, `suppose_par_regle`, `inconnu` pour les ETF) ; **aucun veto d'ETF par défaut** (`esg.etf_criteres_requis` vide, H : aucune exclusion d'ETF n'est « déterminée » sauf CRP.PA et AHYE.PA) ; score absent signalé ; le LLM (`light`) ne fait qu'expliquer un veto et ne peut ni le lever ni le créer.
+- **Point-in-time :** un enregistrement ESG observé à t ou après est ignoré ; un enregistrement marqué non point-in-time n'est accepté qu'en mode interactif (`esg.accepter_non_point_in_time`, H), jamais en évaluation, et le rapport le signale. Une allocation dont tous les actifs sont vetoed est écartée proprement, les titres sont traités.
+
+## D-058 — Orchestration, configuration et délais
+
+- `DebateLog` est étendu (appels, rejets, risque, ESG, hashes de prompts) et `RiskAssessment.regime_volatilite` devient optionnel (`None` si non calculable).
+- **Orchestrateur :** `langgraph` (D-009) ou `boucle`, interchangeables par `debate.orchestrateur` ; les deux donnent exactement le même débat (testé sur 15 combinaisons graine × profil) ; `langgraph` n'est importé que dans `debate/orchestrator.py`, jamais pour un appel LLM. LangGraph apporte peu pour un flux linéaire : la traçabilité vient du `DebateLog`.
+- **`config/debate.yaml`** : tous les paramètres sont des hypothèses (H) avec leur source (L1, outil du quant), gelés au pré-enregistrement avec `DEFAULT_REPLAY_WEEKS` = 52 et les seuils d'alerte de risque ; `MIN_ANNUALIZED_VOLATILITY` et `MIN_ABS_DRAWDOWN` restent dans `tools/finance.py`.
+- **Délai LLM :** 120 s est insuffisant pour Ollama local (`llama3.1:8b`, CPU) avec des prompts de 2 000 jetons ou plus ; réglage par configuration (`defaults.timeout_s`, `--llm-config`). Un débat d'une classe d'actifs a pris 1 144 s avec Ollama ; un run complet de plusieurs titres prendrait des heures.
+- **Coût en appels** (calcul, `R_max = 2`) : allocation 4 à 9, un titre 3 à 8, une date avec 15 titres 49 à 129. L1 §11.2 donne 11 et 180 car il comptait les appels du RAG comme appels LLM ; ici Fundamental lit directement les passages et seuls les embeddings du RAG s'ajoutent. Les embeddings comptent dans les quotas.
+
+## D-059 — RAG, résumé et évaluation (tâche A)
+
+- **RAG par sections de 10-K et 10-Q** (`tools/rag.py`) : vérifié sur 286 dépôts réels de 15 sociétés tech.
+  - Table des matières ignorée ; états financiers des 10-Q rattachés à Part I Item 1 ; NVDA et ORCL : états financiers sous l'Item 15 ; QCOM : `Annexe-F` détachée ; IBM : Items 7, 7A, 8 « par renvoi ».
+  - **Repli « Document » visible** (`section_fallback`) quand le préambule dépasse 80 000 caractères ou qu'il y a moins de 3 sections lisibles : seul Intel (19 dépôts) en relève.
+  - Seuils (H) calibrés sur 15 sociétés tech : `min_substantial_sections` = 3 peut basculer à tort en repli un petit émetteur (biotech, banques, émetteurs étrangers) ; gelé à 3 (honnête et visible), à revérifier sur d'autres secteurs.
+  - Un dépôt n'est servi que s'il est accepté **strictement avant** t ; filtre appliqué à l'indexation et à chaque requête.
+- **Résumé avec réflexion** (`tools/summarize.py`) : 1 + 2 appels par tour ; citations validées (alias `N1..Nn`), contrôle de présence des chiffres, texte externe encapsulé et neutralisé (y compris le brouillon et la critique réinjectés : injection de second ordre) ; défense de base, une reformulation passe.
+- **Évaluation du RAG** (`evaluation/rag_eval.py`) : **pas de Ragas ni d'Arize Phoenix** (dépendances lourdes, juge OpenAI par défaut, incompatibles avec le budget 0 € et la règle « tout appel LLM passe par `LLMClient` ») ; fidélité et pertinence par juge LLM via `LLMClient`, plus rappel à k et rang réciproque ; **les scores d'un juge de 8 milliards de paramètres sont indicatifs** (mesuré : fidélité 0,75, pertinence 0,83 à 1,0 sur 4 cas de calibration avec des erreurs), champ `indicatif` partout. Écart avec le papier (qui utilisait Phoenix).
+- **`config/text_tools.yaml`** (valeurs H) : paramètres du RAG, du résumé, du juge, préfixes d'embedding par profil.
+- L1 prévoyait un seul prompt `summarize_reflect_v1.md` et `evaluation/reasoning.py` ; la réalisation est de trois prompts (résumer, critiquer, affiner) et `evaluation/rag_eval.py` : L1 à aligner. Les ventes d'initiés relèvent des formulaires 4 (hors RAG), pas du 10-K.
+
+## D-060 — Dette technique et limites connues de la phase 3
+
+| Point | Gravité | Phase |
+| --- | --- | --- |
+| Unité écrite d'un ancrage de texte non retenue (erreur d'un facteur 1 000 acceptée) | Moyenne | 3 (suite), `xfail` strict |
+| Taux de coïncidences de chiffres d'outil avec beaucoup d'ancrages (jusqu'à 27 % pour un entier avec %) | Moyenne | 3 (suite) |
+| `transmettre_voix_unique` lu par l'orchestrateur mais la construction du portefeuille n'existe pas encore | Faible | 4 |
+| Mode `--live` (Sentiment votant) exercé seulement avec le mock ; `summarize_news` jamais exercé sur de vraies news | Moyenne | 3 (suite) |
+| Embedding de production (`gemini/gemini-embedding-001`) non testé ; Gemini jamais appelé en phase 3 | Moyenne | 3 (suite) |
+| Durée de la suite (150 s en local, 2 500 tests) | Faible | continu |
+| Seuils de repli du RAG (3 sections, 80 000, 1 500) calibrés sur 15 sociétés tech | Faible | 7 |
+| Sources de vues : traçabilité par actif corrigée, mais jamais exercée sur de vraies données avec un vrai LLM | Moyenne | 3 (suite) |
+
+## D-061 — Protocole de revue des agents (gouvernance du risque de modèle)
+
+- Chaque branche passe par le `reviewer-tester` (tests adverses indépendants, mutations, essai sur vraies données en lecture seule) avant fusion ; ses tests sont protégés par D-049.
+- Bilan de la phase 3 : tous les défauts bloquants ont été trouvés par ces revues, jamais par les auteurs du code (liste en D-053 et dans les comptes rendus).
+- Constat de fiabilité des outils de développement : les agents ont été interrompus plusieurs fois par la limite de session ; chaque reprise a été vérifiée contre l'état réel des fichiers avant de continuer, et un agent a produit des fichiers corrompus (apostrophes coupées par des sauts de ligne dans 3 prompts, réparées).
