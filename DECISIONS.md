@@ -643,5 +643,64 @@ Décisions D-055 à D-066 : phase 3, agents, RAG, débat (2026-10-06). Les agent
 ## D-061 — Protocole de revue des agents (gouvernance du risque de modèle)
 
 - Chaque branche passe par le `reviewer-tester` (tests adverses indépendants, mutations, essai sur vraies données en lecture seule) avant fusion ; ses tests sont protégés par D-049.
-- Bilan de la phase 3 : tous les défauts bloquants ont été trouvés par ces revues, jamais par les auteurs du code (liste en D-053 et dans les comptes rendus).
+- Bilan de la phase 3 : les défauts bloquants listés en D-053 et dans les comptes rendus ont été trouvés en revue (tests adverses, mutations, essais sur vraies données, revue du critique).
 - Constat de fiabilité des outils de développement : les agents ont été interrompus plusieurs fois par la limite de session ; chaque reprise a été vérifiée contre l'état réel des fichiers avant de continuer, et un agent a produit des fichiers corrompus (apostrophes coupées par des sauts de ligne dans 3 prompts, réparées).
+
+---
+
+Décisions D-062 à D-066 : revue du `financial-critic` sur la phase 3 (verdict « acceptable avec réserves » pour clore la phase, « non probant » pour toute conclusion de L4 sur la confiance, le multi-agent contre les agents seuls et la qualité du raisonnement du RAG).
+
+## D-062 — Ollama tronquait les prompts en silence (2026-10-06) — **défaut trouvé par le critique, confirmé par le lead**
+
+- **Constat :** aucun `num_ctx` n'était fixé. Test du lead (Ollama 0.35.0, `llama3.1:8b`) : un prompt de 40 190 caractères (environ 9 000 jetons) est évalué à **2 050 jetons** avec la valeur par défaut ; la consigne placée au début est perdue (réponse « Je suis prêt à répondre ») ; avec `num_ctx` = 16 384, le serveur évalue 9 041 jetons et la réponse est correcte (« ZEBRE »), au prix d'un temps plus long (149 s contre 28 s sur ce test, rechargement du modèle compris).
+- **Conséquence :** toute exécution réelle avec Ollama faite avant cette date a pu l'être avec des prompts coupés à environ 2 000 jetons, sans erreur. **Sont à refaire ou à considérer comme non valides pour les prompts longs :** la calibration du juge du RAG (fidélité 0,75, pertinence 0,83 : D-059), le débat d'allocation réel de 1 144 s (D-058), les tests `llm` des agents et du RAG. Les tests par défaut (mock) ne sont pas concernés.
+- **Choix :** `num_ctx` explicite dans `config/llm.yaml` (H : 16 384, à valider selon la mémoire) transmis à Ollama ; **comptage des jetons évalués renvoyés par le serveur** (`prompt_eval_count`) comparé à une estimation du prompt envoyé, et **échec franc** (`PromptTronque`) si l'écart dépasse un seuil (H) ; jetons évalués et `num_ctx` enregistrés dans l'`ExecutionRecord`. À corriger avant toute exécution Ollama de la réplication.
+
+## D-063 — La « confiance » du débat est un indice d'accord de processus (2026-10-06)
+
+- **Constat (critique) :** c = clip(c_max·A·g·ρ·h) est une fonction du processus (statut, tours, alerte), pas de l'évidence. Les agents partagent le même LLM et le même gabarit de prompt : leur accord mêle corrélation des erreurs, biais haussier commun et mémoire du modèle. Une unanimité au tour 0 donne c = 0,8 sans contradicteur. Une calibration est invérifiable aujourd'hui : contaminée avant la fin d'entraînement, environ 6 mois après ; distinguer 55 % de 50 % de réussite demande environ 780 observations indépendantes (calcul : (2,8)²·0,25/0,05²).
+- **Choix :**
+  - dans tous les textes, c s'appelle **« indice d'accord de processus »**, jamais « probabilité » ni « confiance calibrée » ;
+  - **par défaut dans Black-Litterman (phase 4), c est constant** ou plafonné bas ; l'ablation « c constant » (EX-O5-04) devient la configuration par défaut et non une option ; le c du débat n'entre dans Ω que si une table de fiabilité hors échantillon montre un pouvoir de discrimination ;
+  - la valeur de c_max, de g, de ρ et de h est gelée avant tout run (D-027) et **jamais réestimée sur les résultats** ; la sémantique d'Idzorek (inclinaison vers la vue) diffère de celle d'un taux de réussite (Brier) : à écrire dans L1 ;
+  - mesures prévues en phase 7 (rapportées même si défavorables) : table de fiabilité par statut avec intervalle de Wilson, Brier de c contre Brier de c constant et contre le taux de base, taux d'unanimité au tour 0 contre un accord permuté (vote Valuation du titre i contre vote Fundamental du titre j), part de POSITIF et kappa, effet de l'avocat du diable mesuré par un contrôle sans avocat sur une part fixée d'avance (25 % des débats) et un test placebo (majorité falsifiée).
+
+## D-064 — Règles de rapport de L4 (2026-10-06)
+
+- **Formulations interdites** dans tout rapport, interface ou documentation : « le multi-agent bat les agents seuls », « confirme les résultats d'AlphaAgents », « le débat réduit la pensée de groupe » (non mesurée), « confiance calibrée » ou « probabilité de succès » pour c, « alpha », « surperformance » hors intervalle, « robuste », « validé », « hors échantillon » pour un résultat de Gemini antérieur à juin 2026 (borne prudente : fin d'entraînement mars 2026 plus 3 mois de marge), « conforme ESG », « analyse fondamentale » pour l'agent Fundamental (écrire : « lecture qualitative de dépôts par un LLM »), « prouve la qualité du raisonnement » (juge de 8 milliards de paramètres), tout Sharpe ou ratio d'information présenté sans son intervalle.
+- **Peut s'affirmer** : la mécanique fonctionne de bout en bout, les contraintes sont respectées, les journaux sont complets, les coûts et durées sont mesurés, l'écart au benchmark est décrit sans inférence, la réplication est « non concluante » si les règles du protocole le disent.
+- Un résultat de Gemini avant la fin d'entraînement est étiqueté « contaminé » ; celui de `llama3.1:8b` pour février à mai 2024 est « hors échantillon sous réserve d'un sondage de mémoire ».
+
+## D-065 — Protocole de réplication AlphaAgents révisé (2026-10-06) — **remplace la version de D-021 et de L1 §9.3**
+
+Objet : vérifier la mécanique et la cohérence qualitative avec le papier ; **aucune conclusion de performance**. Puissance statistique pratiquement nulle (15 titres du même secteur sur une seule fenêtre de 4 mois : ratio d'information détectable d'environ 4,9 ; il faut au moins 12 bonnes décisions sur 15 pour p ≈ 0,018).
+1. **Pré-enregistrement avant tout run** (D-027) : pool, graine hashée, mapping BUY/SELL, règle d'abstention, profils, température, nombres de tirages et d'exécutions, règles de rapport, hashes des prompts et des configs ; toute déviation crée une version datée.
+2. **Cible :** décision au 2024-02-01 (données de janvier 2024 ; dépôts acceptés avant), suivi du 2024-02-01 au 2024-05-31, taux sans risque FRED DGS1MO.
+3. **Univers évalué :** les titres du pool utilisables (62) plus Zscaler (hors pool), une fois par profil et par exécution, **autant que le budget le permet** ; le tirage primaire de 14 titres plus ZS (graine hashée avant le tirage) est un sous-ensemble ; les tirages secondaires (jusqu'à 1 000) rééchantillonnent le pool déjà évalué, **sans appel LLM en plus**, et mesurent la variance du choix des titres (pas celle du marché).
+4. **Un seul débat par titre, profil et exécution** donne tout : le tour 0 de chaque agent = portefeuille « Valuation seul » et « Fundamental seul » ; le consensus final = « multi-agent » ; agrégations sans débat **ET** (BUY si les deux sont positifs) et **OU**.
+5. **Mapping :** niveau final > 0 = BUY, autre = SELL (pas de HOLD, comme dans le papier). **Abstention, rejet d'ancrage ou `voix_unique` = titre exclu des portefeuilles « signal »** (jamais SELL implicite) ; sensibilité « abstention = SELL » rapportée ; portefeuille vide = trésorerie au DGS1MO. Le multi-agent est mécaniquement plus conservateur à K = 2 (médiane arrondie vers 0) : c'est pourquoi ET et OU sont comparés.
+6. **Références :** les 15 titres équipondérés, les 62 équipondérés, la distribution exacte des portefeuilles aléatoires de même taille.
+7. **Exécutions :** baseline (température 0), 2 paraphrases de prompts (température 0), 5 exécutions à température 0,7, sans cache entre elles ; le désaccord entre exécutions (kappa) est le plancher de bruit. Avec Ollama seul, seules la baseline et quelques exécutions sur le tirage primaire de 15 titres sont réalistes (extrapolation d'une seule mesure faite avec le défaut D-062 : à remesurer).
+8. **Contrôle de mémoire (modèles Gemini) :** Valuation anonymisée (prix rebasés à 100, étiquettes tirées au hasard, dates relatives), test de ré-identification, sondage direct de rendements mensuels et de niveaux d'indice, et **réplication jumelle post-coupure** (mêmes règles, décision le 2026-06-01, suivi jusqu'au 2026-09-30, fenêtre fixée par la règle « dernière fenêtre complète de 4 mois à la date du pré-enregistrement »). Fundamental n'est pas anonymisable : « non contrôlable » pour Gemini. **Non fait en phase 3** : exige des appels Gemini (quotas inconnus).
+9. **Inférence :** bootstrap stationnaire par blocs de 5 séances (H), permutation exacte pour la sélection, intervalles de Wilson sur les fréquences d'accord ; intervalle large publié même s'il est inexploitable.
+10. **Règles de rapport :** « non concluant » si l'intervalle d'une différence contient 0, si moins de 4 titres diffèrent entre les portefeuilles comparés, si l'écart est inférieur au désaccord entre exécutions, ou si le multi-agent ne bat pas la règle ET ; le multi-agent n'est dit « meilleur » que si ces conditions sont réunies sur les deux profils et sur les modèles testés ; les modèles de l'ablation par fournisseur restent séparés, jamais moyennés.
+11. **Journal :** taux de rejet d'ancrage, d'abstention, d'erreur JSON et de `voix_unique` par agent et par exécution ; prompts hashés ; `modele_servi` ; arrêt si le modèle servi change.
+12. **Comparaison avec le papier :** qualitative seulement (titres, modèle, outils et agent Sentiment différents) ; aucun chiffre côté à côté.
+
+## D-066 — Autres réserves du critique retenues (2026-10-06)
+
+| Point | Décision | Phase |
+| --- | --- | --- |
+| Avocat du diable : « vote sincère » non contraint ; K = 2 : la position majoritaire (médiane vers 0) n'est tenue par aucun | mesurer (placebo, contrôle sans avocat, accord permuté) plutôt que supposer | 7 |
+| Profils : 5 paragraphes de prose ; risk-seeking ≈ risk-neutral dans le papier | test de différenciation avant d'en dépendre (5 profils × 3 exécutions à température 0,7 sur au moins 30 titres × 3 dates, comparé au bruit entre exécutions) ; réduire le nombre de profils si l'écart n'excède pas le bruit | 3 (suite), 4 |
+| Triple comptage de la volatilité (prompt de profil, facteur h, optimiseur) | le profil n'entre dans le prompt que pour la réplication ; dans le système principal, ablation « prompt sans profil + contraintes » contre « prompt avec profil », choisie **avant** les runs | 4 |
+| Seuils d'alerte à rang centile : fréquence d'alerte quasi mécanique (environ 20 % modérée, 5 % élevée) | publier la fréquence réelle par classe et par année ; sensibilité (0,70/0,90 ; VIX 20/30) rapportée sans choisir a posteriori | 7 |
+| Quadrants macro 2 % / 2 % peu informatifs | publier la répartition 2018-2026 ; pas d'argument de performance | 7 |
+| Plafond de repli (0,4) pénalise toute la vue (Valuation incluse) ; non-monotonie avec voix unique (0,32) et vue contestée | plafonner la contribution de Fundamental seulement, ou documenter la non-monotonie | 4 |
+| RAG : questions en français sur des 10-K en anglais ; évolution des marges et du cash non comparable par top-k ; aucune mesure de valorisation | questions en anglais ; variations calculées en Python depuis XBRL passées en `ToolCall` ; Fundamental = « lecture qualitative » | 3 (suite) |
+| `max_filings` = 4 : les facteurs de risque viennent d'un 10-K vieux de jusqu'à 11 mois | date de dépôt de chaque passage dans le prompt ; âge du dernier dépôt publié par titre | 3 (suite) |
+| Juge du RAG : 4 cas, intervalle de Wilson 3/4 d'environ 0,30 à 0,95 | ne jamais citer comme preuve de qualité ; pour L4, 50 affirmations étiquetées à la main, accord juge/humain (kappa) avec intervalle, juge à version figée | 7 |
+| La consigne « tu ne connais rien après cette date » n'est pas un contrôle de look-ahead | ne jamais la citer comme garde-fou ; le contrôle passe par l'anonymisation et le sondage ; vérifier que l'API Gemini est appelée sans outil de recherche | 3, 7 |
+| `runs/preregistration` et une commande de pré-enregistrement n'existent pas | à créer avant la réplication | 3 (suite) |
+| Phase 3 : aucun appel Gemini réel, un seul débat réel avec Ollama (avec le défaut D-062) | pilote réel de quelques titres avec Ollama (contexte corrigé) pour mesurer les taux de rejet d'ancrage, d'erreur JSON et de `voix_unique` | 3 (suite) |
+| D-061 : « jamais par les auteurs » | formulation ramenée à ce qui est listé en D-053 | fait |
