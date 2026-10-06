@@ -586,3 +586,67 @@ def test_boucle_python_n_importe_pas_langgraph(tmp_path, monkeypatch):
         tmp_path, lambda role, tour, actif: 1, overrides={"debate": {"orchestrateur": "boucle"}}
     )
     assert res.vues_finales
+
+
+# --------------------------------------------------------------------------- modèle servi (évaluation)
+def _ctx_evaluation(tmp_path, handler):
+    from amundi_agentic.llm import MockLLMClient, load_config
+
+    ctx = fabrique_ctx(tmp_path, handler=handler)
+    cfg = load_config()
+    ctx.llm = MockLLMClient(
+        cfg,
+        mode="evaluation",
+        profile="prod",
+        handler=handler,
+        cache_dir=tmp_path / "cache_eval",
+        quota_journal=tmp_path / "q_eval.json",
+        run_dir=tmp_path / "run_eval",
+        run_id="eval",
+    )
+    return ctx, cfg
+
+
+def test_changement_de_modele_servi_en_plein_debat_arrete_l_execution(tmp_path):
+    from amundi_agentic.debate.run import executer
+    from amundi_agentic.llm.types import ModeleServiChange
+
+    base = scripte(lambda role, tour, actif: -1 if role == MACRO else 1)
+    etat = {"n": 0, "ctx": None, "cfg": None}
+
+    def handler(model, messages):
+        etat["n"] += 1
+        if etat["n"] == 6:  # dérive silencieuse du fournisseur au 6e appel
+            etat["ctx"].llm.mock.set_served(model, "version-derivee")
+        return base(model, messages)
+
+    ctx, cfg = _ctx_evaluation(tmp_path, handler)
+    etat["ctx"] = ctx
+    with pytest.raises(ModeleServiChange):
+        executer(ctx, classes=CLASSES, titres=[], live=False)
+    assert etat["n"] >= 6
+    erreurs = [r for r in ctx.llm.records if r.erreur and "modele_servi_change" in r.erreur]
+    assert erreurs and erreurs[0].modele_servi == "version-derivee"  # l'appel fautif est journalisé
+
+
+def test_en_evaluation_le_modele_servi_est_fige_par_niveau_pendant_tout_le_debat(tmp_path):
+    from amundi_agentic.debate.run import executer
+
+    ctx, cfg = _ctx_evaluation(
+        tmp_path, scripte(lambda role, tour, actif: -1 if role == MACRO else 1)
+    )
+    sortie = executer(ctx, classes=CLASSES, titres=[], live=False)
+    assert not sortie.interrompu
+    figes = ctx.llm.modeles_servis_figes
+    assert figes and set(figes) <= {"main", "light", "embed"}
+    servis = {r.modele_servi for r in ctx.llm.records if r.erreur is None}
+    assert len(servis) <= len(figes)  # un seul modèle servi par niveau figé
+    assert not any(r.relais_utilise for r in ctx.llm.records)
+
+
+def test_interruption_clavier_n_est_pas_avalee_par_le_debat(tmp_path):
+    def handler(model, messages):
+        raise KeyboardInterrupt
+
+    with pytest.raises(KeyboardInterrupt):
+        lancer(tmp_path, handler=handler)
