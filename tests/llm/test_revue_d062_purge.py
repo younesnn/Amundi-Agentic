@@ -99,13 +99,6 @@ def test_la_commande_s_execute_comme_module(cache):
 
 
 # --------------------------------------------------------------------------- sécurité
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "BLOQUANT : DiskCache.purge suit les liens symboliques de sous-dossiers (glo"
-        "b) : un fichier JSON EXTERIEUR au dossier de cache est supprimé"
-    ),
-)
 def test_un_lien_symbolique_vers_l_exterieur_n_entraine_aucune_suppression_hors_du_cache(
     cache, tmp_path
 ):
@@ -128,13 +121,6 @@ def test_un_lien_symbolique_de_fichier_ne_supprime_pas_la_cible(cache, tmp_path)
     assert cible.exists()  # seul le lien peut disparaître
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "IMPORTANT : purge supprime tout ??/*.json (illisible, non dict, ou dict ave"
-        "c une clé fournisseur) sans vérifier le nom SHA-256"
-    ),
-)
 def test_ne_supprime_que_des_fichiers_de_cache_nommes_par_leur_cle(cache):
     d = cache / "ab"
     d.mkdir(exist_ok=True)
@@ -151,13 +137,6 @@ def test_ne_supprime_que_des_fichiers_de_cache_nommes_par_leur_cle(cache):
     assert survivants == set(autres), f"fichiers étrangers supprimés : {set(autres) - survivants}"
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "IMPORTANT : aucune garde sur --dir : sur un répertoire personnel ou tout do"
-        "ssier à sous-dossiers de deux lettres, des JSON étrangers sont supprimés"
-    ),
-)
 def test_une_purge_ne_vise_pas_un_dossier_qui_n_est_pas_un_cache_llm(tmp_path, monkeypatch):
     """`--dir` sur un répertoire personnel ou un dossier quelconque contenant des sous-dossiers à
     deux lettres (ex. `go/`) ne doit rien supprimer : seul un dossier de cache est purgé."""

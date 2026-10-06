@@ -16,7 +16,6 @@ import pytest
 import yaml
 
 from amundi_agentic.llm import (
-    LLMError,
     PromptTronque,
     ProviderError,
     load_config,
@@ -109,23 +108,27 @@ def test_l_estimation_du_schema_de_sortie_structuree_est_incluse(fabrique, cfg):
 # rapports évalués/estimés réalistes selon le type de texte (caractères par jeton typiques) :
 # un texte ne déclenche une alerte que s'il a plus de chars_per_token / min_ratio = 9 car./jeton
 @pytest.mark.parametrize(
-    "nature,car_par_jeton",
+    "nature,car_par_jeton,chars",
     [
-        ("français avec nombres", 3.1),
-        ("anglais", 4.2),
-        ("JSON dense", 2.5),
-        ("nombres", 2.0),
-        ("code", 3.0),
-        ("non ASCII (CJK)", 1.2),
-        ("emojis", 0.6),
-        ("base64", 1.4),
+        ("français avec nombres", 3.1, 20_000),
+        ("anglais", 4.2, 20_000),
+        ("JSON dense", 2.5, 20_000),
+        ("nombres", 2.0, 20_000),
+        ("code", 3.0, 20_000),
+        ("non ASCII (CJK)", 1.2, 12_000),  # 10 000 jetons : sous la fenêtre
+        ("emojis", 0.6, 6_000),  # 10 000 jetons
+        ("base64", 1.4, 14_000),
     ],
 )
-def test_pas_de_faux_positif_sur_les_types_de_texte_usuels(fabrique, cfg, nature, car_par_jeton):
-    chars = 20_000
+def test_pas_de_faux_positif_sur_les_types_de_texte_usuels(
+    fabrique, cfg, nature, car_par_jeton, chars
+):
     evalues = int(chars / car_par_jeton)
+    ctx = cfg.ollama.num_ctx
+    # rapports réalistes : le serveur ne peut pas évaluer plus que sa fenêtre
+    assert evalues <= 0.95 * ctx, nature
+    assert evalues >= cfg.truncation_check.min_ratio * _estimes(chars, cfg)
     assert _tronque(fabrique(profile="dev"), chars, evalues) is None, nature
-    assert evalues / _estimes(chars, cfg) >= 1.0
 
 
 def test_faux_positif_theorique_sur_du_texte_a_plus_de_9_caracteres_par_jeton(fabrique, cfg):
@@ -135,16 +138,94 @@ def test_faux_positif_theorique_sur_du_texte_a_plus_de_9_caracteres_par_jeton(fa
     assert _tronque(fabrique(profile="dev"), chars, chars // 12) is not None
 
 
-def test_usage_absent_ou_nul_est_traite_comme_une_troncature_faux_positif_possible(fabrique):
-    """Constat (important, non bloquant) : `prompt_tokens` absent ou nul (le transport convertit en
-    0) lève `PromptTronque` dès 4 500 caractères, alors que rien ne prouve une troncature."""
-    exc = _tronque(fabrique(profile="dev"), 10_000, 0)
-    assert exc is not None and exc.evalues == 0
+@pytest.mark.parametrize("valeur", [0])
+def test_usage_inconnu_pas_de_troncature_mais_detection_aveugle_signalee_une_fois(
+    fabrique, tmp_path, caplog, valeur
+):
+    import logging
+
+    c = fabrique(profile="dev", run_dir=tmp_path / "run")
+    with caplog.at_level(logging.WARNING):
+        for i in range(3):
+            c.mock.push(RawCompletion("ok", SERVI, valeur, 5))
+            r = c.complete(_msgs(10_000 + i), date_donnees=T)
+            assert r.text == "ok" and r.record.detection_aveugle is True
+    avertissements = [m for m in caplog.messages if "aveugle" in m]
+    assert len(avertissements) == 1  # avertissement unique par exécution
+    lignes = [json.loads(x) for x in (tmp_path / "run" / "calls.jsonl").read_text().splitlines()]
+    assert [x["detection_aveugle"] for x in lignes] == [True, True, True]
 
 
-@pytest.mark.parametrize("valeur", [None, "abc", -5, 2.5])
-def test_valeurs_aberrantes_de_prompt_tokens_dans_le_transport(monkeypatch, valeur):
-    """`usage.prompt_tokens` aberrant : on veut une valeur entière ≥ 0 ou une erreur CONTRÔLÉE."""
+def test_usage_inconnu_sur_prompt_court_pas_de_detection_aveugle(fabrique):
+    c = fabrique(profile="dev")
+    c.mock.push(RawCompletion("ok", SERVI, 0, 5))
+    r = c.complete(_msgs(500), date_donnees=T)
+    assert not r.record.detection_aveugle
+
+
+def test_usage_connu_ne_marque_pas_la_detection_aveugle(fabrique):
+    c = fabrique(profile="dev")
+    c.mock.push(RawCompletion("ok", SERVI, 4_500, 5))
+    assert not c.complete(_msgs(20_000), date_donnees=T).record.detection_aveugle
+
+
+@pytest.mark.parametrize("valeur", [0])
+def test_usage_inconnu_en_evaluation_leve_usage_inconnu_et_est_journalise(
+    fabrique, cfg, tmp_path, valeur
+):
+    from amundi_agentic.llm.types import UsageInconnu
+
+    ev_cfg = load_config(
+        overrides={
+            "evaluation": {
+                "fallback_enabled": False,
+                "models": {"main": "ollama/modele-fige-1", "light": cfg.evaluation.models["light"]},
+            }
+        }
+    )
+    assert ev_cfg.truncation_check.exiger_usage_en_evaluation is True
+    c = fabrique(config=ev_cfg, mode="evaluation", profile="prod", run_dir=tmp_path / "run")
+    c.mock.push(RawCompletion("ok", "v1", valeur, 5))
+    with pytest.raises(UsageInconnu):
+        c.complete(_msgs(20_000), date_donnees=T)
+    assert _fichiers_cache(c) == [] and c.sleeps == []
+    ligne = json.loads((tmp_path / "run" / "calls.jsonl").read_text().splitlines()[-1])
+    assert ligne["erreur"].startswith("usage_inconnu") and ligne["detection_aveugle"] is True
+    # prompt court : aucune exigence
+    c.mock.push(RawCompletion("ok", "v1", 0, 5))
+    assert c.complete(_msgs(500), date_donnees=T).text == "ok"
+    # exigence désactivée par la configuration : avertissement seulement
+    souple = load_config(
+        overrides={
+            "evaluation": {
+                "fallback_enabled": False,
+                "models": {"main": "ollama/modele-fige-1", "light": cfg.evaluation.models["light"]},
+            },
+            "truncation_check": {
+                **cfg.truncation_check.model_dump(),
+                "exiger_usage_en_evaluation": False,
+            },
+        }
+    )
+    c2 = fabrique(config=souple, mode="evaluation", profile="prod")
+    c2.mock.push(RawCompletion("ok", "v1", valeur, 5))
+    assert c2.complete(_msgs(20_000), date_donnees=T).record.detection_aveugle is True
+
+
+def test_usage_inconnu_en_evaluation_ne_concerne_pas_un_fournisseur_non_controle(fabrique):
+    c = fabrique(mode="evaluation", profile="prod")  # modèles figés Gemini : non contrôlés
+    c.mock.push(RawCompletion("ok", "v1", 0, 5))
+    assert c.complete(_msgs(20_000), date_donnees=T).text == "ok"
+
+
+@pytest.mark.parametrize(
+    "valeur,attendu",
+    [(None, 0), ("abc", 0), (-5, 0), (True, 0), (float("nan"), 0), (float("inf"), 0), (0, 0),
+     (2.5, 2), (4500, 4500), ("4500", 0)],
+)  # fmt: skip
+def test_prompt_tokens_aberrant_dans_le_transport_donne_un_usage_inconnu_jamais_une_exception(
+    monkeypatch, valeur, attendu
+):
     monkeypatch.setattr("amundi_agentic.llm.transport.load_dotenv", lambda *a, **k: None)
     t = LiteLLMTransport(load_config())
 
@@ -153,35 +234,79 @@ def test_valeurs_aberrantes_de_prompt_tokens_dans_le_transport(monkeypatch, vale
             return SimpleNamespace(
                 choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))],
                 model="m",
-                usage=SimpleNamespace(prompt_tokens=valeur, completion_tokens=1),
+                usage=SimpleNamespace(prompt_tokens=valeur, completion_tokens=valeur),
             )
 
     t._litellm = Lib()
-    try:
-        r = t.completion(
-            model="ollama/x",
-            messages=[{"role": "user", "content": "a"}],
-            temperature=0,
-            seed=0,
-            max_tokens=None,
-            timeout=5,
-            json_mode=False,
-        )
-    except (ProviderError, LLMError):
-        return
-    except ValueError:
-        pytest.xfail("DEFAUT MINEUR : prompt_tokens non numérique -> ValueError brute du transport")
-    assert isinstance(r.tokens_in, int) and r.tokens_in >= 0 or valeur == -5
+    r = t.completion(
+        model="ollama/x", messages=[{"role": "user", "content": "a"}], temperature=0,
+        seed=0, max_tokens=None, timeout=5, json_mode=False,
+    )  # fmt: skip
+    assert r.tokens_in == attendu and r.tokens_out == attendu
+
+
+def test_usage_absent_de_la_reponse_donne_zero(monkeypatch):
+    monkeypatch.setattr("amundi_agentic.llm.transport.load_dotenv", lambda *a, **k: None)
+    t = LiteLLMTransport(load_config())
+
+    class Lib:
+        def completion(self, **kw):
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))], model="m"
+            )
+
+    t._litellm = Lib()
+    r = t.completion(
+        model="ollama/x", messages=[{"role": "user", "content": "a"}], temperature=0,
+        seed=0, max_tokens=None, timeout=5, json_mode=False,
+    )  # fmt: skip
+    assert (r.tokens_in, r.tokens_out) == (0, 0)
 
 
 # --- faux négatifs : troncature partielle au-delà de la moitié
-def test_faux_negatif_prompt_depassant_num_ctx_tronque_par_le_serveur_a_num_ctx(fabrique, cfg):
-    """80 000 caractères (≈ 17 777 jetons estimés) avec num_ctx = 16 384 : un serveur qui tronque à
-    num_ctx évalue 16 384 jetons, rapport 0,92 > 0,5 : NON DETECTE (voir règle proposée)."""
+@pytest.mark.parametrize(
+    "ratio,refuse",
+    [(0.6, False), (0.95, False), (0.97, False), (0.98, True), (0.99, True), (1.0, True)],
+)
+def test_prompt_depassant_num_ctx_est_detecte_par_la_saturation(
+    fabrique, cfg, tmp_path, ratio, refuse
+):
+    import math
+
     chars = 80_000
-    est = _estimes(chars, cfg)
-    assert est > cfg.ollama.num_ctx
-    assert _tronque(fabrique(profile="dev"), chars, cfg.ollama.num_ctx) is None
+    assert _estimes(chars, cfg) > cfg.ollama.num_ctx  # prompt plus grand que la fenêtre
+    seuil = cfg.truncation_check.saturation_ratio
+    assert seuil == 0.98
+    evalues = (
+        math.ceil(ratio * cfg.ollama.num_ctx) if ratio >= seuil else int(ratio * cfg.ollama.num_ctx)
+    )
+    c = fabrique(profile="dev", run_dir=tmp_path / "run")
+    exc = _tronque(c, chars, evalues)
+    assert (exc is not None) is refuse
+    if refuse:
+        assert exc.motif == "saturation" and "saturation" in str(exc)
+        assert _fichiers_cache(c) == [] and len(c.mock.chat_calls) == 1  # ni cache ni retry
+        ligne = json.loads((tmp_path / "run" / "calls.jsonl").read_text().splitlines()[-1])
+        assert ligne["erreur"].startswith("prompt_tronque_saturation")
+        assert ligne["prompt_tokens_evalues"] == evalues and ligne["num_ctx"] == cfg.ollama.num_ctx
+
+
+def test_exactement_a_la_limite_de_saturation(fabrique, cfg):
+    import math
+
+    limite = cfg.truncation_check.saturation_ratio * cfg.ollama.num_ctx
+    assert _tronque(fabrique(profile="dev"), 80_000, math.ceil(limite) - 1) is None
+    # autre taille de prompt : le cache partagé ne doit pas servir la réponse précédente
+    assert _tronque(fabrique(profile="dev"), 80_001, math.ceil(limite)) is not None
+
+
+def test_saturation_sans_relais_ni_retry_en_chaine_interactive(fabrique, cfg_ollama_principal):
+    c = fabrique(config=cfg_ollama_principal, profile="prod")
+    modele = cfg_ollama_principal.models["main"]
+    c.mock.push(RawCompletion("x", SERVI, 16384, 5), model=modele)
+    with pytest.raises(PromptTronque):
+        c.complete(_msgs(80_000), date_donnees=T)
+    assert [a["model"] for a in c.mock.chat_calls] == [modele] and c.sleeps == []
 
 
 def test_la_troncature_n_est_detectee_que_si_le_prompt_depasse_deux_fois_num_ctx(fabrique, cfg):
@@ -189,13 +314,6 @@ def test_la_troncature_n_est_detectee_que_si_le_prompt_depasse_deux_fois_num_ctx
     assert _tronque(fabrique(profile="dev"), chars, cfg.ollama.num_ctx) is not None
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="FAUX NEGATIF (important) : une troncature partielle (jetons évalués >= 50 % de "
-    "l'estimation) n'est jamais détectée, notamment un prompt de 17 800 jetons tronqué à num_ctx "
-    "(16 384, rapport 0,92). Règle proposée : refuser quand jetons évalués >= 0,98 x num_ctx "
-    "(« contexte saturé »), ou borner la taille du prompt à 70 % de num_ctx avant l'envoi",
-)
 def test_regle_proposee_contexte_sature_devrait_etre_refuse(fabrique, cfg):
     chars = 80_000
     assert _tronque(fabrique(profile="dev"), chars, int(0.99 * cfg.ollama.num_ctx)) is not None
@@ -402,9 +520,25 @@ def test_num_ctx_invalide_refuse_a_la_lecture(cfg, valeur):
         load_config(overrides={"ollama": {"num_ctx": valeur}})
 
 
-@pytest.mark.parametrize("valeur", [None, 2048, 16384, 131072])
+@pytest.mark.parametrize("valeur", [2048, 16384, 131072])
 def test_num_ctx_valide_accepte(cfg, valeur):
     assert load_config(overrides={"ollama": {"num_ctx": valeur}}).ollama.num_ctx == valeur
+
+
+def test_num_ctx_none_avec_un_modele_ollama_configure_est_une_erreur_de_configuration(cfg):
+    with pytest.raises(ConfigurationError, match="num_ctx"):
+        load_config(overrides={"ollama": {"num_ctx": None}})
+    # modèle d'évaluation Ollama sans num_ctx : refusé aussi
+    sans_dev = {**cfg.models, "dev": cfg.models["main"]}
+    ev = {"fallback_enabled": False, "models": {**cfg.evaluation.models, "main": "ollama/fige-1"}}
+    with pytest.raises(ConfigurationError, match="num_ctx"):
+        load_config(overrides={"models": sans_dev, "ollama": {"num_ctx": None}, "evaluation": ev})
+
+
+def test_num_ctx_none_accepte_quand_aucun_modele_ollama_n_est_configure(cfg):
+    sans_ollama = {**cfg.models, "dev": cfg.models["main"]}
+    c = load_config(overrides={"models": sans_ollama, "ollama": {"num_ctx": None}})
+    assert c.ollama.num_ctx is None and c.provider_params("ollama") == {}
 
 
 @pytest.mark.parametrize(
@@ -447,12 +581,6 @@ def test_surcharge_par_un_autre_fichier_de_config(tmp_path, fabrique):
     assert c.mock.chat_calls[0]["extra_params"] == {"num_ctx": 8192}
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="DEFAUT (important, non bloquant) : un fichier de configuration SANS sections `ollama` "
-    "et `truncation_check` est accepté en silence avec des défauts DANGEREUX (num_ctx absent, "
-    "détection sur aucun fournisseur) : le défaut de D-062 revient sans aucun avertissement",
-)
 def test_une_config_sans_les_sections_d062_n_est_pas_silencieusement_dangereuse(tmp_path):
     brut = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
     brut.pop("ollama")
@@ -468,11 +596,6 @@ def test_une_config_sans_les_sections_d062_n_est_pas_silencieusement_dangereuse(
     )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="DEFAUT MINEUR : config/llm.yaml contient deux fois les sections `ollama` et "
-    "`truncation_check` (copier-coller) ; yaml.safe_load garde la dernière en silence",
-)
 def test_llm_yaml_sans_cle_dupliquee():
     class Strict(yaml.SafeLoader):
         pass
