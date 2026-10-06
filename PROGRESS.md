@@ -7,7 +7,7 @@ Mis à jour par le chef de projet à chaque étape.
 | 0 | Cadrage et socle du dépôt | Validée par Younes le 2026-10-02 |
 | 1 | Spécifications (L1) | Validée par Younes le 2026-10-02 |
 | 2 | Couche de données | Validée par Younes le 2026-10-03 |
-| 3 | Agents et débat (L2) | En cours |
+| 3 | Agents et débat (L2) | En cours : socle, outils, ESG, RAG, agents et débat fusionnés ; reste correctif Ollama, pré-enregistrement, réplication |
 | 4 | Construction du portefeuille (L3) | À faire |
 | 5 | Rééquilibrage automatique (O3) | À faire |
 | 6 | Explicabilité et interface (O4) | À faire |
@@ -55,3 +55,12 @@ Mis à jour par le chef de projet à chaque étape.
 - Décisions de Younes du 2026-10-03 : D-039 corrigée (allocation mensuelle sur tout l'historique, poche titres trimestrielle sur l'historique long) ; D-045 validée avec haut rendement conservé et étiquette « non investissable » sur les périodes de séries synthétiques ; source ESG manuelle par ETF à construire en phase 3 (D-048) ; règle sur les tests (D-049) ; graphify installé en mode code seulement (D-050).
 - L1 v1.4 : 69 exigences (O1 18, O2 14, O3 11, O4 9, O5 17). Budget d'appels recalculé (calcul de L1 §11.2) : 852 appels par profil et par an d'historique long (φ = 1), environ 9 060 par profil sur 8,1 ans avant ablations ; la faisabilité dépend des quotas à relever en phase 3.
 - Point à confirmer par Younes : l'étiquette « non investissable » s'applique dès qu'une classe détenue ou du benchmark repose sur un segment synthétique ; les titres de la poche (instruments réels cotés en dollars) ne sont pas des proxys.
+
+## Phase 3 — 2026-10-06 (en cours)
+
+- Fusionné dans `main`, chaque branche relue et testée par le `reviewer-tester` : socle LLM (schémas, `LLMClient`, mock, cache, quotas), outils de calcul financier, source ESG manuelle par ETF avec registre d'empreintes, nettoyage de la couche de données, RAG par sections, résumé avec réflexion, évaluation du RAG, agents « outils d'abord » avec contrôle d'ancrage, coordinateur, débat (consensus en Python), commande `views`. Plus de 2 500 tests ; CI verte sur Python 3.11 et 3.12.
+- Revue du `financial-critic` : acceptable avec réserves pour clore la phase, non probant pour toute conclusion de L4 sur la confiance, le multi-agent contre les agents seuls et la qualité du raisonnement du RAG (D-063 à D-066).
+- **Défaut majeur trouvé (D-062) :** Ollama tronquait les prompts à environ 2 000 jetons sans erreur (aucun `num_ctx`) : les exécutions réelles Ollama faites avant le correctif sont à refaire. Correctif en cours.
+- En cours : correctif de contexte Ollama ; commande de pré-enregistrement et harnais de réplication (protocole révisé D-065).
+- À faire pour clore la phase : pilote réel avec Ollama (contexte corrigé) pour mesurer les taux de rejet d'ancrage, d'erreur JSON et de voix unique ; réplication sur le tirage primaire ; décision de Younes sur le recours à Gemini (quotas à relever dans Google AI Studio : requêtes/min, jetons/min, requêtes/jour pour `gemini-3.8-flash`, `gemini-3.5-flash-lite`, `gemini-flash-latest`, `gemini-flash-lite-latest`).
+- L1 v1.5 (74 exigences). Dettes : D-060 et D-066.
