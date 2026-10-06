@@ -101,18 +101,94 @@ def test_le_debat_ne_traite_pas_la_troncature_en_revision_comme_une_panne(tmp_pa
         run_debate(ctx, "allocation", CLASSES, votants, Coordinator(), esg, risk_agent=RiskAgent())
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="IMPORTANT (non bloquant) : `executer` (debate/run.py) ne capture ni PromptTronque ni "
-    "LLMError : la commande `views` plante avec une trace et AUCUN journal, alors que les débats "
-    "déjà terminés pourraient être gardés (comme pour ProviderError) ; il faudrait un échec "
-    "propre « débat non terminé : prompt tronqué (D-062) » et un code de sortie dédié",
-)
 def test_executer_transforme_la_troncature_en_debat_non_termine_sans_perdre_le_reste(tmp_path):
+    from amundi_agentic.debate.run import ecrire_sorties
+
     ctx = ctx_dev(tmp_path)
-    tronquer_a_partir(ctx, 8, 50)  # les premiers appels passent, puis troncature
+    tronquer_a_partir(ctx, 1, 50, agent="Agent Macro")  # l'allocation (Macro) est tronquée
+    sortie = executer(ctx, classes=CLASSES, titres=["AAA", "BBB"], live=False)
+    assert list(sortie.echecs) == ["allocation"]
+    assert "débat non terminé : prompt tronqué (D-062)" in sortie.echecs["allocation"]
+    assert [d.log.actifs for d in sortie.debats] == [["AAA"], ["BBB"]]  # les titres continuent
+    assert sortie.interrompu is None and "Débats non terminés" in sortie.rapport_md
+    ecrire_sorties(tmp_path / "out", sortie, {})  # le journal est écrit
+    assert (tmp_path / "out" / "views.json").is_file()
+    assert sortie.appels_echecs  # les appels du débat échoué sont conservés pour l'audit
+
+
+def test_la_troncature_en_revision_n_est_pas_une_panne_le_vote_precedent_n_est_pas_conserve(
+    tmp_path,
+):
+    ctx = fabrique_ctx(tmp_path, handler=scripte(lambda r, t, a: -1 if "Macro" in r else 1))
+    mock = ctx.llm.mock
+    original = mock.completion
+
+    def completion(**kw):
+        r = original(**kw)
+        if "Tour de débat" in kw["messages"][0]["content"]:
+            return RawCompletion(r.text, r.model_served, 50, r.tokens_out)
+        return r
+
+    mock.completion = completion
     sortie = executer(ctx, classes=CLASSES, titres=[], live=False)
-    assert sortie.echecs and "tronqu" in json.dumps(sortie.echecs, ensure_ascii=False).lower()
+    assert "allocation" in sortie.echecs and sortie.debats == []  # aucune vue : débat non terminé
+    assert sortie.vues_finales == []  # le vote du tour 0 n'est pas « conservé » comme vue finale
+
+
+def test_commande_views_code_1_journal_ecrit_et_message_sur_un_debat_tronque(
+    tmp_path, monkeypatch, capsys
+):
+    from amundi_agentic.cli import main
+    from amundi_agentic.llm.mock import MockTransport
+
+    original = MockTransport.completion
+
+    def completion(self, **kw):
+        r = original(self, **kw)
+        if "Agent Macro" in kw["messages"][0]["content"]:
+            return RawCompletion(r.text, r.model_served, 40, r.tokens_out)
+        return r
+
+    monkeypatch.setattr(MockTransport, "completion", completion)
+    code = main(["views", "--date", "2024-02-01", "--profile", "equilibre", "--llm-profile",
+                 "dev", "--mock", "--out", str(tmp_path / "runs"), "--stocks", "AAA"])  # fmt: skip
+    run = sorted((tmp_path / "runs").iterdir())[-1]
+    assert code == 1
+    assert "prompt tronqué (D-062)" in capsys.readouterr().err
+    assert (run / "views.json").is_file() and (run / "rapport.md").is_file()
+    lignes = [json.loads(x) for x in (run / "calls.jsonl").read_text().splitlines()]
+    assert any((x["erreur"] or "").startswith("prompt_tronque") for x in lignes)
+    assert {v["actif"] for v in json.loads((run / "views.json").read_text())} == {"AAA"}
+
+
+def test_detection_aveugle_dans_calls_jsonl_et_le_debatlog(tmp_path, monkeypatch):
+    """Usage inconnu (0 jeton renvoyé) : détection aveugle journalisée, aucun débat interrompu."""
+    from amundi_agentic.llm.mock import MockTransport
+
+    original = MockTransport.completion
+
+    def completion(self, **kw):
+        r = original(self, **kw)
+        return RawCompletion(r.text, r.model_served, 0, r.tokens_out)
+
+    monkeypatch.setattr(MockTransport, "completion", completion)
+    ctx = ctx_dev(tmp_path)
+    votants = construire_votants(ctx, "allocation", live=False)
+    esg = EsgAgent().evaluer(ctx, "allocation", CLASSES)
+    res = run_debate(
+        ctx, "allocation", CLASSES, votants, Coordinator(), esg, risk_agent=RiskAgent()
+    )
+    assert res.vues_finales
+    aveugles = [a.record.detection_aveugle for a in res.log.appels]
+    assert aveugles and any(aveugles)  # au moins les prompts ≥ 1 000 jetons estimés
+    assert all(a.record.prompt_tokens_estimes is not None for a in res.log.appels)
+    brut = json.loads(res.log.model_dump_json())
+    assert any(x["record"]["detection_aveugle"] for x in brut["appels"])
+    lignes = [json.loads(x) for x in (tmp_path / "run" / "calls.jsonl").read_text().splitlines()]
+    assert any(x["detection_aveugle"] for x in lignes)
+    from amundi_agentic.schemas import DebateLog
+
+    assert DebateLog.model_validate_json(res.log.model_dump_json()) == res.log
 
 
 def test_la_troncature_est_un_llmerror_pas_un_providererror_donc_ni_relais_ni_panne():
