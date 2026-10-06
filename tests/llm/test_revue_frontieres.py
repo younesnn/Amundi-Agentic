@@ -11,7 +11,12 @@ from amundi_agentic.llm import load_config
 
 ROOT = Path(__file__).resolve().parents[2]
 SRC = ROOT / "src" / "amundi_agentic"
-SDK = ("litellm", "openai", "anthropic", "google", "groq", "ollama", "langchain", "langgraph")
+# SDK de fournisseurs et de cadres LLM : interdits partout hors de `llm/transport.py`.
+SDK = ("litellm", "openai", "anthropic", "google", "groq", "ollama", "langchain")
+# LangGraph est l'ordonnanceur retenu (D-009) : autorisé UNIQUEMENT dans l'orchestrateur du débat,
+# et seulement pour ordonnancer (aucun client de modèle).
+ORCHESTRATEUR = "langgraph"
+FICHIER_LANGGRAPH = Path("debate") / "orchestrator.py"
 PROJET = "amundi_agentic"
 
 
@@ -68,7 +73,59 @@ def test_sdk_et_litellm_uniquement_dans_transport_y_compris_imports_dynamiques()
         sdk = {m for m in mods if _est_sdk(m)}
         if sdk and f != SRC / "llm" / "transport.py":
             fautes.append(f"{f.relative_to(ROOT)} importe {sorted(sdk)}")
+        lg = {m for m in mods if _est_langgraph(m)}
+        if lg and f != SRC / FICHIER_LANGGRAPH:
+            fautes.append(f"{f.relative_to(ROOT)} importe {sorted(lg)} (hors de l'orchestrateur)")
     assert not fautes, "\n".join(fautes)
+
+
+def _est_langgraph(m: str) -> bool:
+    return m == ORCHESTRATEUR or m.startswith(ORCHESTRATEUR + ".")
+
+
+def test_langgraph_n_est_importe_que_par_l_orchestrateur_du_debat():
+    importeurs = set()
+    for f in _fichiers():
+        mods = _modules_importes(ast.parse(f.read_text(encoding="utf-8")), _paquet(f))
+        if any(_est_langgraph(m) for m in mods):
+            importeurs.add(f.relative_to(SRC))
+    assert importeurs == {FICHIER_LANGGRAPH}
+
+
+@pytest.mark.parametrize("paquet", ["agents", "portfolio", "tools", "data", "llm", "evaluation"])
+def test_langgraph_interdit_hors_de_l_orchestrateur_paquet_par_paquet(paquet):
+    for f in (SRC / paquet).rglob("*.py"):
+        mods = _modules_importes(ast.parse(f.read_text(encoding="utf-8")), _paquet(f))
+        assert not [m for m in mods if _est_langgraph(m) or _est_sdk(m)] or (
+            paquet == "llm" and f.name == "transport.py"
+        ), f
+
+
+def test_l_orchestrateur_n_utilise_langgraph_que_comme_ordonnanceur_pas_pour_appeler_un_llm():
+    """Aucun client de modèle (`langchain*`, `langgraph.prebuilt`, `ChatModel`, `create_react_agent`)
+    dans debate/ : les appels de modèle passent par `LLMClient` uniquement."""
+    interdits_modules = ("langchain", "langgraph.prebuilt", "langgraph.func")
+    interdits_noms = re.compile(
+        r"ChatOpenAI|ChatGoogle|ChatGroq|ChatOllama|init_chat_model|create_react_agent|ToolNode"
+        r"|\.bind_tools|\.with_structured_output|\bChatModel\b"
+    )
+    for f in (SRC / "debate").rglob("*.py"):
+        texte = f.read_text(encoding="utf-8")
+        mods = _modules_importes(ast.parse(texte), _paquet(f))
+        assert not [m for m in mods if m.startswith(interdits_modules)], f
+        assert not interdits_noms.search(texte), f
+    orch = (SRC / FICHIER_LANGGRAPH).read_text(encoding="utf-8")
+    importes = {
+        m for m in _modules_importes(ast.parse(orch), "amundi_agentic.debate") if _est_langgraph(m)
+    }
+    assert importes <= {"langgraph", "langgraph.graph", "langgraph.graph.StateGraph",
+                        "langgraph.graph.END", "langgraph.graph.START"}, importes  # fmt: skip
+
+
+def test_le_graphe_langgraph_n_a_que_des_noeuds_python_sans_modele():
+    texte = (SRC / FICHIER_LANGGRAPH).read_text(encoding="utf-8")
+    assert texte.count("StateGraph(") == 1
+    assert "llm" not in re.findall(r"add_node\(\"(\w+)\"", texte)
 
 
 def test_transport_est_le_seul_a_nommer_litellm_meme_en_chaine():
