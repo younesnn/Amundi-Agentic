@@ -28,14 +28,18 @@ ATTENDUS = {
     "macro", "profils", "regles_communes", "risk", "sentiment_allocation", "sentiment_titre",
     "valuation_allocation", "valuation_titre",
 }  # fmt: skip
-FICHIERS = sorted(PROMPTS_DIR.glob("*_v1.md"))
+# Les prompts de la tâche A (rag_*, summary_*, sans en-tête d'agent) cohabitent dans le même dossier
+# après fusion : seuls ceux des agents, listés dans ATTENDUS, sont contrôlés ici.
+FICHIERS = sorted(
+    f for f in PROMPTS_DIR.glob("*_v1.md") if f.name.removesuffix("_v1.md") in ATTENDUS
+)
 LIB = PromptLibrary()
 PROFILS = ["prudent", "equilibre", "dynamique", "risk_averse", "risk_neutral"]
 A = "actions_etats_unis"
 
 
 # --------------------------------------------------------------------------- intégrité des fichiers
-def test_quatorze_fichiers_de_prompt_exactement():
+def test_quatorze_fichiers_de_prompt_d_agents_presents():
     assert {f.name.removesuffix("_v1.md") for f in FICHIERS} == ATTENDUS and len(FICHIERS) == 14
 
 
@@ -125,7 +129,25 @@ def test_le_hash_depend_de_l_ordre_du_contenu_et_pas_des_variables(tmp_path):
 
 
 def test_tous_donne_le_hash_de_chaque_fichier():
-    assert LIB.tous() == {n: _sha(n) for n in ATTENDUS}
+    tous = LIB.tous()
+    assert {n: tous[n] for n in ATTENDUS} == {n: _sha(n) for n in ATTENDUS}
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="BLOQUANT A LA FUSION : `PromptLibrary.tous()` lève PromptError sur tout `*_v1.md` sans "
+    "en-tête d'agent (prompts de la tâche A : rag_*, summary_*, sur `main`) ; la commande `views` "
+    "(execution.json) et 41 tests échouent après fusion. Correction : ignorer ou charger "
+    "séparément les fichiers sans en-tête",
+)
+def test_tous_ignore_les_prompts_sans_en_tete_d_agent_d_autres_outils(tmp_path):
+    import shutil
+
+    copie = tmp_path / "p"
+    shutil.copytree(PROMPTS_DIR, copie)
+    (copie / "rag_answer_v1.md").write_text("# Réponse (rag_answer_v1)\n\nTexte sans en-tête.\n")
+    tous = PromptLibrary(copie).tous()
+    assert set(tous) >= ATTENDUS
 
 
 def test_variable_non_renseignee_est_une_erreur_jamais_envoyee_au_modele():
