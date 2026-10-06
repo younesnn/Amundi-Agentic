@@ -103,9 +103,11 @@ class MockTransport(Transport):
         max_tokens: int | None,
         timeout: float,
         json_mode: bool,
+        extra_params: dict[str, Any] | None = None,
     ) -> RawCompletion:
         self.calls.append(
             {
+                "extra_params": dict(extra_params or {}),
                 "kind": "chat",
                 "model": model,
                 "messages": messages,

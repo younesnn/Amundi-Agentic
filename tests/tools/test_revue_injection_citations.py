@@ -476,7 +476,21 @@ def test_brouillon_et_critique_hostiles_jamais_de_message_desequilibre_envoye(
     )
     critique = json.dumps({"problems": [forge], "missing": [forge], "verdict": "a_corriger"})
     sc = Sc(resume=brouillon, critique=critique, affine=brouillon)
-    out, sc = go(tmp_path, prompts, [art(1, "Titre")], sc, reflection_rounds=2)
+    # Ces prompts hostiles font ~25 000 jetons : bien au-delà de la fenêtre par défaut (16 384),
+    # que la détection de saturation (D-062) refuserait à juste titre. Ce test vérifie l'équilibre
+    # des délimiteurs, pas la taille : on donne à SA configuration une fenêtre assez grande.
+    from amundi_agentic.llm import MockLLMClient, load_config
+
+    llm = MockLLMClient(
+        load_config(overrides={"ollama": {"num_ctx": 262144}}),
+        profile="dev",
+        transport=MockTransport(handler=sc),
+        cache_dir=tmp_path / "llm_cache",
+        quota_journal=tmp_path / "quotas.json",
+    )
+    out = summarize_news(
+        llm, [art(1, "Titre")], T, focus="thème", prompts_dir=prompts, reflection_rounds=2
+    )
     # 5 appels logiques ; le cache du client sert les tours identiques : moins de messages réels
     assert out.n_calls == 1 + 2 * 2 and 3 <= len(sc.messages) <= out.n_calls
     for messages in sc.messages:
