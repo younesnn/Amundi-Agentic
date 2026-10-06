@@ -2,6 +2,7 @@
 
 amundi-agentic data fetch --sources prices,fx,macro,filings,news,esg,pool
 amundi-agentic data coverage
+amundi-agentic views --date AAAA-MM-JJ --profile equilibre --llm-profile dev --out runs/ [--mock]
 """
 
 from __future__ import annotations
@@ -26,8 +27,15 @@ def main(argv: list[str] | None = None) -> int:
     dsub.add_parser("coverage", help="génère docs/couverture_donnees.md")
     dsub.add_parser("snapshot", help="instantanés reconstruits depuis le stockage (sans réseau)")
     dsub.add_parser("manifest", help="écrit data_manifest.json")
+    from amundi_agentic.debate.commande import ajouter_parseur
+
+    ajouter_parseur(sub)
     args = p.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
+    if args.cmd == "views":
+        from amundi_agentic.debate.commande import executer_commande
+
+        return executer_commande(args, argv)
 
     from amundi_agentic.data.settings import DataSettings
 

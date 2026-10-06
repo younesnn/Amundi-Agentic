@@ -81,7 +81,9 @@ _NIVEAUX = {
 
 NiveauDecision = Literal["allocation", "titre"]
 ProfilRisque = Literal["prudent", "equilibre", "dynamique", "risk_averse", "risk_neutral"]
-StatutVue = Literal["individuelle", "unanime", "consensus", "contestee", "surcharge_gerant"]
+StatutVue = Literal[
+    "individuelle", "unanime", "consensus", "contestee", "voix_unique", "surcharge_gerant"
+]
 NiveauAlerte = Literal["aucune", "moderee", "elevee"]
 
 # --------------------------------------------------------------------------- source et vue
@@ -151,8 +153,8 @@ class View(_Modele):
                     f"source {s.source_id} publiée le {s.date_publication.isoformat()}, "
                     f"à ou après la coupure {limite.isoformat()} (point-in-time, EX-O1-03)"
                 )
-        if self.statut == "contestee" and abs(self.direction.n) > 1:
-            raise ValueError("une vue contestée est bornée à ±1 (L1 6.2)")
+        if self.statut in ("contestee", "voix_unique") and abs(self.direction.n) > 1:
+            raise ValueError("une vue contestée ou à voix unique est bornée à ±1 (L1 6.2)")
         if self.actif in ACTIFS_SANS_VUE:
             raise ValueError(f"{self.actif} est l'actif résiduel : aucune vue (EX-O2-12)")
         return self
@@ -191,7 +193,7 @@ class RiskAssessment(_Modele):
 
     date_analyse: date
     alertes: dict[str, NiveauAlerte]
-    regime_volatilite: Literal["normal", "haut"]
+    regime_volatilite: Literal["normal", "haut"] | None = None  # None : non calculable
     indicateurs: dict[str, float]
     seuils: dict[str, float]
     commentaire: str = ""
@@ -203,6 +205,37 @@ class RiskAssessment(_Modele):
         for s in self.sources:
             if s.date_publication >= limite:
                 raise ValueError(f"source {s.source_id} à ou après la coupure {limite.isoformat()}")
+        return self
+
+
+class RegleDeclenchee(_Modele):
+    """Règle déterministe de l'agent ESG qui a déclenché un veto."""
+
+    regle: str
+    critere: str | None = None
+    detail: str
+    reference: str | None = None
+
+
+class EsgAssessment(_Modele):
+    """Sortie de l'agent ESG (L1 5.3) : déterministe ; le LLM ne formule que `explication`."""
+
+    actif: str
+    veto: bool
+    motifs: list[RegleDeclenchee] = Field(default_factory=list)
+    score: float | None = None  # aucun score gratuit (D-035) : None, signalé comme tel
+    fournisseur_score: str | None = None
+    date_score: date | None = None
+    point_in_time: bool
+    methode: Literal["regles_emetteur", "indice_etf"]
+    etats: dict[str, str] = Field(default_factory=dict)  # critère -> état à trois valeurs (D-035)
+    limites: list[str] = Field(default_factory=list)
+    explication: str | None = None
+
+    @model_validator(mode="after")
+    def _veto_motive(self) -> EsgAssessment:
+        if self.veto and not self.motifs:
+            raise ValueError("un veto ESG doit être motivé par au moins une règle")
         return self
 
 
@@ -239,18 +272,44 @@ class DebateRound(_Modele):
 class DebateOutcome(_Modele):
     actif: str
     niveau_final: int = Field(ge=-2, le=2)
-    statut: Literal["unanime", "consensus", "contestee"]
+    statut: Literal["unanime", "consensus", "contestee", "voix_unique"]
     accord_A: float = Field(ge=0, le=1)  # noqa: N815 (notation de L1 6.4)
     tours_utilises: int = Field(ge=0)
     alerte_risque: NiveauAlerte
     confiance_finale: float = Field(ge=0, le=1)
     arbitrage: str | None = None
+    # limite de données qui a plafonné la confiance finale (calcul Python), sinon None
+    plafonnee_par: str | None = None
 
     @model_validator(mode="after")
     def _contestee_bornee(self) -> DebateOutcome:
-        if self.statut == "contestee" and abs(self.niveau_final) > 1:
+        if self.statut in ("contestee", "voix_unique") and abs(self.niveau_final) > 1:
             raise ValueError("niveau final d'une vue contestée borné à ±1 (L1 6.2)")
         return self
+
+
+class VueRejetee(_Modele):
+    """Vue refusée par le contrôle d'ancrage après les nouvelles demandes (motif explicite)."""
+
+    agent: str
+    tour: int = Field(ge=0)
+    actifs: list[str]
+    motif: str
+    tentatives: int = Field(ge=1)
+
+
+class AppelJournal(_Modele):
+    """Un appel LLM du débat : prompt (référence, messages), réponse brute, enregistrement."""
+
+    agent: str
+    tour: int = Field(ge=0)
+    nature: Literal["analyse", "revision", "rapport", "arbitrage", "commentaire", "explication"]
+    prompt_id: str
+    prompt_version: str
+    prompt_sha256: str
+    messages: list[dict[str, str]]
+    reponse: str
+    record: ExecutionRecord
 
 
 class DebateLog(_Modele):
@@ -268,6 +327,16 @@ class DebateLog(_Modele):
     tokens_entree: int = Field(ge=0)
     tokens_sortie: int = Field(ge=0)
     cout_eur: float = Field(ge=0)
+    # Journal complet (EX-O4-01) : tous champs facultatifs pour rester compatible avec L1 5.4.
+    votants: list[str] = Field(default_factory=list)
+    appels: list[AppelJournal] = Field(default_factory=list)
+    rejets: list[VueRejetee] = Field(default_factory=list)
+    sans_decision: dict[str, str] = Field(
+        default_factory=dict
+    )  # actif -> motif (aucune vue valide)
+    prompt_sha256: dict[str, str] = Field(default_factory=dict)
+    risque: RiskAssessment | None = None
+    esg: list[EsgAssessment] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def _un_resultat_par_actif(self) -> DebateLog:

@@ -145,7 +145,8 @@ class ToolMeta:
             "window_start": self.window_start.isoformat() if self.window_start else None,
             "last_data_date": self.last_data_date.isoformat() if self.last_data_date else None,
             "n_obs": self.n_obs,
-            "params": dict(self.params),
+            # JSON strict : dates, Timestamp, numpy et NaN passent par `canonical_params`
+            "params": json.loads(canonical_params(self.params)),
             "series": self.series,
             "unit": self.unit,
             "source_id": self.source_id,
