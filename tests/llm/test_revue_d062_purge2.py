@@ -119,6 +119,8 @@ def test_noms_trompeurs_jamais_supprimes(cache, dossier, nom):
         json.dumps({"text": "x", "modele_servi": "m"}),  # sans fournisseur
         json.dumps({"text": "x", "modele_servi": "m", "fournisseur": 3}),  # fournisseur non texte
         json.dumps({"text": "x", "modele_servi": "m", "fournisseur": None}),
+        json.dumps({"text": "x", "fournisseur": "ollama"}),  # sans modele_servi
+        json.dumps({"vectors": [[1]], "fournisseur": "ollama"}),  # sans modele_servi
     ],
 )  # fmt: skip
 def test_json_etranger_au_nom_d_une_cle_n_est_jamais_supprime(cache, contenu):
@@ -205,6 +207,42 @@ def test_racine_depot_et_parent_du_depot_refuses_sans_purge_reelle():
     for cible in (Path("/"), DEPOT, DEPOT.parent, Path.home(), Path.home().parent):
         refus = DiskCache(cible).refus_purge()
         assert refus is not None, cible
+    # ces cinq cibles sont refusées PAR LA GARDE D'IDENTITÉ (avant tout examen de structure)
+    for cible in (Path("/"), DEPOT, DEPOT.parent, Path.home(), Path.home().parent):
+        assert "racine, répertoire personnel ou dépôt" in DiskCache(cible).refus_purge(), cible
+
+
+def test_garde_d_identite_isolee_home_et_ancetres_meme_si_la_structure_ressemble_a_un_cache(
+    tmp_path, monkeypatch
+):
+    """Le dossier ressemble à un cache (sous-dossiers hexadécimaux seulement) : seule la garde
+    sur le répertoire personnel et ses ancêtres peut le refuser."""
+    home = tmp_path / "ab" / "cd"
+    home.mkdir(parents=True)
+    depose(home, sha("a"))
+    monkeypatch.setenv("HOME", str(home))
+    assert Path.home() == home
+    for cible in (home, home.parent):  # le répertoire personnel lui-même, puis son parent
+        refus = DiskCache(cible).refus_purge()
+        assert refus and "racine, répertoire personnel ou dépôt" in refus, cible
+        assert main(["purge-cache", "--all", "--dir", str(cible)]) == 3
+    assert (home / "aa" / (sha("a") + ".json")).exists()
+
+
+def test_purge_directe_ne_suit_pas_un_dossier_de_cache_lien_symbolique(cache, tmp_path):
+    lien = tmp_path / "lien"
+    os.symlink(cache, lien)
+    assert DiskCache(lien).purge() == 0 and len(restants(cache)) == 2
+
+
+def test_entrees_valides_exclut_les_liens_de_fichier(cache, tmp_path):
+    cible = tmp_path / "cible.json"
+    cible.write_text(entree("ollama"))
+    d = cache / "cc"
+    d.mkdir()
+    os.symlink(cible, d / (sha("c") + ".json"))
+    chemins = {p.name for p, _ in DiskCache(cache)._entrees_valides()}
+    assert sha("c") + ".json" not in chemins and sha("a") + ".json" in chemins
 
 
 def test_le_dossier_de_cache_par_defaut_du_depot_est_accepte(tmp_path):
