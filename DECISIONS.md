@@ -716,3 +716,10 @@ Objet : vérifier la mécanique et la cohérence qualitative avec le papier ; **
 - **Délai LLM :** `defaults.timeout_s` passe de 120 à 900 s (H) avant le premier pré-enregistrement.
 - **Limites connues :** désaccord entre exécutions nul avec le mock (condition vide) ; la dernière version du pré-enregistrement n'est protégée que par Git ; ET et OU excluent un titre dont un des deux votes manque ; l'abstention réelle de Fundamental reste à mesurer avec un vrai modèle.
 
+
+## D-068 — Générations sans fin avec un petit modèle : borne de sortie (2026-10-07) — **trouvé par le pilote de réplication**
+
+- **Constat (pilote Ollama, `llama3.1:8b`, contexte 16 384 corrigé, D-062) :** sur 6 appels de chat de l'agent Fundamental, **4 ont expiré à 900 s** (une heure perdue) et 2 ont réussi (305 s pour 7 471 jetons, 107 s pour 9 499 jetons). Les 4 échecs étaient **le même prompt** (8 719 jetons) répété à l'identique par les nouvelles tentatives : à température 0, la génération est déterministe, donc un prompt qui part en génération sans fin y retombe à chaque tentative. Aucune longueur maximale de sortie n'était fixée (`max_output_tokens: null`) : le modèle écrit jusqu'au contexte plein.
+- **Choix :** `defaults.max_output_tokens: 2048` (H) dans `config/llm.yaml` (une vue, un rapport ou un arbitrage tient largement dessous), vérifié par un appel réel (plafond de 60 jetons respecté par Ollama). Le délai par défaut reste 900 s (D-067).
+- **Reste à faire :** (1) une nouvelle tentative **à l'identique** après un délai dépassé est inutile à température 0 : adapter la politique de relance (par exemple une seule relance, puis échec franc, ou relance à une température légèrement supérieure en mode interactif seulement) ; (2) `preregister` ne hache que la section `evaluation` de `llm.yaml` : y inclure `defaults` (borne de sortie, délai, graine, température) ; (3) mesurer le taux de sorties tronquées par la borne (une vue coupée n'est pas un JSON valide : elle sera rejetée et redemandée).
+- **Pré-enregistrement :** version 2 (motif : ajout de `defaults.max_output_tokens: 2048` et `defaults.timeout_s: 900`, non couverts par le hachage de la version 1).
