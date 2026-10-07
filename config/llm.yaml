@@ -42,7 +42,7 @@ defaults:
   temperature: 0
   # Graine enregistrée dans chaque ExecutionRecord (EX-NF-10) ; transmise au fournisseur.
   seed: 0
-  timeout_s: 120
+  timeout_s: 900   # (H) 120 s expirait avec Ollama local sur des prompts de 2 000 jetons ou plus (D-058) ; 900 s tient les appels du débat et du RAG avec num_ctx 16384
   max_output_tokens: null
   # Sortie structurée invalide : nouvelles tentatives avec rappel des erreurs de validation.
   structured_retries: 2
