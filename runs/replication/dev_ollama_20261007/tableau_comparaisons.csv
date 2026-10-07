@@ -1,0 +1,11 @@
+execution,profil,pour,contre,delta,ic_bas,ic_haut,titres_differents,desaccord_entre_executions
+baseline,risk_averse,multi_agent,ET,0.0,0.0,0.0,0,
+baseline,risk_averse,multi_agent,OU,0.0,0.0,0.0,0,
+baseline,risk_averse,multi_agent,valuation_seul,0.0,0.0,0.0,0,
+baseline,risk_averse,multi_agent,fundamental_seul,0.0,0.0,0.0,0,
+baseline,risk_averse,multi_agent,ref15,-0.05769583425399394,-0.2943049152571226,0.14456093065144385,15,
+baseline,risk_neutral,multi_agent,ET,0.0,0.0,0.0,0,
+baseline,risk_neutral,multi_agent,OU,0.0,0.0,0.0,0,
+baseline,risk_neutral,multi_agent,valuation_seul,0.0,0.0,0.0,0,
+baseline,risk_neutral,multi_agent,fundamental_seul,0.0,0.0,0.0,0,
+baseline,risk_neutral,multi_agent,ref15,-0.05769583425399394,-0.2943049152571226,0.14456093065144385,15,

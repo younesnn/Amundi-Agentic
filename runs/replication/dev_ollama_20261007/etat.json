@@ -1,0 +1,1516 @@
+{
+ "caracteristiques": {
+  "ADI": {
+   "volatilite_annualisee_avant_t": 0.25953829655618843
+  },
+  "AMAT": {
+   "volatilite_annualisee_avant_t": 0.33035704288223455
+  },
+  "CRM": {
+   "volatilite_annualisee_avant_t": 0.28906884851851355
+  },
+  "CTSH": {
+   "volatilite_annualisee_avant_t": 0.22804978453622313
+  },
+  "EPAM": {
+   "volatilite_annualisee_avant_t": 0.40266382969545794
+  },
+  "GEN": {
+   "volatilite_annualisee_avant_t": 0.3107683870437655
+  },
+  "IBM": {
+   "volatilite_annualisee_avant_t": 0.1900754392813506
+  },
+  "IT": {
+   "volatilite_annualisee_avant_t": 0.2606448385150099
+  },
+  "KEYS": {
+   "volatilite_annualisee_avant_t": 0.2861453190592716
+  },
+  "KLAC": {
+   "volatilite_annualisee_avant_t": 0.33556952054416156
+  },
+  "NTAP": {
+   "volatilite_annualisee_avant_t": 0.26824560064229724
+  },
+  "NVDA": {
+   "volatilite_annualisee_avant_t": 0.46796974561903404
+  },
+  "PTC": {
+   "volatilite_annualisee_avant_t": 0.20627419522350568
+  },
+  "QCOM": {
+   "volatilite_annualisee_avant_t": 0.2984901185183955
+  },
+  "TRMB": {
+   "volatilite_annualisee_avant_t": 0.30354897614365683
+  },
+  "ZS": {
+   "volatilite_annualisee_avant_t": 0.49341577350606697
+  }
+ },
+ "config_sha256": "847544003a32d332e51feaad22bb5a18a5074fc12ddb1bbabc4c8667e44a6768",
+ "debats": {
+  "baseline|risk_averse|ADI": {
+   "appels_reels": 32,
+   "cache_hits": 4,
+   "duree_s": 152.635,
+   "final": {
+    "confiance": 0.8,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "unanime",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 32
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 143547,
+   "tokens_sortie": 781,
+   "votants": [
+    "fundamental",
+    "valuation"
+   ],
+   "votes_tour0": {
+    "fundamental": 0,
+    "valuation": 0
+   }
+  },
+  "baseline|risk_averse|AMAT": {
+   "appels_reels": 47,
+   "cache_hits": 4,
+   "duree_s": 366.338,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 47
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "ancrage",
+     "motif": "exactement une vue par actif demandé",
+     "tentatives": 3,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 212423,
+   "tokens_sortie": 2782,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_averse|CRM": {
+   "appels_reels": 63,
+   "cache_hits": 4,
+   "duree_s": 825.339,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 63
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 6470",
+     "tentatives": 2,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 296860,
+   "tokens_sortie": 7141,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_averse|CTSH": {
+   "appels_reels": 38,
+   "cache_hits": 4,
+   "duree_s": 229.758,
+   "final": {
+    "confiance": 0.8,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "unanime",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 38
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 170281,
+   "tokens_sortie": 1909,
+   "votants": [
+    "fundamental",
+    "valuation"
+   ],
+   "votes_tour0": {
+    "fundamental": 0,
+    "valuation": 0
+   }
+  },
+  "baseline|risk_averse|EPAM": {
+   "appels_reels": 46,
+   "cache_hits": 4,
+   "duree_s": 368.278,
+   "final": null,
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 46
+   },
+   "prompts_sha256": {
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "ancrage",
+     "motif": "exactement une vue par actif demandé",
+     "tentatives": 3,
+     "tour": 0
+    },
+    {
+     "agent": "valuation",
+     "classe": "ancrage",
+     "motif": "chiffres introuvables dans les sorties d'outils : ['-16,49']",
+     "tentatives": 3,
+     "tour": 0
+    }
+   ],
+   "sans_decision": "aucune vue valide : exactement une vue par actif demandé | chiffres introuvables dans les sorties d'outils : ['-16,49']",
+   "statut_debat": "ok",
+   "tokens_entree": 209988,
+   "tokens_sortie": 2806,
+   "votants": [],
+   "votes_tour0": {}
+  },
+  "baseline|risk_averse|GEN": {
+   "appels_reels": 50,
+   "cache_hits": 4,
+   "duree_s": 706.176,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 50
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 6585",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 233186,
+   "tokens_sortie": 6357,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_averse|IBM": {
+   "appels_reels": 39,
+   "cache_hits": 4,
+   "duree_s": 243.14,
+   "final": {
+    "confiance": 0.6400000000000001,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "unanime",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 39
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 202447,
+   "tokens_sortie": 1360,
+   "votants": [
+    "fundamental",
+    "valuation"
+   ],
+   "votes_tour0": {
+    "fundamental": 0,
+    "valuation": 0
+   }
+  },
+  "baseline|risk_averse|IT": {
+   "appels_reels": 35,
+   "cache_hits": 4,
+   "duree_s": 300.86,
+   "final": {
+    "confiance": 0.8,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "unanime",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 35
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 168542,
+   "tokens_sortie": 2001,
+   "votants": [
+    "fundamental",
+    "valuation"
+   ],
+   "votes_tour0": {
+    "fundamental": 0,
+    "valuation": 0
+   }
+  },
+  "baseline|risk_averse|KEYS": {
+   "appels_reels": 50,
+   "cache_hits": 4,
+   "duree_s": 705.841,
+   "final": {
+    "confiance": 0.32,
+    "niveau": -1,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 50
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 7078",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 225363,
+   "tokens_sortie": 6354,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": -1
+   }
+  },
+  "baseline|risk_averse|KLAC": {
+   "appels_reels": 2,
+   "cache_hits": 0,
+   "duree_s": 27.026,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 2
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "abstention",
+     "motif": "aucune sortie d'outil citable : {\"xbrl:KLAC\": \"aucun fait XBRL connu à t\", \"rag:KLAC:Flux de trésorerie et résultat net : évo\": \"aucun passage retrouvé : sans réponse\", \"rag:KLAC:Exploitation et marge brute : évolution \": \"aucun passage ret",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 1929,
+   "tokens_sortie": 207,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_averse|NTAP": {
+   "appels_reels": 41,
+   "cache_hits": 4,
+   "duree_s": 649.466,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 41
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 5645",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 184276,
+   "tokens_sortie": 6351,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_averse|NVDA": {
+   "appels_reels": 43,
+   "cache_hits": 4,
+   "duree_s": 286.624,
+   "final": {
+    "confiance": 0.32,
+    "niveau": -1,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 43
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "ancrage",
+     "motif": "exactement une vue par actif demandé",
+     "tentatives": 3,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 192370,
+   "tokens_sortie": 2806,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": -1
+   }
+  },
+  "baseline|risk_averse|PTC": {
+   "appels_reels": 34,
+   "cache_hits": 4,
+   "duree_s": 726.426,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 34
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 7172",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 169342,
+   "tokens_sortie": 6835,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_averse|QCOM": {
+   "appels_reels": 56,
+   "cache_hits": 4,
+   "duree_s": 262.782,
+   "final": {
+    "confiance": 0.8,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "unanime",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 56
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 242329,
+   "tokens_sortie": 1567,
+   "votants": [
+    "fundamental",
+    "valuation"
+   ],
+   "votes_tour0": {
+    "fundamental": 0,
+    "valuation": 0
+   }
+  },
+  "baseline|risk_averse|TRMB": {
+   "appels_reels": 10,
+   "cache_hits": 4,
+   "duree_s": 1006.516,
+   "final": {
+    "confiance": 0.5760000000000001,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "unanime",
+    "tours": 1
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 10
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c",
+    "valuation_titre+regles_communes+debate_round+devil": "6dd3b9d587ced558f58dd98e3e328155ede30302d6936e5beb3b767a49db9456"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 5546",
+     "tentatives": 1,
+     "tour": 1
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 65409,
+   "tokens_sortie": 9494,
+   "votants": [
+    "fundamental",
+    "valuation"
+   ],
+   "votes_tour0": {
+    "fundamental": 0,
+    "valuation": -1
+   }
+  },
+  "baseline|risk_averse|ZS": {
+   "appels_reels": 10,
+   "cache_hits": 0,
+   "duree_s": 693.011,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 10
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 4857",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 36752,
+   "tokens_sortie": 7212,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_neutral|ADI": {
+   "appels_reels": 7,
+   "cache_hits": 4,
+   "duree_s": 688.996,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 7
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 7392",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 29923,
+   "tokens_sortie": 6674,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_neutral|AMAT": {
+   "appels_reels": 4,
+   "cache_hits": 4,
+   "duree_s": 198.536,
+   "final": {
+    "confiance": 0.8,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "unanime",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 4
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 14664,
+   "tokens_sortie": 1573,
+   "votants": [
+    "fundamental",
+    "valuation"
+   ],
+   "votes_tour0": {
+    "fundamental": 0,
+    "valuation": 0
+   }
+  },
+  "baseline|risk_neutral|CRM": {
+   "appels_reels": 6,
+   "cache_hits": 4,
+   "duree_s": 706.972,
+   "final": null,
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 6
+   },
+   "prompts_sha256": {
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 6416",
+     "tentatives": 1,
+     "tour": 0
+    },
+    {
+     "agent": "valuation",
+     "classe": "ancrage",
+     "motif": "chiffres introuvables dans les sorties d'outils : ['71,55']",
+     "tentatives": 3,
+     "tour": 0
+    }
+   ],
+   "sans_decision": "aucune vue valide : sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 6416 | chiffres introuvables dans les sorties d'outils : ['71,55']",
+   "statut_debat": "ok",
+   "tokens_entree": 32388,
+   "tokens_sortie": 6498,
+   "votants": [],
+   "votes_tour0": {}
+  },
+  "baseline|risk_neutral|CTSH": {
+   "appels_reels": 7,
+   "cache_hits": 4,
+   "duree_s": 423.884,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 7
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "valuation",
+     "classe": "ancrage",
+     "motif": "chiffres introuvables dans les sorties d'outils : ['22,805', '17,3756']",
+     "tentatives": 3,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 27587,
+   "tokens_sortie": 3934,
+   "votants": [
+    "fundamental"
+   ],
+   "votes_tour0": {
+    "fundamental": 0
+   }
+  },
+  "baseline|risk_neutral|EPAM": {
+   "appels_reels": 8,
+   "cache_hits": 4,
+   "duree_s": 638.804,
+   "final": null,
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 8
+   },
+   "prompts_sha256": {
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "ancrage",
+     "motif": "exactement une vue par actif demandé",
+     "tentatives": 3,
+     "tour": 0
+    },
+    {
+     "agent": "valuation",
+     "classe": "ancrage",
+     "motif": "chiffres introuvables dans les sorties d'outils : ['-16,49']",
+     "tentatives": 3,
+     "tour": 0
+    }
+   ],
+   "sans_decision": "aucune vue valide : exactement une vue par actif demandé | chiffres introuvables dans les sorties d'outils : ['-16,49']",
+   "statut_debat": "ok",
+   "tokens_entree": 43394,
+   "tokens_sortie": 5775,
+   "votants": [],
+   "votes_tour0": {}
+  },
+  "baseline|risk_neutral|GEN": {
+   "appels_reels": 5,
+   "cache_hits": 4,
+   "duree_s": 483.022,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 5
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "ancrage",
+     "motif": "exactement une vue par actif demandé",
+     "tentatives": 3,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 25350,
+   "tokens_sortie": 4230,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_neutral|IBM": {
+   "appels_reels": 5,
+   "cache_hits": 4,
+   "duree_s": 692.909,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 5
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a value at line 1 column 6591",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 30801,
+   "tokens_sortie": 6353,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_neutral|IT": {
+   "appels_reels": 5,
+   "cache_hits": 4,
+   "duree_s": 698.871,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 5
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 6748",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 31299,
+   "tokens_sortie": 6357,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_neutral|KEYS": {
+   "appels_reels": 5,
+   "cache_hits": 4,
+   "duree_s": 686.565,
+   "final": {
+    "confiance": 0.32,
+    "niveau": -1,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 5
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 7078",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 27842,
+   "tokens_sortie": 6375,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": -1
+   }
+  },
+  "baseline|risk_neutral|KLAC": {
+   "appels_reels": 3,
+   "cache_hits": 0,
+   "duree_s": 65.916,
+   "final": null,
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 3
+   },
+   "prompts_sha256": {
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "abstention",
+     "motif": "aucune sortie d'outil citable : {\"xbrl:KLAC\": \"aucun fait XBRL connu à t\", \"rag:KLAC:Flux de trésorerie et résultat net : évo\": \"aucun passage retrouvé : sans réponse\", \"rag:KLAC:Exploitation et marge brute : évolution \": \"aucun passage ret",
+     "tentatives": 1,
+     "tour": 0
+    },
+    {
+     "agent": "valuation",
+     "classe": "ancrage",
+     "motif": "chiffres introuvables dans les sorties d'outils : ['1,51']",
+     "tentatives": 3,
+     "tour": 0
+    }
+   ],
+   "sans_decision": "aucune vue valide : aucune sortie d'outil citable : {\"xbrl:KLAC\": \"aucun fait XBRL connu à t\", \"rag:KLAC:Flux de trésorerie et résultat net : évo\": \"aucun passage retrouvé : sans réponse\", \"rag:KLAC:Exploitation et marge brute : évolution \": \"aucun passage retrouvé : sans réponse\", \"rag:KLAC:Points d'inquiétude : risques, litiges, \": \"aucun passage r | chiffres introuvables dans les sorties d'outils : ['1,51']",
+   "statut_debat": "ok",
+   "tokens_entree": 5476,
+   "tokens_sortie": 766,
+   "votants": [],
+   "votes_tour0": {}
+  },
+  "baseline|risk_neutral|NTAP": {
+   "appels_reels": 5,
+   "cache_hits": 4,
+   "duree_s": 681.849,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 5
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 6908",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 26334,
+   "tokens_sortie": 6345,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_neutral|NVDA": {
+   "appels_reels": 6,
+   "cache_hits": 4,
+   "duree_s": 358.287,
+   "final": null,
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 6
+   },
+   "prompts_sha256": {
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "ancrage",
+     "motif": "exactement une vue par actif demandé",
+     "tentatives": 3,
+     "tour": 0
+    },
+    {
+     "agent": "valuation",
+     "classe": "ancrage",
+     "motif": "chiffres introuvables dans les sorties d'outils : ['2,23']",
+     "tentatives": 3,
+     "tour": 0
+    }
+   ],
+   "sans_decision": "aucune vue valide : exactement une vue par actif demandé | chiffres introuvables dans les sorties d'outils : ['2,23']",
+   "statut_debat": "ok",
+   "tokens_entree": 28485,
+   "tokens_sortie": 3082,
+   "votants": [],
+   "votes_tour0": {}
+  },
+  "baseline|risk_neutral|PTC": {
+   "appels_reels": 5,
+   "cache_hits": 4,
+   "duree_s": 287.315,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 5
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "ancrage",
+     "motif": "exactement une vue par actif demandé",
+     "tentatives": 3,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 24365,
+   "tokens_sortie": 2244,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  },
+  "baseline|risk_neutral|QCOM": {
+   "appels_reels": 4,
+   "cache_hits": 4,
+   "duree_s": 267.286,
+   "final": {
+    "confiance": 0.8,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "unanime",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 4
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "fundamental+regles_communes": "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 18384,
+   "tokens_sortie": 1970,
+   "votants": [
+    "fundamental",
+    "valuation"
+   ],
+   "votes_tour0": {
+    "fundamental": 0,
+    "valuation": 0
+   }
+  },
+  "baseline|risk_neutral|TRMB": {
+   "appels_reels": 0,
+   "cache_hits": 0,
+   "duree_s": 0.0,
+   "final": null,
+   "modeles_servis": [],
+   "motif": "ProviderError (unavailable) : InternalServerError: litellm.InternalServerError: OllamaException - {\"error\":\"prediction aborted, token repeat limit reached\"}",
+   "par_fournisseur": {},
+   "prompts_sha256": {},
+   "rejets": [],
+   "sans_decision": null,
+   "statut_debat": "echec_fournisseur",
+   "tokens_entree": 0,
+   "tokens_sortie": 0,
+   "votants": [],
+   "votes_tour0": {}
+  },
+  "baseline|risk_neutral|ZS": {
+   "appels_reels": 6,
+   "cache_hits": 4,
+   "duree_s": 747.325,
+   "final": {
+    "confiance": 0.32,
+    "niveau": 0,
+    "plafonnee_par": null,
+    "statut": "voix_unique",
+    "tours": 0
+   },
+   "modeles_servis": [
+    [
+     "dev",
+     "ollama/llama3.1:8b"
+    ],
+    [
+     "embed",
+     "ollama/nomic-embed-text"
+    ]
+   ],
+   "par_fournisseur": {
+    "ollama": 6
+   },
+   "prompts_sha256": {
+    "coordinator_report": "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72",
+    "valuation_titre+regles_communes": "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+   },
+   "rejets": [
+    {
+     "agent": "fundamental",
+     "classe": "json",
+     "motif": "sortie non conforme au schéma après nouvelles tentatives : sortie non conforme au schéma AgentDraft après 3 tentative(s) : racine : Invalid JSON: EOF while parsing a string at line 1 column 7189",
+     "tentatives": 1,
+     "tour": 0
+    }
+   ],
+   "sans_decision": null,
+   "statut_debat": "ok",
+   "tokens_entree": 36035,
+   "tokens_sortie": 6474,
+   "votants": [
+    "valuation"
+   ],
+   "votes_tour0": {
+    "valuation": 0
+   }
+  }
+ },
+ "interrompu": null,
+ "modeles_servis": {
+  "dev": "ollama/llama3.1:8b",
+  "embed": "ollama/nomic-embed-text"
+ },
+ "schema": "amundi-agentic/replication-etat/v1"
+}

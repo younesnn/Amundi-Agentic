@@ -1,0 +1,98 @@
+{
+ "commande": "/Users/younes/ESCP/AGENTIC IA Projets/Amundi Agentic Project/Amundi Agentic/.venv/bin/amundi-agentic replicate --run --llm-profile dev --mode interactif --univers primaire --executions baseline --reprendre /private/tmp/claude-501/replication_pilote/20261007T011619Z/ --out /private/tmp/claude-501/replication_pilote",
+ "ecrit_le": "2026-10-07T07:08:25.831330+00:00",
+ "durees_s": {
+  "baseline|risk_averse|AMAT": 366.338,
+  "baseline|risk_averse|TRMB": 1006.516,
+  "baseline|risk_averse|ZS": 693.011,
+  "baseline|risk_averse|NVDA": 286.624,
+  "baseline|risk_averse|CTSH": 229.758,
+  "baseline|risk_averse|NTAP": 649.466,
+  "baseline|risk_averse|CRM": 825.339,
+  "baseline|risk_averse|IT": 300.86,
+  "baseline|risk_averse|QCOM": 262.782,
+  "baseline|risk_averse|IBM": 243.14,
+  "baseline|risk_averse|GEN": 706.176,
+  "baseline|risk_averse|PTC": 726.426,
+  "baseline|risk_averse|EPAM": 368.278,
+  "baseline|risk_averse|ADI": 152.635,
+  "baseline|risk_averse|KEYS": 705.841,
+  "baseline|risk_neutral|ZS": 747.325,
+  "baseline|risk_neutral|TRMB": 0.0,
+  "baseline|risk_neutral|AMAT": 198.536,
+  "baseline|risk_neutral|NVDA": 358.287,
+  "baseline|risk_neutral|CTSH": 423.884,
+  "baseline|risk_neutral|NTAP": 681.849,
+  "baseline|risk_neutral|CRM": 706.972,
+  "baseline|risk_neutral|IT": 698.871,
+  "baseline|risk_neutral|QCOM": 267.286,
+  "baseline|risk_neutral|IBM": 692.909,
+  "baseline|risk_neutral|GEN": 483.022,
+  "baseline|risk_neutral|PTC": 287.315,
+  "baseline|risk_neutral|EPAM": 638.804,
+  "baseline|risk_neutral|ADI": 688.996,
+  "baseline|risk_neutral|KEYS": 686.565,
+  "baseline|risk_averse|KLAC": 27.026,
+  "baseline|risk_neutral|KLAC": 65.916
+ },
+ "appels_par_fournisseur": {
+  "ollama": 677
+ },
+ "prompts_sha256": {
+  "baseline": {
+   "n_debats_demandes": 32,
+   "n_debats_ok": 31,
+   "echecs_donnees": 0,
+   "echecs_fournisseur": 1,
+   "exclus_esg": 0,
+   "par_agent": {
+    "valuation": {
+     "n_debats": 31,
+     "debats_avec_ancrage": 6,
+     "debats_avec_abstention": 0,
+     "debats_avec_json": 0,
+     "debats_avec_panne": 0,
+     "taux_ancrage": 0.1935483870967742,
+     "taux_abstention": 0.0,
+     "taux_json": 0.0,
+     "taux_panne": 0.0,
+     "sans_vote_tour0": 6
+    },
+    "fundamental": {
+     "n_debats": 31,
+     "debats_avec_ancrage": 7,
+     "debats_avec_abstention": 2,
+     "debats_avec_json": 13,
+     "debats_avec_panne": 0,
+     "taux_ancrage": 0.22580645161290322,
+     "taux_abstention": 0.06451612903225806,
+     "taux_json": 0.41935483870967744,
+     "taux_panne": 0.0,
+     "sans_vote_tour0": 22
+    }
+   },
+   "voix_unique": 18,
+   "taux_voix_unique": 0.5806451612903226,
+   "sans_decision_finale": 5,
+   "appels_reels": 677,
+   "cache_hits": 112,
+   "tokens_entree": 3157371,
+   "tokens_sortie": 134613,
+   "prompts_sha256": {
+    "coordinator_report": [
+     "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72"
+    ],
+    "fundamental+regles_communes": [
+     "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87"
+    ],
+    "valuation_titre+regles_communes": [
+     "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+    ],
+    "valuation_titre+regles_communes+debate_round+devil": [
+     "6dd3b9d587ced558f58dd98e3e328155ede30302d6936e5beb3b767a49db9456"
+    ]
+   }
+  }
+ },
+ "avertissement": "Prototype académique (ESCP, pour Amundi Technology). Ce n'est pas un conseil en investissement."
+}

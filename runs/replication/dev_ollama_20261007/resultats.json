@@ -1,0 +1,1314 @@
+{
+ "meta": {
+  "etiquettes": [
+   [
+    "ollama/llama3.1:8b",
+    "dans la marge de contamination : hors échantillon non garanti, sondage de mémoire requis"
+   ]
+  ],
+  "exclus": {
+   "ANSS": "aucune donnée de prix dans le stockage (société radiée ou absente de la source)",
+   "JNPR": "aucune donnée de prix dans le stockage (société radiée ou absente de la source)"
+  },
+  "executions": [
+   "baseline"
+  ],
+  "graine_sha256": "d7458cc2854316191485a831d14dbb2b9313ee4cdf2194c2d2995997834e88f5",
+  "graine_verifiee": true,
+  "modele_embeddings": "ollama/nomic-embed-text",
+  "modeles_servis": {
+   "dev": "ollama/llama3.1:8b"
+  },
+  "n_pool": 64,
+  "n_utilisables": 62,
+  "preenregistrement": {
+   "ecarts": [],
+   "sha256": "d5418d8b115a150f6798d8b96c44f70a8d2ec55ca48ad9e043ccc4b811ec3f4f",
+   "statut": "conforme"
+  },
+  "remplaces": {
+   "TRMB": "KLAC"
+  },
+  "simule": false,
+  "synthetique": false
+ },
+ "qualitatif": [
+  [
+   "Le profil risk-averse retient moins de titres que le risk-neutral",
+   "BUY multi-agent : 0 (averse) contre 0 (neutre)",
+   "indéterminé"
+  ],
+  [
+   "Risk-averse : le multi-agent est plus resserré que les agents seuls",
+   "BUY : multi-agent 0, Valuation 0, Fundamental 0",
+   "indéterminé"
+  ],
+  [
+   "Risk-averse : écarte les titres les plus volatils",
+   "aucun titre BUY ou volatilité absente",
+   "indéterminé"
+  ],
+  [
+   "Le risk-neutral obtient un rendement cumulé plus élevé que le risk-averse (multi-agent)",
+   "1.78 % (neutre) contre 1.78 % (averse), sans inférence",
+   "indéterminé"
+  ],
+  [
+   "Risk-averse : le multi-agent subit une perte maximale plus faible que les agents seuls",
+   "multi-agent 0.00 %, Valuation 0.00 %, Fundamental 0.00 %",
+   "différent"
+  ]
+ ],
+ "resultats": {
+  "abstention_par_agent_profil": {
+   "baseline": {
+    "risk_averse": {
+     "fundamental": {
+      "n": 16,
+      "sans_vote": 10,
+      "taux": 0.625
+     },
+     "valuation": {
+      "n": 16,
+      "sans_vote": 1,
+      "taux": 0.0625
+     }
+    },
+    "risk_neutral": {
+     "fundamental": {
+      "n": 15,
+      "sans_vote": 12,
+      "taux": 0.8
+     },
+     "valuation": {
+      "n": 15,
+      "sans_vote": 5,
+      "taux": 0.3333333333333333
+     }
+    }
+   }
+  },
+  "accord": {
+   "baseline": {
+    "risk_averse": {
+     "accords": 6,
+     "frequence": 1.0,
+     "n": 6,
+     "wilson": [
+      0.6096657120978348,
+      1.0
+     ]
+    },
+    "risk_neutral": {
+     "accords": 2,
+     "frequence": 1.0,
+     "n": 2,
+     "wilson": [
+      0.3423802275066532,
+      1.0
+     ]
+    }
+   }
+  },
+  "caracteristiques": {
+   "ADI": {
+    "volatilite_annualisee_avant_t": 0.25953829655618843
+   },
+   "AMAT": {
+    "volatilite_annualisee_avant_t": 0.33035704288223455
+   },
+   "CRM": {
+    "volatilite_annualisee_avant_t": 0.28906884851851355
+   },
+   "CTSH": {
+    "volatilite_annualisee_avant_t": 0.22804978453622313
+   },
+   "EPAM": {
+    "volatilite_annualisee_avant_t": 0.40266382969545794
+   },
+   "GEN": {
+    "volatilite_annualisee_avant_t": 0.3107683870437655
+   },
+   "IBM": {
+    "volatilite_annualisee_avant_t": 0.1900754392813506
+   },
+   "IT": {
+    "volatilite_annualisee_avant_t": 0.2606448385150099
+   },
+   "KEYS": {
+    "volatilite_annualisee_avant_t": 0.2861453190592716
+   },
+   "KLAC": {
+    "volatilite_annualisee_avant_t": 0.33556952054416156
+   },
+   "NTAP": {
+    "volatilite_annualisee_avant_t": 0.26824560064229724
+   },
+   "NVDA": {
+    "volatilite_annualisee_avant_t": 0.46796974561903404
+   },
+   "PTC": {
+    "volatilite_annualisee_avant_t": 0.20627419522350568
+   },
+   "QCOM": {
+    "volatilite_annualisee_avant_t": 0.2984901185183955
+   },
+   "TRMB": {
+    "volatilite_annualisee_avant_t": 0.30354897614365683
+   },
+   "ZS": {
+    "volatilite_annualisee_avant_t": 0.49341577350606697
+   }
+  },
+  "executions": {
+   "baseline": {
+    "risk_averse": {
+     "comparaisons": [
+      {
+       "bas": 0.0,
+       "contient_zero": true,
+       "contre": "ET",
+       "delta": 0.0,
+       "desaccord_entre_executions": null,
+       "execution": "baseline",
+       "haut": 0.0,
+       "n_reechantillonnages": 10000,
+       "pour": "multi_agent",
+       "profil": "risk_averse",
+       "titres_differents": 0
+      },
+      {
+       "bas": 0.0,
+       "contient_zero": true,
+       "contre": "OU",
+       "delta": 0.0,
+       "desaccord_entre_executions": null,
+       "execution": "baseline",
+       "haut": 0.0,
+       "n_reechantillonnages": 10000,
+       "pour": "multi_agent",
+       "profil": "risk_averse",
+       "titres_differents": 0
+      },
+      {
+       "bas": 0.0,
+       "contient_zero": true,
+       "contre": "valuation_seul",
+       "delta": 0.0,
+       "desaccord_entre_executions": null,
+       "execution": "baseline",
+       "haut": 0.0,
+       "n_reechantillonnages": 10000,
+       "pour": "multi_agent",
+       "profil": "risk_averse",
+       "titres_differents": 0
+      },
+      {
+       "bas": 0.0,
+       "contient_zero": true,
+       "contre": "fundamental_seul",
+       "delta": 0.0,
+       "desaccord_entre_executions": null,
+       "execution": "baseline",
+       "haut": 0.0,
+       "n_reechantillonnages": 10000,
+       "pour": "multi_agent",
+       "profil": "risk_averse",
+       "titres_differents": 0
+      },
+      {
+       "bas": -0.2943049152571226,
+       "contient_zero": true,
+       "contre": "ref15",
+       "delta": -0.05769583425399394,
+       "desaccord_entre_executions": null,
+       "execution": "baseline",
+       "haut": 0.14456093065144385,
+       "n_reechantillonnages": 10000,
+       "pour": "multi_agent",
+       "profil": "risk_averse",
+       "titres_differents": 15
+      }
+     ],
+     "decompte": {
+      "ET": {
+       "pool_evalue": {
+        "BUY": 0,
+        "SELL": 6,
+        "exclus": 10
+       },
+       "primaire": {
+        "BUY": 0,
+        "SELL": 5,
+        "exclus": 10
+       }
+      },
+      "OU": {
+       "pool_evalue": {
+        "BUY": 0,
+        "SELL": 6,
+        "exclus": 10
+       },
+       "primaire": {
+        "BUY": 0,
+        "SELL": 5,
+        "exclus": 10
+       }
+      },
+      "fundamental_seul": {
+       "pool_evalue": {
+        "BUY": 0,
+        "SELL": 6,
+        "exclus": 10
+       },
+       "primaire": {
+        "BUY": 0,
+        "SELL": 5,
+        "exclus": 10
+       }
+      },
+      "multi_agent": {
+       "pool_evalue": {
+        "BUY": 0,
+        "SELL": 6,
+        "exclus": 10
+       },
+       "primaire": {
+        "BUY": 0,
+        "SELL": 5,
+        "exclus": 10
+       }
+      },
+      "valuation_seul": {
+       "pool_evalue": {
+        "BUY": 0,
+        "SELL": 15,
+        "exclus": 1
+       },
+       "primaire": {
+        "BUY": 0,
+        "SELL": 14,
+        "exclus": 1
+       }
+      }
+     },
+     "portefeuilles": {
+      "ET": {
+       "aleatoire_meme_taille": null,
+       "annualise": 0.05496986732959863,
+       "creux": "2024-02-01",
+       "cumul": 0.017781289334725336,
+       "m": 0,
+       "n_rendements": 83,
+       "notes": [
+        "Sharpe non défini : Sharpe non défini : volatilité annualisée 9.64e-06 < 0.0001"
+       ],
+       "perte_max": 0.0,
+       "pic": "2024-02-01",
+       "rf_annuel": 0.05496987951807229,
+       "sensibilite_abstention_buy": {
+        "annualise": 0.2565125813523681,
+        "creux": "2024-04-19",
+        "cumul": 0.07810756787907702,
+        "m": 10,
+        "n_rendements": 83,
+        "notes": [],
+        "perte_max": -0.11704741800942897,
+        "pic": "2024-03-07",
+        "rf_annuel": 0.05496987951807229,
+        "sharpe": 0.8600368464843184,
+        "sharpe_intervalle": [
+         -1.910466657526166,
+         5.684480629575522
+        ],
+        "titres": [
+         "ZS",
+         "AMAT",
+         "NVDA",
+         "NTAP",
+         "CRM",
+         "GEN",
+         "PTC",
+         "EPAM",
+         "KEYS",
+         "KLAC"
+        ],
+        "tresorerie": false,
+        "volatilite": 0.23434193855550192
+       },
+       "sharpe": null,
+       "sharpe_intervalle": null,
+       "titres": [],
+       "tresorerie": true,
+       "volatilite": 9.635722122160918e-06
+      },
+      "OU": {
+       "aleatoire_meme_taille": null,
+       "annualise": 0.05496986732959863,
+       "creux": "2024-02-01",
+       "cumul": 0.017781289334725336,
+       "m": 0,
+       "n_rendements": 83,
+       "notes": [
+        "Sharpe non défini : Sharpe non défini : volatilité annualisée 9.64e-06 < 0.0001"
+       ],
+       "perte_max": 0.0,
+       "pic": "2024-02-01",
+       "rf_annuel": 0.05496987951807229,
+       "sensibilite_abstention_buy": {
+        "annualise": 0.2565125813523681,
+        "creux": "2024-04-19",
+        "cumul": 0.07810756787907702,
+        "m": 10,
+        "n_rendements": 83,
+        "notes": [],
+        "perte_max": -0.11704741800942897,
+        "pic": "2024-03-07",
+        "rf_annuel": 0.05496987951807229,
+        "sharpe": 0.8600368464843184,
+        "sharpe_intervalle": [
+         -1.910466657526166,
+         5.684480629575522
+        ],
+        "titres": [
+         "ZS",
+         "AMAT",
+         "NVDA",
+         "NTAP",
+         "CRM",
+         "GEN",
+         "PTC",
+         "EPAM",
+         "KEYS",
+         "KLAC"
+        ],
+        "tresorerie": false,
+        "volatilite": 0.23434193855550192
+       },
+       "sharpe": null,
+       "sharpe_intervalle": null,
+       "titres": [],
+       "tresorerie": true,
+       "volatilite": 9.635722122160918e-06
+      },
+      "fundamental_seul": {
+       "aleatoire_meme_taille": null,
+       "annualise": 0.05496986732959863,
+       "creux": "2024-02-01",
+       "cumul": 0.017781289334725336,
+       "m": 0,
+       "n_rendements": 83,
+       "notes": [
+        "Sharpe non défini : Sharpe non défini : volatilité annualisée 9.64e-06 < 0.0001"
+       ],
+       "perte_max": 0.0,
+       "pic": "2024-02-01",
+       "rf_annuel": 0.05496987951807229,
+       "sensibilite_abstention_buy": {
+        "annualise": 0.2565125813523681,
+        "creux": "2024-04-19",
+        "cumul": 0.07810756787907702,
+        "m": 10,
+        "n_rendements": 83,
+        "notes": [],
+        "perte_max": -0.11704741800942897,
+        "pic": "2024-03-07",
+        "rf_annuel": 0.05496987951807229,
+        "sharpe": 0.8600368464843184,
+        "sharpe_intervalle": [
+         -1.910466657526166,
+         5.684480629575522
+        ],
+        "titres": [
+         "ZS",
+         "AMAT",
+         "NVDA",
+         "NTAP",
+         "CRM",
+         "GEN",
+         "PTC",
+         "EPAM",
+         "KEYS",
+         "KLAC"
+        ],
+        "tresorerie": false,
+        "volatilite": 0.23434193855550192
+       },
+       "sharpe": null,
+       "sharpe_intervalle": null,
+       "titres": [],
+       "tresorerie": true,
+       "volatilite": 9.635722122160918e-06
+      },
+      "multi_agent": {
+       "aleatoire_meme_taille": null,
+       "annualise": 0.05496986732959863,
+       "creux": "2024-02-01",
+       "cumul": 0.017781289334725336,
+       "m": 0,
+       "n_rendements": 83,
+       "notes": [
+        "Sharpe non défini : Sharpe non défini : volatilité annualisée 9.64e-06 < 0.0001"
+       ],
+       "perte_max": 0.0,
+       "pic": "2024-02-01",
+       "rf_annuel": 0.05496987951807229,
+       "sensibilite_abstention_buy": {
+        "annualise": 0.2565125813523681,
+        "creux": "2024-04-19",
+        "cumul": 0.07810756787907702,
+        "m": 10,
+        "n_rendements": 83,
+        "notes": [],
+        "perte_max": -0.11704741800942897,
+        "pic": "2024-03-07",
+        "rf_annuel": 0.05496987951807229,
+        "sharpe": 0.8600368464843184,
+        "sharpe_intervalle": [
+         -1.910466657526166,
+         5.684480629575522
+        ],
+        "titres": [
+         "ZS",
+         "AMAT",
+         "NVDA",
+         "NTAP",
+         "CRM",
+         "GEN",
+         "PTC",
+         "EPAM",
+         "KEYS",
+         "KLAC"
+        ],
+        "tresorerie": false,
+        "volatilite": 0.23434193855550192
+       },
+       "sharpe": null,
+       "sharpe_intervalle": null,
+       "titres": [],
+       "tresorerie": true,
+       "volatilite": 9.635722122160918e-06
+      },
+      "valuation_seul": {
+       "aleatoire_meme_taille": null,
+       "annualise": 0.05496986732959863,
+       "creux": "2024-02-01",
+       "cumul": 0.017781289334725336,
+       "m": 0,
+       "n_rendements": 83,
+       "notes": [
+        "Sharpe non défini : Sharpe non défini : volatilité annualisée 9.64e-06 < 0.0001"
+       ],
+       "perte_max": 0.0,
+       "pic": "2024-02-01",
+       "rf_annuel": 0.05496987951807229,
+       "sensibilite_abstention_buy": {
+        "annualise": -0.7622408505422179,
+        "creux": "2024-05-30",
+        "cumul": -0.3769521638703617,
+        "m": 1,
+        "n_rendements": 83,
+        "notes": [],
+        "perte_max": -0.440453865430509,
+        "pic": "2024-03-07",
+        "rf_annuel": 0.05496987951807229,
+        "sharpe": -1.4461997194089662,
+        "sharpe_intervalle": [
+         -3.104320882145096,
+         0.10940341065206338
+        ],
+        "titres": [
+         "EPAM"
+        ],
+        "tresorerie": false,
+        "volatilite": 0.5650746014487324
+       },
+       "sharpe": null,
+       "sharpe_intervalle": null,
+       "titres": [],
+       "tresorerie": true,
+       "volatilite": 9.635722122160918e-06
+      }
+     }
+    },
+    "risk_neutral": {
+     "comparaisons": [
+      {
+       "bas": 0.0,
+       "contient_zero": true,
+       "contre": "ET",
+       "delta": 0.0,
+       "desaccord_entre_executions": null,
+       "execution": "baseline",
+       "haut": 0.0,
+       "n_reechantillonnages": 10000,
+       "pour": "multi_agent",
+       "profil": "risk_neutral",
+       "titres_differents": 0
+      },
+      {
+       "bas": 0.0,
+       "contient_zero": true,
+       "contre": "OU",
+       "delta": 0.0,
+       "desaccord_entre_executions": null,
+       "execution": "baseline",
+       "haut": 0.0,
+       "n_reechantillonnages": 10000,
+       "pour": "multi_agent",
+       "profil": "risk_neutral",
+       "titres_differents": 0
+      },
+      {
+       "bas": 0.0,
+       "contient_zero": true,
+       "contre": "valuation_seul",
+       "delta": 0.0,
+       "desaccord_entre_executions": null,
+       "execution": "baseline",
+       "haut": 0.0,
+       "n_reechantillonnages": 10000,
+       "pour": "multi_agent",
+       "profil": "risk_neutral",
+       "titres_differents": 0
+      },
+      {
+       "bas": 0.0,
+       "contient_zero": true,
+       "contre": "fundamental_seul",
+       "delta": 0.0,
+       "desaccord_entre_executions": null,
+       "execution": "baseline",
+       "haut": 0.0,
+       "n_reechantillonnages": 10000,
+       "pour": "multi_agent",
+       "profil": "risk_neutral",
+       "titres_differents": 0
+      },
+      {
+       "bas": -0.2943049152571226,
+       "contient_zero": true,
+       "contre": "ref15",
+       "delta": -0.05769583425399394,
+       "desaccord_entre_executions": null,
+       "execution": "baseline",
+       "haut": 0.14456093065144385,
+       "n_reechantillonnages": 10000,
+       "pour": "multi_agent",
+       "profil": "risk_neutral",
+       "titres_differents": 15
+      }
+     ],
+     "decompte": {
+      "ET": {
+       "pool_evalue": {
+        "BUY": 0,
+        "SELL": 2,
+        "exclus": 14
+       },
+       "primaire": {
+        "BUY": 0,
+        "SELL": 2,
+        "exclus": 13
+       }
+      },
+      "OU": {
+       "pool_evalue": {
+        "BUY": 0,
+        "SELL": 2,
+        "exclus": 14
+       },
+       "primaire": {
+        "BUY": 0,
+        "SELL": 2,
+        "exclus": 13
+       }
+      },
+      "fundamental_seul": {
+       "pool_evalue": {
+        "BUY": 0,
+        "SELL": 3,
+        "exclus": 13
+       },
+       "primaire": {
+        "BUY": 0,
+        "SELL": 3,
+        "exclus": 12
+       }
+      },
+      "multi_agent": {
+       "pool_evalue": {
+        "BUY": 0,
+        "SELL": 2,
+        "exclus": 14
+       },
+       "primaire": {
+        "BUY": 0,
+        "SELL": 2,
+        "exclus": 13
+       }
+      },
+      "valuation_seul": {
+       "pool_evalue": {
+        "BUY": 0,
+        "SELL": 10,
+        "exclus": 6
+       },
+       "primaire": {
+        "BUY": 0,
+        "SELL": 10,
+        "exclus": 5
+       }
+      }
+     },
+     "portefeuilles": {
+      "ET": {
+       "aleatoire_meme_taille": null,
+       "annualise": 0.05496986732959863,
+       "creux": "2024-02-01",
+       "cumul": 0.017781289334725336,
+       "m": 0,
+       "n_rendements": 83,
+       "notes": [
+        "Sharpe non défini : Sharpe non défini : volatilité annualisée 9.64e-06 < 0.0001"
+       ],
+       "perte_max": 0.0,
+       "pic": "2024-02-01",
+       "rf_annuel": 0.05496987951807229,
+       "sensibilite_abstention_buy": {
+        "annualise": 0.09145364480757423,
+        "creux": "2024-04-19",
+        "cumul": 0.029242277583719112,
+        "m": 13,
+        "n_rendements": 83,
+        "notes": [],
+        "perte_max": -0.10868410897844616,
+        "pic": "2024-03-07",
+        "rf_annuel": 0.05496987951807229,
+        "sharpe": 0.1825842457516468,
+        "sharpe_intervalle": [
+         -2.3396762271275486,
+         4.351565271967993
+        ],
+        "titres": [
+         "ZS",
+         "NVDA",
+         "CTSH",
+         "NTAP",
+         "CRM",
+         "IT",
+         "IBM",
+         "GEN",
+         "PTC",
+         "EPAM",
+         "ADI",
+         "KEYS",
+         "KLAC"
+        ],
+        "tresorerie": false,
+        "volatilite": 0.19981880221543089
+       },
+       "sharpe": null,
+       "sharpe_intervalle": null,
+       "titres": [],
+       "tresorerie": true,
+       "volatilite": 9.635722122160918e-06
+      },
+      "OU": {
+       "aleatoire_meme_taille": null,
+       "annualise": 0.05496986732959863,
+       "creux": "2024-02-01",
+       "cumul": 0.017781289334725336,
+       "m": 0,
+       "n_rendements": 83,
+       "notes": [
+        "Sharpe non défini : Sharpe non défini : volatilité annualisée 9.64e-06 < 0.0001"
+       ],
+       "perte_max": 0.0,
+       "pic": "2024-02-01",
+       "rf_annuel": 0.05496987951807229,
+       "sensibilite_abstention_buy": {
+        "annualise": 0.09145364480757423,
+        "creux": "2024-04-19",
+        "cumul": 0.029242277583719112,
+        "m": 13,
+        "n_rendements": 83,
+        "notes": [],
+        "perte_max": -0.10868410897844616,
+        "pic": "2024-03-07",
+        "rf_annuel": 0.05496987951807229,
+        "sharpe": 0.1825842457516468,
+        "sharpe_intervalle": [
+         -2.3396762271275486,
+         4.351565271967993
+        ],
+        "titres": [
+         "ZS",
+         "NVDA",
+         "CTSH",
+         "NTAP",
+         "CRM",
+         "IT",
+         "IBM",
+         "GEN",
+         "PTC",
+         "EPAM",
+         "ADI",
+         "KEYS",
+         "KLAC"
+        ],
+        "tresorerie": false,
+        "volatilite": 0.19981880221543089
+       },
+       "sharpe": null,
+       "sharpe_intervalle": null,
+       "titres": [],
+       "tresorerie": true,
+       "volatilite": 9.635722122160918e-06
+      },
+      "fundamental_seul": {
+       "aleatoire_meme_taille": null,
+       "annualise": 0.05496986732959863,
+       "creux": "2024-02-01",
+       "cumul": 0.017781289334725336,
+       "m": 0,
+       "n_rendements": 83,
+       "notes": [
+        "Sharpe non défini : Sharpe non défini : volatilité annualisée 9.64e-06 < 0.0001"
+       ],
+       "perte_max": 0.0,
+       "pic": "2024-02-01",
+       "rf_annuel": 0.05496987951807229,
+       "sensibilite_abstention_buy": {
+        "annualise": 0.13851545198503667,
+        "creux": "2024-04-19",
+        "cumul": 0.04365288001398482,
+        "m": 12,
+        "n_rendements": 83,
+        "notes": [],
+        "perte_max": -0.10709232241655775,
+        "pic": "2024-03-07",
+        "rf_annuel": 0.05496987951807229,
+        "sharpe": 0.4003667128567842,
+        "sharpe_intervalle": [
+         -2.1610433246182805,
+         4.745880279455031
+        ],
+        "titres": [
+         "ZS",
+         "NVDA",
+         "NTAP",
+         "CRM",
+         "IT",
+         "IBM",
+         "GEN",
+         "PTC",
+         "EPAM",
+         "ADI",
+         "KEYS",
+         "KLAC"
+        ],
+        "tresorerie": false,
+        "volatilite": 0.2086726238323654
+       },
+       "sharpe": null,
+       "sharpe_intervalle": null,
+       "titres": [],
+       "tresorerie": true,
+       "volatilite": 9.635722122160918e-06
+      },
+      "multi_agent": {
+       "aleatoire_meme_taille": null,
+       "annualise": 0.05496986732959863,
+       "creux": "2024-02-01",
+       "cumul": 0.017781289334725336,
+       "m": 0,
+       "n_rendements": 83,
+       "notes": [
+        "Sharpe non défini : Sharpe non défini : volatilité annualisée 9.64e-06 < 0.0001"
+       ],
+       "perte_max": 0.0,
+       "pic": "2024-02-01",
+       "rf_annuel": 0.05496987951807229,
+       "sensibilite_abstention_buy": {
+        "annualise": 0.09145364480757423,
+        "creux": "2024-04-19",
+        "cumul": 0.029242277583719112,
+        "m": 13,
+        "n_rendements": 83,
+        "notes": [],
+        "perte_max": -0.10868410897844616,
+        "pic": "2024-03-07",
+        "rf_annuel": 0.05496987951807229,
+        "sharpe": 0.1825842457516468,
+        "sharpe_intervalle": [
+         -2.3396762271275486,
+         4.351565271967993
+        ],
+        "titres": [
+         "ZS",
+         "NVDA",
+         "CTSH",
+         "NTAP",
+         "CRM",
+         "IT",
+         "IBM",
+         "GEN",
+         "PTC",
+         "EPAM",
+         "ADI",
+         "KEYS",
+         "KLAC"
+        ],
+        "tresorerie": false,
+        "volatilite": 0.19981880221543089
+       },
+       "sharpe": null,
+       "sharpe_intervalle": null,
+       "titres": [],
+       "tresorerie": true,
+       "volatilite": 9.635722122160918e-06
+      },
+      "valuation_seul": {
+       "aleatoire_meme_taille": null,
+       "annualise": 0.05496986732959863,
+       "creux": "2024-02-01",
+       "cumul": 0.017781289334725336,
+       "m": 0,
+       "n_rendements": 83,
+       "notes": [
+        "Sharpe non défini : Sharpe non défini : volatilité annualisée 9.64e-06 < 0.0001"
+       ],
+       "perte_max": 0.0,
+       "pic": "2024-02-01",
+       "rf_annuel": 0.05496987951807229,
+       "sensibilite_abstention_buy": {
+        "annualise": 0.20673542670217637,
+        "creux": "2024-04-19",
+        "cumul": 0.06384942579810837,
+        "m": 5,
+        "n_rendements": 83,
+        "notes": [],
+        "perte_max": -0.15424095222673084,
+        "pic": "2024-03-07",
+        "rf_annuel": 0.05496987951807229,
+        "sharpe": 0.5415481612050512,
+        "sharpe_intervalle": [
+         -1.9514756941612756,
+         5.682871735298075
+        ],
+        "titres": [
+         "NVDA",
+         "CTSH",
+         "CRM",
+         "EPAM",
+         "KLAC"
+        ],
+        "tresorerie": false,
+        "volatilite": 0.28024386020699593
+       },
+       "sharpe": null,
+       "sharpe_intervalle": null,
+       "titres": [],
+       "tresorerie": true,
+       "volatilite": 9.635722122160918e-06
+      }
+     }
+    }
+   }
+  },
+  "fenetre": {
+   "as_of_performance": "2024-06-01",
+   "cumul_tresorerie": 0.017781289334725336,
+   "devise": "USD",
+   "entree": "2024-02-01",
+   "fin": "2024-05-31",
+   "n_rendements": 83,
+   "n_seances": 84,
+   "prix": "adj_close",
+   "rf_annuel": 0.05496987951807229
+  },
+  "kappa": {
+   "risk_averse": {},
+   "risk_neutral": {}
+  },
+  "prix_arretes_avant_la_fin": {},
+  "qualite": {
+   "baseline": {
+    "appels_reels": 677,
+    "cache_hits": 112,
+    "echecs_donnees": 0,
+    "echecs_fournisseur": 1,
+    "exclus_esg": 0,
+    "n_debats_demandes": 32,
+    "n_debats_ok": 31,
+    "par_agent": {
+     "fundamental": {
+      "debats_avec_abstention": 2,
+      "debats_avec_ancrage": 7,
+      "debats_avec_json": 13,
+      "debats_avec_panne": 0,
+      "n_debats": 31,
+      "sans_vote_tour0": 22,
+      "taux_abstention": 0.06451612903225806,
+      "taux_ancrage": 0.22580645161290322,
+      "taux_json": 0.41935483870967744,
+      "taux_panne": 0.0
+     },
+     "valuation": {
+      "debats_avec_abstention": 0,
+      "debats_avec_ancrage": 6,
+      "debats_avec_json": 0,
+      "debats_avec_panne": 0,
+      "n_debats": 31,
+      "sans_vote_tour0": 6,
+      "taux_abstention": 0.0,
+      "taux_ancrage": 0.1935483870967742,
+      "taux_json": 0.0,
+      "taux_panne": 0.0
+     }
+    },
+    "prompts_sha256": {
+     "coordinator_report": [
+      "fa5bd7d2bc7cc618deb7a0ca3b5a8012cc1c3a7d6180f78b7e5758c16340bb72"
+     ],
+     "fundamental+regles_communes": [
+      "76655a381f37d1581fa5e8dc774ec3ef1b051a90c6922a01c6943870e3d46c87"
+     ],
+     "valuation_titre+regles_communes": [
+      "64958fda6c3ce4de1446d4187d8b31a4b125eeee0556e39e9b6c3c02c4c8ad2c"
+     ],
+     "valuation_titre+regles_communes+debate_round+devil": [
+      "6dd3b9d587ced558f58dd98e3e328155ede30302d6936e5beb3b767a49db9456"
+     ]
+    },
+    "sans_decision_finale": 5,
+    "taux_voix_unique": 0.5806451612903226,
+    "tokens_entree": 3157371,
+    "tokens_sortie": 134613,
+    "voix_unique": 18
+   }
+  },
+  "references": {
+   "ref15": {
+    "annualise": 0.24722768414034801,
+    "creux": "2024-04-19",
+    "cumul": 0.0754771235887195,
+    "m": 15,
+    "n_rendements": 83,
+    "notes": [],
+    "perte_max": -0.10815155165639612,
+    "pic": "2024-03-07",
+    "rf_annuel": 0.05496987951807229,
+    "sharpe": 0.9345321201159801,
+    "sharpe_intervalle": [
+     -1.9569133072954379,
+     5.945034208446326
+    ],
+    "titres": [
+     "ZS",
+     "AMAT",
+     "NVDA",
+     "CTSH",
+     "NTAP",
+     "CRM",
+     "IT",
+     "QCOM",
+     "IBM",
+     "GEN",
+     "PTC",
+     "EPAM",
+     "ADI",
+     "KEYS",
+     "KLAC"
+    ],
+    "tresorerie": false,
+    "volatilite": 0.2057262671703735
+   },
+   "tous_evalues": {
+    "annualise": 0.2444396282906265,
+    "creux": "2024-04-19",
+    "cumul": 0.07468469474858241,
+    "m": 16,
+    "n_rendements": 83,
+    "notes": [],
+    "perte_max": -0.10574533778094597,
+    "pic": "2024-03-07",
+    "rf_annuel": 0.05496987951807229,
+    "sharpe": 0.9555746302852235,
+    "sharpe_intervalle": [
+     -1.9895032796401526,
+     5.999104627974424
+    ],
+    "titres": [
+     "ADI",
+     "AMAT",
+     "CRM",
+     "CTSH",
+     "EPAM",
+     "GEN",
+     "IBM",
+     "IT",
+     "KEYS",
+     "KLAC",
+     "NTAP",
+     "NVDA",
+     "PTC",
+     "QCOM",
+     "TRMB",
+     "ZS"
+    ],
+    "tresorerie": false,
+    "volatilite": 0.19827833720951815
+   },
+   "tresorerie": {
+    "annualise": 0.05496986732959863,
+    "creux": "2024-02-01",
+    "cumul": 0.017781289334725336,
+    "m": 0,
+    "n_rendements": 83,
+    "notes": [
+     "Sharpe non défini : Sharpe non défini : volatilité annualisée 9.64e-06 < 0.0001"
+    ],
+    "perte_max": 0.0,
+    "pic": "2024-02-01",
+    "rf_annuel": 0.05496987951807229,
+    "sharpe": null,
+    "sharpe_intervalle": null,
+    "titres": [],
+    "tresorerie": true,
+    "volatilite": 9.635722122160918e-06
+   }
+  },
+  "secondaires": {
+   "n_tirages": 1000,
+   "tableau": {
+    "baseline": {
+     "risk_averse": {
+      "ET": {
+       "mediane": 0.017781289334725336,
+       "p05": 0.017781289334725336,
+       "p95": 0.017781289334725336,
+       "part_au_dessus_de_ref15": 0.0
+      },
+      "OU": {
+       "mediane": 0.017781289334725336,
+       "p05": 0.017781289334725336,
+       "p95": 0.017781289334725336,
+       "part_au_dessus_de_ref15": 0.0
+      },
+      "fundamental_seul": {
+       "mediane": 0.017781289334725336,
+       "p05": 0.017781289334725336,
+       "p95": 0.017781289334725336,
+       "part_au_dessus_de_ref15": 0.0
+      },
+      "multi_agent": {
+       "mediane": 0.017781289334725336,
+       "p05": 0.017781289334725336,
+       "p95": 0.017781289334725336,
+       "part_au_dessus_de_ref15": 0.0
+      },
+      "multi_agent_moins_ET": {
+       "mediane": 0.0,
+       "p05": 0.0,
+       "p95": 0.0,
+       "part_positive": 0.0
+      },
+      "multi_agent_moins_OU": {
+       "mediane": 0.0,
+       "p05": 0.0,
+       "p95": 0.0,
+       "part_positive": 0.0
+      },
+      "multi_agent_moins_fundamental_seul": {
+       "mediane": 0.0,
+       "p05": 0.0,
+       "p95": 0.0,
+       "part_positive": 0.0
+      },
+      "multi_agent_moins_valuation_seul": {
+       "mediane": 0.0,
+       "p05": 0.0,
+       "p95": 0.0,
+       "part_positive": 0.0
+      },
+      "valuation_seul": {
+       "mediane": 0.017781289334725336,
+       "p05": 0.017781289334725336,
+       "p95": 0.017781289334725336,
+       "part_au_dessus_de_ref15": 0.0
+      }
+     },
+     "risk_neutral": {
+      "ET": {
+       "mediane": 0.017781289334725336,
+       "p05": 0.017781289334725336,
+       "p95": 0.017781289334725336,
+       "part_au_dessus_de_ref15": 0.0
+      },
+      "OU": {
+       "mediane": 0.017781289334725336,
+       "p05": 0.017781289334725336,
+       "p95": 0.017781289334725336,
+       "part_au_dessus_de_ref15": 0.0
+      },
+      "fundamental_seul": {
+       "mediane": 0.017781289334725336,
+       "p05": 0.017781289334725336,
+       "p95": 0.017781289334725336,
+       "part_au_dessus_de_ref15": 0.0
+      },
+      "multi_agent": {
+       "mediane": 0.017781289334725336,
+       "p05": 0.017781289334725336,
+       "p95": 0.017781289334725336,
+       "part_au_dessus_de_ref15": 0.0
+      },
+      "multi_agent_moins_ET": {
+       "mediane": 0.0,
+       "p05": 0.0,
+       "p95": 0.0,
+       "part_positive": 0.0
+      },
+      "multi_agent_moins_OU": {
+       "mediane": 0.0,
+       "p05": 0.0,
+       "p95": 0.0,
+       "part_positive": 0.0
+      },
+      "multi_agent_moins_fundamental_seul": {
+       "mediane": 0.0,
+       "p05": 0.0,
+       "p95": 0.0,
+       "part_positive": 0.0
+      },
+      "multi_agent_moins_valuation_seul": {
+       "mediane": 0.0,
+       "p05": 0.0,
+       "p95": 0.0,
+       "part_positive": 0.0
+      },
+      "valuation_seul": {
+       "mediane": 0.017781289334725336,
+       "p05": 0.017781289334725336,
+       "p95": 0.017781289334725336,
+       "part_au_dessus_de_ref15": 0.0
+      }
+     }
+    },
+    "ref15": {
+     "mediane": 0.07637517868000554,
+     "p05": 0.030360838483493913,
+     "p95": 0.10479381865651183
+    }
+   },
+   "titres_par_tirage": 15
+  },
+  "titres": {
+   "evalues": [
+    "ADI",
+    "AMAT",
+    "CRM",
+    "CTSH",
+    "EPAM",
+    "GEN",
+    "IBM",
+    "IT",
+    "KEYS",
+    "KLAC",
+    "NTAP",
+    "NVDA",
+    "PTC",
+    "QCOM",
+    "TRMB",
+    "ZS"
+   ],
+   "primaire": [
+    "ZS",
+    "AMAT",
+    "NVDA",
+    "CTSH",
+    "NTAP",
+    "CRM",
+    "IT",
+    "QCOM",
+    "IBM",
+    "GEN",
+    "PTC",
+    "EPAM",
+    "ADI",
+    "KEYS",
+    "KLAC"
+   ]
+  }
+ },
+ "verdict": {
+  "par_profil": {
+   "risk_averse": {
+    "conditions_reunies": false,
+    "raisons": [
+     "[risk_averse] multi_agent contre ET : l'intervalle de la différence contient 0",
+     "[risk_averse] multi_agent contre ET : 0 titre(s) diffèrent (moins de 4)",
+     "[risk_averse] multi_agent contre ET : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+     "[risk_averse] multi_agent contre ET : le multi-agent ne fait pas mieux",
+     "[risk_averse] multi_agent contre valuation_seul : l'intervalle de la différence contient 0",
+     "[risk_averse] multi_agent contre valuation_seul : 0 titre(s) diffèrent (moins de 4)",
+     "[risk_averse] multi_agent contre valuation_seul : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+     "[risk_averse] multi_agent contre valuation_seul : le multi-agent ne fait pas mieux",
+     "[risk_averse] multi_agent contre fundamental_seul : l'intervalle de la différence contient 0",
+     "[risk_averse] multi_agent contre fundamental_seul : 0 titre(s) diffèrent (moins de 4)",
+     "[risk_averse] multi_agent contre fundamental_seul : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+     "[risk_averse] multi_agent contre fundamental_seul : le multi-agent ne fait pas mieux"
+    ]
+   },
+   "risk_neutral": {
+    "conditions_reunies": false,
+    "raisons": [
+     "[risk_neutral] multi_agent contre ET : l'intervalle de la différence contient 0",
+     "[risk_neutral] multi_agent contre ET : 0 titre(s) diffèrent (moins de 4)",
+     "[risk_neutral] multi_agent contre ET : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+     "[risk_neutral] multi_agent contre ET : le multi-agent ne fait pas mieux",
+     "[risk_neutral] multi_agent contre valuation_seul : l'intervalle de la différence contient 0",
+     "[risk_neutral] multi_agent contre valuation_seul : 0 titre(s) diffèrent (moins de 4)",
+     "[risk_neutral] multi_agent contre valuation_seul : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+     "[risk_neutral] multi_agent contre valuation_seul : le multi-agent ne fait pas mieux",
+     "[risk_neutral] multi_agent contre fundamental_seul : l'intervalle de la différence contient 0",
+     "[risk_neutral] multi_agent contre fundamental_seul : 0 titre(s) diffèrent (moins de 4)",
+     "[risk_neutral] multi_agent contre fundamental_seul : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+     "[risk_neutral] multi_agent contre fundamental_seul : le multi-agent ne fait pas mieux"
+    ]
+   }
+  },
+  "raisons": [
+   "[risk_averse] multi_agent contre ET : l'intervalle de la différence contient 0",
+   "[risk_averse] multi_agent contre ET : 0 titre(s) diffèrent (moins de 4)",
+   "[risk_averse] multi_agent contre ET : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+   "[risk_averse] multi_agent contre ET : le multi-agent ne fait pas mieux",
+   "[risk_averse] multi_agent contre valuation_seul : l'intervalle de la différence contient 0",
+   "[risk_averse] multi_agent contre valuation_seul : 0 titre(s) diffèrent (moins de 4)",
+   "[risk_averse] multi_agent contre valuation_seul : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+   "[risk_averse] multi_agent contre valuation_seul : le multi-agent ne fait pas mieux",
+   "[risk_averse] multi_agent contre fundamental_seul : l'intervalle de la différence contient 0",
+   "[risk_averse] multi_agent contre fundamental_seul : 0 titre(s) diffèrent (moins de 4)",
+   "[risk_averse] multi_agent contre fundamental_seul : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+   "[risk_averse] multi_agent contre fundamental_seul : le multi-agent ne fait pas mieux",
+   "[risk_neutral] multi_agent contre ET : l'intervalle de la différence contient 0",
+   "[risk_neutral] multi_agent contre ET : 0 titre(s) diffèrent (moins de 4)",
+   "[risk_neutral] multi_agent contre ET : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+   "[risk_neutral] multi_agent contre ET : le multi-agent ne fait pas mieux",
+   "[risk_neutral] multi_agent contre valuation_seul : l'intervalle de la différence contient 0",
+   "[risk_neutral] multi_agent contre valuation_seul : 0 titre(s) diffèrent (moins de 4)",
+   "[risk_neutral] multi_agent contre valuation_seul : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+   "[risk_neutral] multi_agent contre valuation_seul : le multi-agent ne fait pas mieux",
+   "[risk_neutral] multi_agent contre fundamental_seul : l'intervalle de la différence contient 0",
+   "[risk_neutral] multi_agent contre fundamental_seul : 0 titre(s) diffèrent (moins de 4)",
+   "[risk_neutral] multi_agent contre fundamental_seul : désaccord entre exécutions non mesurable (moins de 2 exécutions)",
+   "[risk_neutral] multi_agent contre fundamental_seul : le multi-agent ne fait pas mieux"
+  ],
+  "statut": "non_concluant"
+ },
+ "versions": {
+  "numpy": "2.5.3"
+ }
+}

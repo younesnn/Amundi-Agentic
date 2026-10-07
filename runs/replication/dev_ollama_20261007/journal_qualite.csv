@@ -1,0 +1,3 @@
+execution,agent,debats,taux_rejet_ancrage,taux_abstention,taux_erreur_json,taux_panne,taux_voix_unique
+baseline,valuation,31,0.1935483870967742,0.0,0.0,0.0,0.5806451612903226
+baseline,fundamental,31,0.22580645161290322,0.06451612903225806,0.41935483870967744,0.0,0.5806451612903226

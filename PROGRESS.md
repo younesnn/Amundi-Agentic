@@ -64,3 +64,9 @@ Mis à jour par le chef de projet à chaque étape.
 - En cours : correctif de contexte Ollama ; commande de pré-enregistrement et harnais de réplication (protocole révisé D-065).
 - À faire pour clore la phase : pilote réel avec Ollama (contexte corrigé) pour mesurer les taux de rejet d'ancrage, d'erreur JSON et de voix unique ; réplication sur le tirage primaire ; décision de Younes sur le recours à Gemini (quotas à relever dans Google AI Studio : requêtes/min, jetons/min, requêtes/jour pour `gemini-3.8-flash`, `gemini-3.5-flash-lite`, `gemini-flash-latest`, `gemini-flash-lite-latest`).
 - L1 v1.5 (74 exigences). Dettes : D-060 et D-066.
+
+
+## Phase 3 : état au 2026-10-07 (matin)
+- Agents, débat, RAG, résumé avec réflexion, harnais de réplication : fusionnés, tests au vert (~3 000), CI verte.
+- Réplication réelle sur Ollama (D-069) : mécanique validée, verdict non concluant (Fundamental abstenu 62-80 %, aucun BUY). Réplication concluante : attend Gemini (décision de Younes).
+- En attente de Younes : validation de la phase 3, usage de Gemini en évaluation, quotas Gemini, questions Q-1..Q-31 pour Amundi.

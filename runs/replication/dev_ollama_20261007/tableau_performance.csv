@@ -1,0 +1,11 @@
+execution,profil,portefeuille,m_buy,cumul,volatilite,sharpe,sharpe_ic_bas,sharpe_ic_haut,perte_max
+baseline,risk_averse,valuation_seul,0,0.017781289334725336,9.635722122160918e-06,,,,0.0
+baseline,risk_averse,fundamental_seul,0,0.017781289334725336,9.635722122160918e-06,,,,0.0
+baseline,risk_averse,ET,0,0.017781289334725336,9.635722122160918e-06,,,,0.0
+baseline,risk_averse,OU,0,0.017781289334725336,9.635722122160918e-06,,,,0.0
+baseline,risk_averse,multi_agent,0,0.017781289334725336,9.635722122160918e-06,,,,0.0
+baseline,risk_neutral,valuation_seul,0,0.017781289334725336,9.635722122160918e-06,,,,0.0
+baseline,risk_neutral,fundamental_seul,0,0.017781289334725336,9.635722122160918e-06,,,,0.0
+baseline,risk_neutral,ET,0,0.017781289334725336,9.635722122160918e-06,,,,0.0
+baseline,risk_neutral,OU,0,0.017781289334725336,9.635722122160918e-06,,,,0.0
+baseline,risk_neutral,multi_agent,0,0.017781289334725336,9.635722122160918e-06,,,,0.0
