@@ -38,7 +38,7 @@ def test_sous_paquets_de_la_section_5_2(nom):
         "PROMPT.md",
         "PROGRESS.md",
         "DECISIONS.md",
-        "QUESTIONS_AMUNDI.md",
+        "HYPOTHESES.md",
         "README.md",
         "docs/tracabilite.md",
         ".env.example",

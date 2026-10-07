@@ -139,7 +139,7 @@ def test_valeurs_du_fichier_reel_attendues(reel):
 
 
 def test_fichier_reel_historise_le_changement_d_indice_de_crp(reel):
-    """Q-21 : l'indice de CRP.PA a changé le 2023-01-11 (avis aux actionnaires) ; mode non_pit pour remonter le temps."""
+    """H-21 : l'indice de CRP.PA a changé le 2023-01-11 (avis aux actionnaires) ; mode non_pit pour remonter le temps."""
     avant = reel.as_of(date(2023, 1, 10), mode="non_pit").get("CRP.PA", "indice")
     jour = reel.as_of(date(2023, 1, 11), mode="non_pit").get("CRP.PA", "indice")
     apres = reel.as_of(date(2023, 1, 12), mode="non_pit").get("CRP.PA", "indice")
