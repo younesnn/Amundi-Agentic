@@ -1,0 +1,287 @@
+{
+ "avertissement": "Prototype académique (ESCP, pour Amundi Technology). Ce n'est pas un conseil en investissement.",
+ "changements": [],
+ "date": "2026-10-07",
+ "empreintes": {
+  "configs": {
+   "debate.yaml": "9d64e8fa40f6abbc9043182767a7071fb46bcae2de71adb4fcea0a36d133e942",
+   "esg.yaml": "ba8bb8923b6543b32fbe04677fd15d3a81e497c22c38613253be332bde11bb33",
+   "esg_etf_sources.lock.json": "03d0f35e038f317aa349bccb572aa715b33d4cd72d9a4173e3369e667e0eb479",
+   "esg_etf_sources.yaml": "bd23de50627a50e9e4a3afa8c8fb3e78337ec78fe6bff84e2fce0c52eeb0f110",
+   "llm.yaml#evaluation": "9bb85b51dbb90380bc3648399a8f21f84751ccc39052082da31061847ce3e804",
+   "replication.yaml": "847544003a32d332e51feaad22bb5a18a5074fc12ddb1bbabc4c8667e44a6768",
+   "text_tools.yaml": "9c69be016cb747eeebb362f49eb91f6cc4691418eb683653c0dbfe3fd55d7baf",
+   "universe.yaml": "3727bc342e2059b1458048fb3bd6ced8bfa2fd2366d0a7a1e5b41319e02c0a91"
+  },
+  "graine_sha256": "d7458cc2854316191485a831d14dbb2b9313ee4cdf2194c2d2995997834e88f5",
+  "manifeste_donnees_sha256": "d40a97ecba9c20d867cb69d52fd5a77a9948906ff1daffdaea004031de557041",
+  "modeles_evaluation": {
+   "fin_entrainement": {
+    "gemini/gemini-3.5-flash-lite": "2026-03-31",
+    "gemini/gemini-3.8-flash": "2026-03-31"
+   },
+   "identifiants": {
+    "light": "gemini/gemini-3.5-flash-lite",
+    "main": "gemini/gemini-3.8-flash"
+   }
+  },
+  "prompts": {
+   "paraphrases": {
+    "paraphrase_1": {
+     "coordinator_arbitrage_v1": "faec99ef1de7c19fe4fc18f1d857820ce790e7c8103f129eca0cdc59d0a9813e",
+     "coordinator_report_v1": "ec1f07fc6ef6b1d17f113057776fb70a7818ade76933497ffd19e6531f5aee99",
+     "debate_round_v1": "4def3cceeae6899eaae8f465d20e950a09902212447e752caac7f046dfeb806f",
+     "devil_v1": "b5fcef1b0fe411b11a67dd23005dcb4ebe457868d555284546df799c3c9dc35d",
+     "fundamental_v1": "56e785c3c043e9c63b9103eb1c883778aa8a2c508021155be2d4d183762652b4",
+     "profils_v1": "38e444fbe6221a0a618b277c103c1b0efc74e826ee08d3642a14f30b7b637697",
+     "regles_communes_v1": "7aab53485300c0b8a6eb590b96d78ab91e6f2f0adae2760a986100dbf2e47181",
+     "valuation_titre_v1": "c85256b5ef9e8056b6afb524a7f2974aafd2d265384d4a87c2b8ed19d0caf7e0"
+    },
+    "paraphrase_2": {
+     "coordinator_arbitrage_v1": "f87c4d2ef7028f271210be013404f8dc47c5971f3748f7c3ebf6aa13e45bd8d1",
+     "coordinator_report_v1": "d60a7f2e7c09104966208476714cbb046d37cff2ae98153c59cb6421cb33e36e",
+     "debate_round_v1": "104da690b25936bd135e964e2e7ce092a33872177ba689e8c11ffa7f27b4b20e",
+     "devil_v1": "39f68b37650374854de868cef2e7a321076792ecfdd857dd071645f877240557",
+     "fundamental_v1": "36b9431a5b7a6877b9266d6ec08735434011ffdb0098384929924ce5116a26e8",
+     "profils_v1": "52325a7f8e9b81689b17d93565599d8a25e37de729dc723a36906c869d7941d8",
+     "regles_communes_v1": "3e5c6d5689065b9f93c530451415a68c9e28dcbfe3196eff5906264f9848cd25",
+     "valuation_titre_v1": "334c985d3021dd3be13f7ece4acc1baec9e76683dd9e9711751d5fd27e40f090"
+    }
+   },
+   "rag_et_resume": {
+    "rag_answer_v1": "f3f992ed84d6223ca0300beed931b3f3dae54604a10d74e68ce11db044c1360e",
+    "rag_guide_v1": "f41d5b3d4511aa2416ea6f90c338dbb9350f4003438c0c0754653a66701f30b5",
+    "rag_judge_faithfulness_v1": "4939c4d0a81095dddf0252f12f3bc552740d4f92be6a453e94a8bb2f288c1413",
+    "rag_judge_relevance_v1": "18a3f1a1184e2d172ab26eb671e96515e123943f7c58917d711bb98a37af7dc7",
+    "rag_questions_v1": "7e2ab30ca3dab7ec8876932765a84f2cb2dbc6f667a8517c3bba20f75e4c22f7",
+    "summary_critique_v1": "e5369382b04a0a3f7be6c274d9a9e312facce7d46e11955e6eb3aa258ef9107e",
+    "summary_refine_v1": "9ca4b2b344e8f3330ed893ae90256a48fa0ce5f525460eb5f4f3918dda406e90",
+    "summary_summarize_v1": "a3a34bc4e83d46b819fdfe0ba45bbfe798ee91a0df3b9edff5b728dc4521ca40"
+   },
+   "roles": {
+    "coordinator_arbitrage": "aa36d110fa74b03bc60ec78131fe8627e5077f762247f5a5b81c61de58d5235e",
+    "coordinator_report": "88f2e6dfabcefeae38ff9e1634c1c9a38fa7e5a3df7f3a73c7b829c024b25849",
+    "debate_round": "4405494962129a6729159dca44312c7af159bf7360114566fed5810b50d4b35d",
+    "devil": "c0807942753a74efa61308270b8a7822b19689f069ad90bf7719f4efd7eca27a",
+    "esg": "3bccd6197cb9885cd01da26cfe48f8d10563e4e394b02d852c431c2788a0be79",
+    "fundamental": "c40ae2f2dbfc2448b81d913416c0c09a7f66c682676668c1f12686706ecc7279",
+    "macro": "59857e80034aef58ac13ae7c63dd0ac953e4e32d8514e6d0cfc65ef42640d09a",
+    "profils": "8c790375b379bb17c240db962ffad78d079058036fc1cef03572c45c89c9a437",
+    "regles_communes": "e0f4a59d0a3bff28dfa1b6f278bb404885d3974fae0e51934bfa8250ed54b01b",
+    "risk": "c8d6c0ca4c21fb7c930ce620e8a75674009cde916a656f666ec3bfabcd0f0bb3",
+    "sentiment_allocation": "d74c9dc52e4164a2e2d1ae7cdeaa1edc1ae6ada27d4ba6db44d2e1114679a76d",
+    "sentiment_titre": "4c72aeb8fc49e337ed8940ee4ad0bd19ce992850d0a1036441c8aec5a11260c1",
+    "valuation_allocation": "cff2461a96bb2b13717290071c3cd92435503874c926b294ef6012a6dffcada4",
+    "valuation_titre": "51f49c38c93fbe3da2ef5298e19e13e9416309c8eb5191b9da3031eb933577d1"
+   }
+  },
+  "prompts_composites": {
+   "paraphrase_1": "d99980145d3a8ccc4da7f7a82b360199b5be02170f1a337b73fe77c48b9b3ab7",
+   "paraphrase_2": "730aaa7122dae4f201840078649f9be9c646fca978e0f5962aead9c3df85adbb",
+   "rag_et_resume": "2a20b4112033b0eae5919ef9f70b806e2f7b164fa4616a4327b26d7a889cf3bd",
+   "roles": "c93ce144653467bffa9ebaf67c556d25ba06e895aa26a5efa8025dbf8448c72a"
+  },
+  "protocole": {
+   "cible": {
+    "as_of_performance": "2024-06-01",
+    "couts_de_transaction": "non_modelises",
+    "date_decision": "2024-02-01",
+    "devise_performance": "USD",
+    "fin_suivi": "2024-05-31",
+    "prix": "adj_close",
+    "prix_entree": "premiere_cloture_a_partir_de_t",
+    "rebalancement": "unique"
+   },
+   "cout": {
+    "secondes_par_appel": null
+   },
+   "distribution_aleatoire": {
+    "graine": 20240203,
+    "max_exact": 200000,
+    "n_echantillon": 20000
+   },
+   "evaluation": {
+    "agents_votants": [
+     "valuation",
+     "fundamental"
+    ],
+    "inclure_sentiment": false,
+    "journal_complet": false
+   },
+   "executions": [
+    {
+     "graine_llm": 0,
+     "nom": "baseline",
+     "paraphrase": null,
+     "temperature": 0.0
+    },
+    {
+     "graine_llm": 0,
+     "nom": "paraphrase_1",
+     "paraphrase": "paraphrase_1",
+     "temperature": 0.0
+    },
+    {
+     "graine_llm": 0,
+     "nom": "paraphrase_2",
+     "paraphrase": "paraphrase_2",
+     "temperature": 0.0
+    },
+    {
+     "graine_llm": 1,
+     "nom": "t07_1",
+     "paraphrase": null,
+     "temperature": 0.7
+    },
+    {
+     "graine_llm": 2,
+     "nom": "t07_2",
+     "paraphrase": null,
+     "temperature": 0.7
+    },
+    {
+     "graine_llm": 3,
+     "nom": "t07_3",
+     "paraphrase": null,
+     "temperature": 0.7
+    },
+    {
+     "graine_llm": 4,
+     "nom": "t07_4",
+     "paraphrase": null,
+     "temperature": 0.7
+    },
+    {
+     "graine_llm": 5,
+     "nom": "t07_5",
+     "paraphrase": null,
+     "temperature": 0.7
+    }
+   ],
+   "inference": {
+    "bootstrap": {
+     "graine": 20240204,
+     "longueur_moyenne_bloc": 5,
+     "methode": "stationnaire",
+     "n_reechantillonnages": 10000,
+     "niveau": 0.95
+    },
+    "wilson_niveau": 0.95
+   },
+   "mapping": {
+    "abstention": "exclu_des_portefeuilles_signal",
+    "buy_si_niveau_superieur_a": 0,
+    "portefeuille_vide": "tresorerie",
+    "sensibilite_abstention_buy": true
+   },
+   "modele": {
+    "etiquette_contamine": "contaminé",
+    "etiquette_hors_echantillon": "hors échantillon sous réserve d'un sondage de mémoire",
+    "etiquette_inconnue": "fin d'entraînement non renseignée dans config/llm.yaml (training_cutoff) : aucune étiquette hors échantillon",
+    "etiquette_marge": "dans la marge de contamination : hors échantillon non garanti, sondage de mémoire requis",
+    "etiquette_simule": "LLM simulé : essai de mécanique, aucun résultat de modèle",
+    "marge_contamination_mois": 3
+   },
+   "paraphrases": {
+    "dossier": "config/replication_paraphrases",
+    "prompts_paraphrases": [
+     "valuation_titre",
+     "fundamental",
+     "profils",
+     "regles_communes",
+     "debate_round",
+     "devil",
+     "coordinator_report",
+     "coordinator_arbitrage"
+    ]
+   },
+   "performance": {
+    "fenetre_sharpe_glissant": 21
+   },
+   "pool": {
+    "barres_min_historique": 252,
+    "barres_min_janvier": 10,
+    "depot_requis_avant_t": true,
+    "depots_texte_requis": false,
+    "formulaires": [
+     "10-K",
+     "10-Q"
+    ],
+    "titre_hors_pool": "ZS",
+    "titre_sans_prix_en_fin_de_suivi": "derniere_valeur_connue"
+   },
+   "profils": [
+    "risk_averse",
+    "risk_neutral"
+   ],
+   "protocole": {
+    "nom": "alphaagents_replication",
+    "reference": "D-065"
+   },
+   "rapport_interdit": {
+    "motifs": [
+     "multi agents? (bat|battent|beats?|outperforms?|surperforme\\w*|l.emporte)",
+     "bat(tent)? les agents seuls",
+     "beats? the single agents",
+     "l.emporte sur les agents seuls",
+     "multi agents? (est|sont) meilleurs? que les agents seuls",
+     "confirm\\w* (les )?(resultats )?(d.?|du )?(alphaagents|papier|paper)",
+     "reduit\\w* (la pensee|les biais) de groupe",
+     "reduces? groupthink",
+     "confiance (est )?calibree",
+     "calibrated confidence",
+     "probabilite de succes",
+     "probability of success",
+     "\\balphas?\\b",
+     "sur ?performance",
+     "surperform\\w*",
+     "outperform\\w*",
+     "\\brobust\\w*",
+     "\\bvalid(e|es|ee|ees|ated)\\b",
+     "\\bvalidates?\\b",
+     "conforme esg",
+     "esg compliant",
+     "analyses? fondamentales?",
+     "fundamental analysis",
+     "prouv\\w* la qualite",
+     "\\bprouve\\w*",
+     "\\bproves?\\b|\\bproved\\b|\\bproven\\b",
+     "out of sample"
+    ]
+   },
+   "regles_rapport": {
+    "comparaisons_agents_seuls": [
+     "valuation_seul",
+     "fundamental_seul"
+    ],
+    "desaccord_entre_executions": "ecart_type",
+    "jamais_de_moyenne_entre_modeles": true,
+    "min_titres_differents": 4,
+    "profils_requis": "tous",
+    "regle_a_battre": "ET"
+   },
+   "taux_sans_risque": {
+    "mode": "moyenne_sur_la_fenetre",
+    "serie": "fred:DGS1MO",
+    "tresorerie": "taux_du_jour_reporte"
+   },
+   "tirage": {
+    "graine": 20240201,
+    "graine_secondaires": 20240202,
+    "methode": "tri_par_sha256",
+    "n_tirages_secondaires": 1000,
+    "n_titres": 14,
+    "remplacement": "titre_suivant_dans_la_permutation"
+   }
+  },
+  "uv_lock_sha256": "f8165e39f6ee3ff1c7ef8f896584f2f7725840b5d11ec168c7b9ed21907cf422"
+ },
+ "enregistre_le": "2026-10-07T00:02:35.423595+00:00",
+ "git_commit": "c9db7b8dbb875e79b1303b25a05e75e7ade45163",
+ "motif": null,
+ "nom": "alphaagents_replication",
+ "precedente": null,
+ "schema": "amundi-agentic/preregistration/v1",
+ "tirage_effectue": false,
+ "version": 1
+}
