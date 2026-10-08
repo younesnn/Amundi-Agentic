@@ -175,7 +175,7 @@ Aucune de ces sources n'a été consultée en ligne pour cette rédaction ; seul
 
 ## H-13 — Critère de succès de L4
 
-- **Valeur retenue :** démonstration de la mécanique, contrôle du risque, coûts et explicabilité ; pas de preuve d'un alpha (D-025). Effet minimal détectable publié : IR_min ≈ 2,8/√T ; correction de Holm sur 9 tests principaux ; règles de rapport de D-064.
+- **Valeur retenue :** démonstration de la mécanique, contrôle du risque, coûts et explicabilité ; pas de preuve d'un alpha (D-025). Effet minimal détectable publié : IR_min ≈ 2,8/√T avant correction de Holm, environ 3,6/√T après (Holm sur 9 tests principaux) ; règles de rapport de D-064.
 - **Justification :** avec un historique hors échantillon court, aucun alpha modeste n'est détectable.
 - **Source :** S-M ; méthodes citées en D-025 (bootstrap stationnaire de Politis et Romano, 1994 ; correction de Holm).
 - **Alternative plausible :** Amundi attend une preuve de performance sur une durée de live test plus longue.
