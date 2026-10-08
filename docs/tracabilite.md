@@ -123,3 +123,4 @@ Chaque exigence du cahier des charges (objectifs O, livrables L) et chaque contr
 | ID | Exigence | Composants | Tests prévus | Phase | Statut |
 | --- | --- | --- | --- | --- | --- |
 | EX-NF-06 | Latence (analyse d'une date, tableau de bord) ; en profil `dev`, 1 144 s pour un débat d'une classe d'actifs (D-058) | `debate/`, `app/` | Mesure journalisée par run (`duree_s`) | 3, 6 | Partiel : mesure journalisée (phase 3) ; tableau de bord en phase 6 |
+| EX-NF-16 | Hypothèses H-xx présentées comme « à valider avec Amundi » dans L4, L5 et L6 ; grille de sensibilité par hypothèse (`HYPOTHESES.md`) | `docs/` | `test_plan_deploiement_marque_les_hypotheses_a_valider` (prévisionnel) | 7, 9 | Spécifié (hypothèses rédigées, v1.6) |

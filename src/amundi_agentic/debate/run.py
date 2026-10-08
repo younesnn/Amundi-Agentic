@@ -246,7 +246,7 @@ def rendre_rapport(ctx: AgentContext, sortie: RunOutput) -> str:
     lignes += [
         "",
         "Limites : score ESG absent (aucune source gratuite, D-035) ; contrainte CT-06 suspendue ; "
-        "« sans exclusion détectée » n'est pas une preuve d'absence d'exposition (Q-26).",
+        "« sans exclusion détectée » n'est pas une preuve d'absence d'exposition (H-26).",
     ]
     for a, e in sortie.esg.items():
         if e.veto and not e.point_in_time:

@@ -1,4 +1,4 @@
-# ESG (phase 2, L1 §9.4, D-007, D-022, R-04). Hypothèses de conception (H), à confirmer (Q-3, Q-12, Q-14).
+# ESG (phase 2, L1 §9.4, D-007, D-022, R-04). Hypothèses de conception (H), à confirmer (H-03, H-12, H-14).
 # Les exclusions par secteur sont un PROXY : elles reposent sur le code SIC courant de l'émetteur
 # (EDGAR), pas sur le chiffre d'affaires réel par activité. Elles ne sont pas historisées
 # (non point-in-time) : usage backtest seulement en mode « non_pit » avec analyse de sensibilité.

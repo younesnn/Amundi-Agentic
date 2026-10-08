@@ -4,7 +4,7 @@ Aucune décision n'est prise par le LLM. Les règles sont :
 
 * titres : exclusions normatives de `config/esg.yaml` détectées pour l'émetteur (code SIC EDGAR,
   proxy ; indicateur fournisseur s'il existe) -> veto ; sans donnée connue à t, pas de veto mais
-  l'état « inconnu » est signalé (« sans exclusion détectée » n'est pas une preuve, Q-26) ;
+  l'état « inconnu » est signalé (« sans exclusion détectée » n'est pas une preuve, H-26) ;
 * ETF : état de chaque critère à trois valeurs (`determine_par_donnee` si un document de la source
   manuelle D-048 le prouve, `suppose_par_regle` si la méthodologie de l'indice le suppose,
   `inconnu`) ; veto seulement si `esg.etf_criteres_requis` (configuration) cite un critère dont
@@ -38,7 +38,7 @@ LIMITE_SCORE = "score ESG absent : aucune source gratuite (D-035), CT-06 suspend
 LIMITE_FUTUR = (
     "enregistrement ESG observé à t ou après : ignoré (point-in-time), aucun veto fondé dessus"
 )
-LIMITE_PREUVE = "« sans exclusion détectée » n'est pas une preuve d'absence d'exposition (Q-26)"
+LIMITE_PREUVE = "« sans exclusion détectée » n'est pas une preuve d'absence d'exposition (H-26)"
 
 
 class _Explication(BaseModel):
